@@ -1,0 +1,13 @@
+{% extends "events/base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<h2>User Profile: {{ request.user.username }}</h2>
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form user_profile_form %}
+  <button class="btn btn-primary" type="submit">Update</button>
+</form>
+{% endblock %}

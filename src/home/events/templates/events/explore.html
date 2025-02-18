@@ -1,0 +1,314 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% load settings %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<h1>Please Enter your Query</h1>
+<hr />
+<div id="main">
+    <div class="container">
+        <a class="btn btn-secondary" role="button" href="#search_commands" data-bs-toggle="collapse"
+            aria-expanded="false" aria-controls="search_commands">
+            <h5>Help</h5>
+        </a>
+        <a class="btn btn-secondary" role="button" href="#query_lookups" data-bs-toggle="collapse" aria-expanded="false"
+            aria-controls="query_lookups">
+            <h5>Query Lookups</h5>
+        </a>
+        <a class="btn btn-secondary" role="button" href="#saved_queries" data-bs-toggle="collapse" aria-expanded="false"
+            aria-controls="saved_queries">
+            <h5>Saved Queries</h5>
+        </a>
+        <a class="btn btn-secondary" role="button" href="#local_contexts" data-bs-toggle="collapse"
+            aria-expanded="false" aria-controls="local_contexts">
+            <h5>Local Contexts</h5>
+        </a>
+        <a class="btn btn-secondary" role="button" href="#file_uploads_container" data-bs-toggle="collapse"
+            aria-expanded="false" aria-controls="file_uploads_container">
+            <h5>File Uploads</h5>
+        </a>
+
+        <div class="container mb-2">
+            <div class="collapse width-100 preserve-whitespace" id="query_lookups">
+                <table id="lookup-table" class="table table-striped table-hover table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <td>name</td>
+                            <td>description</td>
+                            <td>search</td>
+                            <td>filter</td>
+                            <td>join</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>__exact</td>
+                            <td>Exact match</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__iexact</td>
+                            <td>Case-insensitive exact match</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__contains</td>
+                            <td>containment test</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__icontains</td>
+                            <td>Case-insensitive containment test</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__in</td>
+                            <td>In a given iterable</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__gt</td>
+                            <td>Greater than</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__gte</td>
+                            <td>Greater than or Equal to</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__lt</td>
+                            <td>Less than</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__lte</td>
+                            <td>Less than or Equal to</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__startswith</td>
+                            <td>Starts with</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__istartswith</td>
+                            <td>Case-insensitive starts with</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__endswith</td>
+                            <td>Ends with</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__iendswith</td>
+                            <td>Case-insensitive Ends with</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__range</td>
+                            <td>within a range</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__date</td>
+                            <td>For datetime fields, casts the value as date. Allows chaining additional field lookups
+                            </td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__year</td>
+                            <td>For date and datetime fields, an exact year match</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__iso_year</td>
+                            <td>For date and datetime fields, an exact ISO 8601 week-numbering year match</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__month</td>
+                            <td>For date and datetime fields, an exact month match (1=Jan, 12=Dec)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__day</td>
+                            <td>For date and datetime fields, an exact day match</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__week</td>
+                            <td>For date and datetime fields, return the week number (1-52 or 53) according to ISO-8601
+                            </td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__week_day</td>
+                            <td>For date and datetime fields, a 'day of the week' match. Allows chaining additional
+                                field lookups (1=Sunday, 7=Saturday)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__iso_week_day</td>
+                            <td>For date and datetime fields, an exact ISO 8601 day of the week match (1=Monday,
+                                7=Sunday)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__quarter</td>
+                            <td>For date and datetime fields, a 'quarter of the year' match (1-4)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__time</td>
+                            <td>For datetime fields, casts the value as time</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__hour</td>
+                            <td>For datetime and time fields, an exact hour match (0-23)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__minute</td>
+                            <td>For datetime and time fields, an exact minute match (0-59)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__second</td>
+                            <td>For datetime and time fields, an exact second match (0-59)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-x-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__isnull</td>
+                            <td>Takes either True or False</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__regex</td>
+                            <td>Regular expression match (The regular expression syntax is that of the database backend
+                                in use)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                        <tr>
+                            <td>__iregex</td>
+                            <td>Case-insensitive regular expression match (The regular expression syntax is that of the
+                                database backend in use)</td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                            <td><i class="bi bi-check-lg"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="container mb-2">
+            <div class="collapse width-100 preserve-whitespace" id="saved_queries"></div>
+        </div>
+        <div class="container mb2">
+            <div class="collapse width-100 preserve-whitespace" id="search_commands"></div>
+        </div>
+        <div class="container mb-2">
+            <div class="collapse width-100 preserve-whitespace" id="local_contexts"></div>
+        </div>
+        <div class="container mb-2">
+            <div class="collapse width-100" id="file_uploads_container">
+                <div class="width-100 preserve-whitespace" id="file_uploads"></div>
+                <div class="border container">
+                    <p>Upload a File</p>
+                    <form method="POST" action="{% url 'fileupload-list' %}" id="new_upload_form">
+                        {% csrf_token %}
+                        {% bootstrap_form file_upload_form %}
+                        <button class="btn btn-primary" id="fileUploadFormSubmitButton" type="submit">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <a class="btn btn-primary" role="button" href="#currentContextForm" data-bs-toggle="collapse"
+            aria-expanded="false" aria-controls="currentContextForm">
+            <h4>Current Context</h4>
+        </a>
+        <div class="container">
+            <form class="collapse width-100 border" id="currentContextForm">
+                {% csrf_token %}
+                {% bootstrap_form current_context_form %}
+                <button class="btn btn-primary" id="currentContextFormSubmitButton" type="submit">Save</button>
+            </form>
+        </div>
+
+        <div class="container mb-1">
+            <form id="queryForm">
+                {% csrf_token %}
+                {% bootstrap_form query_form %}
+                <button class="btn btn-primary" id="queryFormSubmitButton" type="submit">Query</button>
+            </form>
+        </div>
+
+        <hr />
+        <!-- <div id="report" class="preserve-whitespace"></div> -->
+        <div id="report" class="bg-{{ request.user.profile.background }} text-{{ request.user.profile.foreground }}">
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'events/base.html' %}
+{% load static %}
+{% load settings %}
+{% load django_bootstrap5 %}
+
+{% block title %}Markdown Content{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        {{ content | safe }}
+    </div>
+{% endblock content %}

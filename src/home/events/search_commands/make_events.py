@@ -1,0 +1,92 @@
+import json
+import argparse
+import logging
+
+from django.db.models.manager import Manager
+from django.db.models.query import QuerySet
+
+from events.models import (
+    Event,
+)
+from events.serializers import (
+    EventSerializer,
+)
+from events.util import resolve
+
+from .decorators import search_command
+
+parser = argparse.ArgumentParser(
+    prog="make_events",
+    description="Generate events based on the current result set. ",
+)
+parser.add_argument(
+    "-i", "--index",
+    default="default",
+    help="The index to assign to the new events, you can "
+            "use dollarsign notation to assign the value of a field.",
+)
+parser.add_argument(
+    "-o", "--host",
+    default="127.0.0.1",
+    help="The host to assign to the new events, you can "
+            "use dollarsign notation to assign the value of a field. "
+            "(ie. $management_hostname)",
+)
+parser.add_argument(
+    "-s", "--source",
+    default="events",
+    help="The source to assign to the new events, you can "
+            "use dollarsign notation to assign the value of a field."
+            "(ie. $management_hostname)",
+)
+parser.add_argument(
+    "-t", "--sourcetype",
+    default="json",
+    help="The sourcetype to assign to the new events, you can "
+            "use dollarsign notation to assign the value of a field."
+            "(ie. $content_type)",
+)
+parser.add_argument(
+    "-S", "--save",
+    action="store_true",
+    help="If specified, the events will be saved."
+)
+parser.add_argument(
+    "-d", "--drop",
+    action="append",
+    help="If specified, provide the name of a field to "
+            "drop before creating the events."
+)
+
+@search_command(parser)
+def make_events(request, events, argv, environment):
+    args = make_events.parser.parse_args(argv[1:])
+    log = logging.getLogger(__name__)
+    index = args.index
+    host = args.host
+    source = args.source
+    sourcetype = args.sourcetype
+    events = resolve(events)
+    for orig_event in events:
+        event = {
+            "host": host if "$" not in host else orig_event.get(host.replace("$", "")),
+            "source": source if "$" not in source else orig_event.get(source.replace("$", "")),
+            "sourcetype": sourcetype if "$" not in sourcetype else orig_event.get(sourcetype.replace("$", "")),
+            "index": index if "$" not in index else orig_event.get(index.replace("$", "")),
+            "user": request.user,
+        }
+        if args.drop:
+            update_dict = {k: v for k, v in orig_event.items() if k not in args.drop}
+        else:
+            update_dict = dict(orig_event.items())
+        event.update(
+            {
+                "text": json.dumps(update_dict),
+                "extracted_fields": update_dict,
+            },
+        )
+        event = Event(**event)
+        if args.save:
+            event.save()
+        serializer = EventSerializer(event)
+        yield serializer.data

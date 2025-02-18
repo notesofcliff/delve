@@ -1,0 +1,12 @@
+{% extends "events/base.html" %}
+
+{% block title %}Global Context{% endblock %}
+
+{% block content %}
+<h2>Global Context for: {{ request.user.username }}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ global_context_form }}
+  <button type="submit">Update</button>
+</form>
+{% endblock %}

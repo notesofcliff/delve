@@ -1,0 +1,19 @@
+{% load query %}
+<div>
+    <table class="fl-table table table-striped table-hover table-bordered table-sm">
+        <thead>
+            <tr>
+                {% for field in fields %}
+                    <th>{{ field }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% for result in results %}
+        <tr>
+            {% for field in fields %}
+                <td>{{ result|lookup:field }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
