@@ -303,7 +303,6 @@ FLASHLIGHT_SEARCH_COMMANDS = {
     'make_events': 'events.search_commands.make_events',
     'mark_timestamp': 'events.search_commands.mark_timestamp',
     'merge': 'events.search_commands.merge',
-    'orm': 'events.search_commands.orm',
     'read_file': 'events.search_commands.read_file',
     'rename': 'events.search_commands.rename',
     'replace': 'events.search_commands.replace',
