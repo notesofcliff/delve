@@ -18,7 +18,7 @@ For detailed documentation, please refer to the [Flashlight Documentation](./src
 
 # Installation
 
-1. Download one of the pre-built zip files from the [releases page](/DelveCorp/flashlight/releases).
+1. Download one of the pre-built zip files from the [releases page](https://github.com/DelveCorp/flashlight/releases/).
 2. Unzip the file in the desired location.
 3. That's it!
 
