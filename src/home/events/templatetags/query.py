@@ -8,12 +8,14 @@ from events.util import resolve
 register = template.Library()
 
 @register.inclusion_tag('events/query-table.html', takes_context=True)
-def query_table(context, query_string, form=None):
+def query_table(context, query_string, form=None, kwargs=None):
     ctx = {}
     if form and form.is_valid():
         ctx = form.cleaned_data
     else:
         ctx = {}
+    if kwargs:
+        ctx.update(kwargs)
     query_obj = Query(text=query_string)
     results = query_obj.resolve(request=context["request"], context=ctx)
     results = resolve(results)
@@ -27,11 +29,13 @@ def query_table(context, query_string, form=None):
     }
 
 @register.inclusion_tag('events/query-chart.html', takes_context=True)
-def query_chart(context, query_string, form=None):
+def query_chart(context, query_string, form=None, kwargs=None):
     if form and form.is_valid():
         ctx = form.cleaned_data
     else:
         ctx = {}
+    if kwargs:
+        ctx.update(kwargs)
     query_obj = Query(text=query_string)
     results = query_obj.resolve(request=context["request"], context=ctx)
     try:
