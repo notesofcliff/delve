@@ -33,25 +33,31 @@ This use-case can be quite handy if you need to quickly troubleshoot an issue or
 To start using Flashlight with the simplest setup, use the following commands:
 
 ```bash
+# Copy the example settings and urls files
+cp ./flashlight/example-settings.py ./flashlight/settings.py
+cp ./flashlight/example-urls.py ./flashlight/urls.py
+
 # Create the database
-fl migrate
+./fl migrate
 
 # Run the tests
-fl test
+./fl test
 
 # Create an admin user
-fl createsuperuser
+./fl createsuperuser
 
 # Start serving the web UI
-fl serve
+./fl serve
 
 # In another window, you can start the task runner
-fl qcluster
+./fl qcluster
 ```
 
 # Configuration
 
 Configuration settings are located in `$FLASHLIGHT_HOME/flashlight/settings.py`.
+
+On a fresh install, there is no settings.py or urls.py. This is done to prevent overwriting a user's settings.py or urls.py if the install package is used as an update. So, if you are using the default configuration, you must copy the files `./flashlight/example-settings.py` and `./flashlight/example-urls.py` like in the command above. 
 
 All Flashlight-specific settings are prefixed with `FLASHLIGHT`.
 
