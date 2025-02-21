@@ -25,8 +25,8 @@ import * as bootstrap from 'bootstrap';
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-moment';
 import JSZip from 'jszip';
-import pdfMake from 'pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+// import pdfMake from 'pdfmake';
+// import pdfFonts from 'pdfmake/build/vfs_fonts';
 import DataTable from 'datatables.net-bs5';
 import 'datatables.net-buttons';
 import 'datatables.net-buttons-bs5';
@@ -45,8 +45,8 @@ require( 'datatables.net-buttons/js/buttons.html5.js' );
 require( 'datatables.net-buttons/js/buttons.print.js' );
 
 DataTable.Buttons.jszip(JSZip);
-DataTable.Buttons.pdfMake(pdfMake);
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+// DataTable.Buttons.pdfMake(pdfMake);
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 
 const objectPop = function( object, propertyName ){
