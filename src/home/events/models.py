@@ -3,6 +3,7 @@ import sys
 import shlex
 import logging
 from uuid import uuid4
+from uuid import UUID as UUID
 from io import StringIO
 
 from django.db import models
@@ -15,6 +16,7 @@ from django.core.exceptions import ValidationError
 from django.utils.module_loading import import_string
 
 from jinja2 import Environment
+from uuid_utils import uuid7
 
 from .validators import JsonObjectValidator
 from events.util import resolve
@@ -243,18 +245,26 @@ class Query(models.Model):
         log.debug(f"Finished resolution")
         return matching_events
 
+def generate_uuid7():
+    """Generate a UUID v7 that's compatible with Django's UUIDField"""
+    return UUID(str(uuid7()))
+
 class BaseEvent(models.Model):
     id = models.UUIDField(
-        default=uuid4,
+        default=generate_uuid7,
         primary_key=True,
+        editable=False,
     )
+    # id = models.BigAutoField(
+    #     primary_key=True,
+    # )
     created = models.DateTimeField(
         auto_now_add=True,
         db_index=True,
     )
-    modified = models.DateTimeField(
-        auto_now=True,
-    ) 
+    # modified = models.DateTimeField(
+    #     auto_now=True,
+    # ) 
 
     index = models.CharField(
         default="default",

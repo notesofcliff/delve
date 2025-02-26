@@ -67,7 +67,7 @@ class EventAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "created",
-        "modified",
+        # "modified",
         "host",
         "index",
         "source",
@@ -78,7 +78,7 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = (
         "id",
         "created",
-        "modified",
+        # "modified",
         "host",
         "index",
         "source",

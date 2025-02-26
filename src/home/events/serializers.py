@@ -122,6 +122,7 @@ class BulkEventSerializer(serializers.ListSerializer):
         return result
 
 class EventSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
     user = serializers.HiddenField(
         default=CurrentUserDefault(),
     )
@@ -132,7 +133,7 @@ class EventSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'created',
-            'modified',
+            # 'modified',
             'index',
             'source',
             'sourcetype',
@@ -144,7 +145,7 @@ class EventSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'id',
             'created',
-            'modified',
+            # 'modified',
             'user'
         ]
     
