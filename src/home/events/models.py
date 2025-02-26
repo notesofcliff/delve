@@ -26,6 +26,7 @@ class FileUpload(models.Model):
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
+        editable=False,
     )
     created = models.DateTimeField(
         auto_now_add=True,
@@ -52,6 +53,7 @@ class GlobalContext(models.Model):
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
+        editable=False,
     )
     created = models.DateTimeField(
         auto_now_add=True,
@@ -83,6 +85,7 @@ class LocalContext(models.Model):
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
+        editable=False,
     )
     created = models.DateTimeField(
         auto_now_add=True,
@@ -115,6 +118,7 @@ class Query(models.Model):
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
+        editable=False,
     )
     created = models.DateTimeField(
         auto_now_add=True,
