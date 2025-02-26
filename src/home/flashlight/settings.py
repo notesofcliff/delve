@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    # 'guardian',
     'whitenoise',
     'rest_framework',
     'django_bootstrap5',
@@ -55,6 +54,8 @@ INSTALLED_APPS = [
     'users',
     'events',
 ]
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
 
 
 MIDDLEWARE = [
@@ -68,9 +69,9 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-# if DEBUG:
-#     INSTALLED_APPS.append('debug_toolbar')
-#     MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = 'flashlight.urls'
 
