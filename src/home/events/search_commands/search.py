@@ -65,7 +65,11 @@ def orm_search(request, events, args):
         if not request.user.has_perm(permission_names[0]):
             raise PermissionError(f"You do not have permission to access model {model._meta.model_name}")
 
-    ret = model.objects.all()
+    if args.using:
+        ret = model.objects.using(args.using)
+    else:
+        ret = model.objects.all()
+
     for search_filter in search_filters:
         ret = ret.filter(search_filter)
     for search_exclude in search_excludes:
@@ -206,6 +210,11 @@ parser.add_argument(
     "--model",
     default="events.models.Event",
     help="The import_string formatted model to query."
+)
+parser.add_argument(
+    "--using",
+    default="default",
+    help="The database to query."
 )
 # parser.add_argument(
 #     "--serializer",
