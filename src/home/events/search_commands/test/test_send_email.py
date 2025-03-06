@@ -20,7 +20,7 @@ class SendEmailCommandTest(TestCase):
                 index="test",
                 host="127.0.0.1",
                 source="test",
-                sourcetype="json",
+                sourcetype="text",
                 user=self.user,
                 text=f"Test event {i}",
             )
