@@ -179,10 +179,10 @@ You can browse the REST API. Most endpoints can be found when browsing to `/api/
 The file-tail utility allows you to ingest data from log files in real-time. This utility monitors specified log files and streams new entries into Flashlight as they are written.
 
 #### Syslog (UDP/TCP/TLS)
-Flashlight supports Syslog for data ingestion over UDP, TCP, and TLS. This method is commonly used for collecting logs from network devices, servers, and other infrastructure components.
+Flashlight supports Syslog for data ingestion over UDP, TCP, and TCP over TLS. This method is commonly used for collecting logs from network devices, servers, and other infrastructure components.
 
 #### Through Searches (Interactive and Scheduled)
-You can also ingest data through searches, both interactive and scheduled. This method allows you to define search queries that retrieve data from external sources and import it into Flashlight on a regular basis or on-demand.
+You can also ingest data through searches, both interactive and scheduled. This method allows you to define search queries that retrieve data from external sources and import it into Flashlight on a schedule or on-demand.
 
 ### Field Extraction / Preprocessing
 Field extraction is the process of identifying and extracting specific fields from your data. Flashlight supports both index-time and search-time field extractions.
@@ -194,9 +194,9 @@ Index-time field extractions are performed by specifying a parser function for a
 Search-time field extractions are performed using search commands. These extractions are very versatile and allow you to dynamically extract fields during a search. Search-time field extractions are not usually persisted to the database, but they can be if needed. This method provides flexibility in querying and analyzing data without modifying the underlying data storage.
 
 #### Preprocessing
-Preprocessing in Flashlight is similar to index-time field extractions. These preprocessing steps are defined in `settings.py` under the `FLASHLIGHT_PROCESSOR_MAP` and are executed based on the `sourcetype` of the event.
+Preprocessing in Flashlight is similar to index-time field extractions. These preprocessing rules are defined in `settings.py` under the `FLASHLIGHT_PROCESSOR_MAP` and are executed based on the `sourcetype` of the event.
 
-Preprocessing functions are called as an event with the corresponding `sourcetype` is being indexed. This can be useful for taking immediate actions in response to the existence of certain events.
+Preprocessing functions are called as an event with the corresponding `sourcetype` is being indexed. This can be useful for sending alerts in real time.
 
 ### Search
 Searches can be done through the REST API at the `/api/query/` URL or they can be done through the web UI at the `/explore` URL.
@@ -222,5 +222,90 @@ Flashlight allows you to write your own custom apps. Custom apps allow you to gr
 Flashlight apps are also Django Apps, so all of [their documentation](https://docs.djangoproject.com/en/5.1/ref/applications/) applies in addition to our own.
 
 ### Alerts
-Coming soon. For now, please see the section above on Preprocessing.
+Flashlight provides two methods for implementing alerts: search-based alerts using the `send_email` command and processor-based alerts using the `FLASHLIGHT_PROCESSOR_MAP`.
 
+#### Email Configuration
+First, configure email settings in your `settings.py` file:
+
+```python
+# filepath: /flashlight/settings.py
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.your-email-provider.com'
+EMAIL_PORT = 587  # Common ports are 587 (TLS) or 465 (SSL)
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@example.com'
+EMAIL_HOST_PASSWORD = 'your-app-specific-password'
+DEFAULT_FROM_EMAIL = 'Flashlight Alerts <alerts@your-domain.com>'
+```
+
+For development, you can use the file-based backend:
+```python
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/tmp/app-messages'  # Change this to your preferred location
+```
+
+#### Search-based Alerts
+To create an alert, you'll need to:
+
+1. First, save your query using one of these methods:
+   - **Explore UI**: Create and test your query in `/explore`, then click "Save Query"
+   - **Django Admin**: Navigate to `/admin/events/query/` and create a new Query
+   - **REST API**: POST to `/api/queries/`
+
+Example query to save:
+```bash
+search --last-15-minutes text__icontains=fail index=logs
+| qs_values host
+| qs_annotate count=Count(host)
+| qs_order_by count
+| qs_filter count__gt=100
+| send_email to="team@example.com" subject="High Failure Rate Alert"
+```
+
+2. Schedule the saved query using Django Q:
+   1. Ensure the Q cluster is running (`fl qcluster` or via Windows Service)
+   2. Access the Django admin interface at `/admin/`
+   3. Navigate to `Django Q > Scheduled tasks`
+   4. Click "Add Scheduled task"
+   5. Configure the schedule:
+      ```python
+      Name: "High Error Rate Alert"
+      Func: "events.util.run_query"
+      Hook: None
+      Args: '["High Error Rate Alert"]'  # Use your saved query name here
+      Schedule Type: CRON
+      Cron: */15 * * * *  # Runs every 15 minutes
+      ```
+   6. Set additional options:
+      - `Repeats`: -1 for infinite repetition
+      - `Next Run`: When the schedule should start
+      - `Cluster`: Leave as default
+
+Note: For Windows installations using the Flashlight service, make sure the service is running to process scheduled tasks (ie. make sure a `qcluster` command is included FLASHLIGHT_SERVICE_COMMANDS). You can check the service status in Windows Services (services.msc).
+
+#### Processor-based Alerts
+For immediate alerts when specific events are ingested, use the `FLASHLIGHT_PROCESSOR_MAP`:
+
+```python
+# filepath: /flashlight/settings.py
+def alert_on_critical_error(event):
+    from django.core.mail import send_mail
+    
+    if 'CRITICAL' in event.upper():
+        send_mail(
+            subject='Critical Error Detected',
+            message=f'Critical error in event: {event.id}',
+            from_email='alerts@your-domain.com',
+            recipient_list=['team@example.com'],
+        )
+
+FLASHLIGHT_PROCESSOR_MAP = {
+    'error_logs': alert_on_critical_error,
+    'security_events': 'myapp.processors.security_alert_processor',
+}
+```
+
+The processor function is called whenever an event with the matching sourcetype is created or updated. This allows for real-time alerting based on event content.
+
+Remember that `FLASHLIGHT_ENABLE_PROCESSORS_ON_CREATE` and `FLASHLIGHT_ENABLE_PROCESSORS_ON_UPDATE` must be set to `True` in `settings.py` for processors to work.

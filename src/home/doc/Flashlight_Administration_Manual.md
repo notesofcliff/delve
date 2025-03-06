@@ -37,17 +37,21 @@ Follow these steps to install Flashlight:
    ```
 4. **Run Migrations**: Create the database and run migrations.
    ```bash
-   fl migrate
+   ./fl migrate
    ```
 5. **Create Admin User**: Create an admin user for accessing the admin interface.
    ```bash
-   fl createsuperuser
+   ./fl createsuperuser
    ```
-6. **Start the Server**: Start the Flashlight server and task scheduler.
+6. **Start the Server**: Start the Flashlight web server, task scheduler, syslog server and/or file-tail utility.
    ```bash
-   fl serve
-   fl qcluster
+   ./fl serve
+   ./fl qcluster
+   ./python/$PYTHON_VERSION/bin/python ./utilities/cli/syslog-receiver.py
+   ./python/$PYTHON_VERSION/bin/python ./utilities/cli/tail-files.py /var/log/*.log
    ```
+
+**NOTE**: Utilities launched with `fl` are generally configured in settings.py, while utilities in `./utilities/cli/` are generally configured via command line arguments.
 
 ### Initial Configuration
 After installation, perform the initial configuration to tailor Flashlight to your needs. Most configuration settings are found in the `settings.py` file.
