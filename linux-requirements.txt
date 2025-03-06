@@ -19,3 +19,7 @@ python-json-logger
 django_extensions
 records
 mariadb
+mysqlclient
+psutil
+pygments
+uuid_utils

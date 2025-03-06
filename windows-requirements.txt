@@ -23,3 +23,4 @@ mysqlclient
 pywin32
 psutil
 pygments
+uuid_utils
