@@ -54,9 +54,6 @@ INSTALLED_APPS = [
     'users',
     'events',
 ]
-if DEBUG:
-    INSTALLED_APPS.append('debug_toolbar')
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -336,6 +333,7 @@ FLASHLIGHT_SEARCH_COMMANDS = {
     'qs_filter': 'events.search_commands.qs.filter',
     'qs_first': 'events.search_commands.qs.first',
     'qs_last': 'events.search_commands.qs.last',
+    'qs_latest': 'events.search_commands.qs.latest',
     'qs_only': 'events.search_commands.qs.only',
     'qs_order_by': 'events.search_commands.qs.order_by',
     'qs_reverse': 'events.search_commands.qs.reverse',
@@ -343,6 +341,9 @@ FLASHLIGHT_SEARCH_COMMANDS = {
     'qs_update': 'events.search_commands.qs.update',
     'qs_using': 'events.search_commands.qs.using',
     'qs_values': 'events.search_commands.qs.values',
+    'qs_group_by': 'events.search_commands.qs.group_by',
+    'qs_having': 'events.search_commands.qs.having',
+    'qs_limit': 'events.search_commands.qs.limit',
 }
 
 
