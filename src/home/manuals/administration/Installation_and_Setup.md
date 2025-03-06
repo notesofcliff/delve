@@ -4,6 +4,7 @@ This section covers the system requirements, installation steps, and initial con
 
 ## System Requirements
 Before installing Flashlight, ensure your system meets the following requirements:
+
 - **Operating System**: Windows, macOS, or Linux
 - **Python**: Version 3.8 or higher
 - **Database**: SQLite (default), PostgreSQL, or MySQL
@@ -12,23 +13,31 @@ Before installing Flashlight, ensure your system meets the following requirement
 
 ## Installation Steps
 Follow these steps to install Flashlight:
+
 1. **Download Flashlight**: Download the latest release from the [releases page](#).
 2. **Extract Files**: Unzip the downloaded file to your desired location.
 3. **Configure Settings**: Copy the example settings and URL files.
-   ```bash
+
+   ```
    cp ./flashlight/example-settings.py ./flashlight/settings.py
    cp ./flashlight/example-urls.py ./flashlight/urls.py
    ```
+
 4. **Run Migrations**: Create the database and run migrations.
-   ```bash
+
+   ```
    ./fl migrate
    ```
+
 5. **Create Admin User**: Create an admin user for accessing the admin interface.
-   ```bash
+
+   ```
    ./fl createsuperuser
    ```
+
 6. **Start the Server**: Start the Flashlight web server, task scheduler, syslog server and/or file-tail utility.
-   ```bash
+
+   ```
    ./fl serve
    ./fl qcluster
    ./python/$PYTHON_VERSION/bin/python ./utilities/cli/syslog-receiver.py

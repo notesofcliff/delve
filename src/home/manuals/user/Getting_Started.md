@@ -5,6 +5,7 @@ Flashlight is a versatile and powerful platform for ingesting, transforming, and
 
 ## Background
 Flashlight is built on top of several robust technologies:
+
 - **Django**: A high-level Python web framework that encourages rapid development and clean, pragmatic design.
 - **Django Rest Framework**: A powerful and flexible toolkit for building Web APIs.
 - **CherryPy**: A minimalist Python web framework that allows developers to build web applications in much the same way they would build any other object-oriented Python program.
@@ -18,9 +19,10 @@ Once Flashlight is installed, you can log in to the web interface using the cred
 
 ## User Interface Overview
 The Flashlight web interface consists of several key components:
+
 - **Browsable REST API**: Provides access to almost all of the data that Flashlight has.
 - **Documentation**: Comprehensive documentation for using and configuring Flashlight.
 - **Explore UI**: A dynamic, universal search interface.
 - **Admin UI**: An administrative dashboard for managing users, data sources, and system settings.
 
-[Previous](../administration/index.md) | [Next](../administration/Installation_and_Setup.md)
+[Previous: Index](../administration/index.md) | [Next: Installation and Setup](../administration/Installation_and_Setup.md)

@@ -7,6 +7,7 @@ Flashlight provides a REST API for data ingestion, allowing you to programmatica
 
 ### Accessing the REST API
 To access the REST API, navigate to `/api/` in your browser. You will see a list of available endpoints, including:
+
 - `/api/events/`: Manage events.
 - `/api/search_commands/`: Manage search commands.
 - `/api/queries/`: Manage queries.
@@ -16,6 +17,7 @@ To access the REST API, navigate to `/api/` in your browser. You will see a list
 
 ### Example Usage
 To create a new event, send a POST request to `/api/events/` with the following JSON payload:
+
 ```json
 {
     "text": "Example event text",
@@ -40,6 +42,7 @@ The file-tail utility is a command-line tool that can be used to monitor log fil
 
 ### Command-line Arguments
 The `tail-files.py` script accepts the following command-line arguments:
+
 - `--server`: The scheme, host, and port of the Flashlight server (default: `http://localhost:8000`).
 - `--no-verify`: If specified, TLS hostname verification will be disabled.
 - `-i, --index`: The index in which to store the event (default: `default`).
@@ -56,6 +59,7 @@ The `tail-files.py` script accepts the following command-line arguments:
 
 ### Example Usage
 Here are some example commands to use the file-tail utility:
+
 ```bash
 # Basic usage with default settings
 python tail-files.py "/path/to/logfile.log"
@@ -101,6 +105,7 @@ The syslog-receiver utility is a command-line tool that can be used to receive s
 
 ### Command-line Arguments
 The `syslog-receiver.py` script accepts the following command-line arguments:
+
 - `--server`: The scheme, host, and port of the Flashlight server (default: `http://localhost:8000`).
 - `--no-verify`: If specified, TLS hostname verification will be disabled.
 - `-i, --index`: The index in which to store the event (default: `default`).
@@ -124,6 +129,7 @@ The `syslog-receiver.py` script accepts the following command-line arguments:
 
 ### Example Usage
 Here are some example commands to use the syslog-receiver utility:
+
 ```bash
 # Basic usage with default settings for UDP
 python syslog-receiver.py --udp
@@ -169,23 +175,27 @@ Flashlight allows direct file uploads for data ingestion, facilitating one-time 
 
 ### Methods of Upload
 Files can be uploaded using the following methods:
+
 - **REST API**: Perform a POST request to `/api/files/` with the file included as a multipart/form-encoded payload.
 - **Explore UI**: Click the "File Uploads" button at the top of the page to reveal the file upload form.
 - **Admin UI**: Click "File Uploads" on the left-hand side.
 
 ### Reading Uploaded Files
 Once a file is uploaded, it can be read into a search using the `read_file` command. For example, if a file is named "example.xml", it can be read into a search with the following command:
+
 ```bash
 read_file example.xml
 ```
 
 By default, `read_file` returns the contents of the file in the `content` field as an array of lines. To parse the XML, use the following command:
+
 ```bash
 read_file --parse xml example.xml
 ```
 
 ### Parse Options
 The following parse options are currently available:
+
 - `csv`
 - `json`
 - `jsonl`
@@ -196,6 +206,7 @@ Flashlight supports both interactive and scheduled searches, allowing users to d
 
 ### Search Commands
 Flashlight provides several built-in search commands to retrieve, parse, and transform data. Some of the key search commands include:
+
 - `search`: Retrieve data through Flashlight, including the models of registered apps.
 - `request`: Perform an HTTP request and return the data.
 - `read_file`: Retrieve data from an uploaded file.
@@ -208,6 +219,7 @@ Custom or third-party Flashlight apps can also define search commands, but all s
 
 ### Example Usage
 Here are some example commands to use the search functionality:
+
 ```bash
 # Basic search to retrieve data from the flashlight database  
 search --index default text__icontains="error"
@@ -224,6 +236,7 @@ The `make_events` command allows you to generate events based on the current res
 
 #### Command-line Arguments
 The `make_events` command accepts the following command-line arguments:
+
 - `-i, --index`: The index to assign to the new events. You can use dollar sign notation to assign the value of a field.
 - `-o, --host`: The host to assign to the new events. You can use dollar sign notation to assign the value of a field.
 - `-s, --source`: The source to assign to the new events. You can use dollar sign notation to assign the value of a field.
@@ -233,6 +246,7 @@ The `make_events` command accepts the following command-line arguments:
 
 #### Example Usage
 Here are some example commands to use the `make_events` command:
+
 ```bash
 # Generate events with default settings
 make_events

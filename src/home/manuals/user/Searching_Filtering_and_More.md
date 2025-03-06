@@ -6,6 +6,7 @@ Flashlight provides a comprehensive search interface that supports a wide range 
 Data source commands are used to pull data into your results. These commands retrieve data from various sources and integrate it into the Flashlight platform.
 
 ### Example Commands
+
 - `search`: Retrieve data through Flashlight, including the models of registered apps.
 - `request`: Perform an HTTP request and return the data.
 - `read_file`: Retrieve data from an uploaded file.
@@ -14,6 +15,7 @@ Data source commands are used to pull data into your results. These commands ret
 Queryset transformation commands act on Django Querysets (such as the output of the `search` command) and expose Queryset methods. These commands allow you to directly affect the SQL statements before they are executed, resulting in faster performance.
 
 ### Example Commands
+
 - `qs_filter`: Filter the queryset based on specified criteria.
 - `qs_explain`: Explain the queryset execution plan.
 - `qs_latest`: Retrieve the latest entry in the queryset.
@@ -22,9 +24,11 @@ Queryset transformation commands act on Django Querysets (such as the output of 
 - `qs_count`: Count the number of entries in the queryset.
 
 ## Generic Transformations
+
 Generic transformation commands modify data from a source command in some way. These commands are designed to be versatile and work well with diverse sets of data, although they may be slower than their `qs_` counterparts.
 
 ### Example Commands
+
 - `rename`: Rename fields in the result set.
 - `replace`: Replace values in the result set.
 - `rex`: Extract fields using regular expressions.
@@ -35,6 +39,7 @@ Generic transformation commands modify data from a source command in some way. T
 Visualization commands take a result set and generate a table, chart, or other visualization. These commands help you to display your data in a meaningful and interactive way.
 
 ### Example Commands
+
 - `chart`: Generate a chart based on the result set.
 - `table`: Generate a table based on the result set.
 
@@ -42,6 +47,7 @@ Visualization commands take a result set and generate a table, chart, or other v
 The `qs_group_by` command allows you to group records from a QuerySet based on specified fields and expressions. This command is useful for aggregating data and performing calculations on grouped records.
 
 ### Example Commands
+
 - `qs_group_by`: Group records based on specified fields and expressions.
 
 ### Example Usage
@@ -59,6 +65,7 @@ search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted
 ```
 
 ### Explanation
+
 - `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField))`: Groups records by the `extracted_fields__foo` field and calculates the average of the `extracted_fields__bar` field, casting it to an integer.
 - `qs_group_by extracted_fields__foo extracted_fields__bar count=Count('id')`: Groups records by the `extracted_fields__foo` and `extracted_fields__bar` fields and counts the number of records in each group.
 - `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField)) | qs_having avg_bar__gt=1`: Groups records by the `extracted_fields__foo` field, calculates the average of the `extracted_fields__bar` field, and filters the groups to include only those with an average greater than 1.
@@ -122,6 +129,7 @@ The `make_events` command allows you to generate events based on the current res
 
 ### Command-line Arguments
 The `make_events` command accepts the following command-line arguments:
+
 - `-i, --index`: The index to assign to the new events. You can use dollar sign notation to assign the value of a field.
 - `-o, --host`: The host to assign to the new events. You can use dollar sign notation to assign the value of a field.
 - `-s, --source`: The source to assign to the new events. You can use dollar sign notation to assign the value of a field.
@@ -131,6 +139,7 @@ The `make_events` command accepts the following command-line arguments:
 
 ### Example Usage
 Here are some example commands to use the `make_events` command:
+
 ```bash
 # Generate events with default settings
 make_events

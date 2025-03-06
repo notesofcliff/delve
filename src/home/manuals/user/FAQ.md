@@ -6,6 +6,7 @@ Flashlight is a versatile and powerful platform for ingesting, transforming, and
 
 ### What technologies does Flashlight use?
 Flashlight is built on top of several robust technologies:
+
 - **Django**: A high-level Python web framework.
 - **Django Rest Framework**: A toolkit for building Web APIs.
 - **CherryPy**: A minimalist Python web framework.

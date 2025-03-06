@@ -7,6 +7,7 @@ The Browsable REST API provides access to almost all of the data that Flashlight
 
 ### Accessing the Browsable REST API
 To access the Browsable REST API, navigate to `/api/` in your browser. You will see a list of available endpoints, including:
+
 - `/api/events/`: Manage events.
 - `/api/search_commands/`: Manage search commands.
 - `/api/queries/`: Manage queries.
@@ -16,6 +17,7 @@ To access the Browsable REST API, navigate to `/api/` in your browser. You will 
 
 ### Example Usage
 To create a new event, send a POST request to `/api/events/` with the following JSON payload:
+
 ```json
 {
     "text": "Example event text",
@@ -31,6 +33,7 @@ The Documentation section provides comprehensive information on using and config
 
 ### Accessing the Documentation
 To access the documentation, navigate to `/docs/` in your browser. You will find various sections, including:
+
 - User Guide
 - Administration Manual
 - API Reference
@@ -43,6 +46,7 @@ To access the Explore UI, navigate to `/explore/` in your browser. You will see 
 
 ### Example Usage
 To search for events containing the word "error", enter the following query in the search bar:
+
 ```
 search text__icontains="error"
 ```
@@ -55,6 +59,7 @@ To access the Admin UI, navigate to `/admin/` in your browser. You will need to 
 
 ### Example Usage
 To create a new user, follow these steps:
+
 1. Log in to the Admin UI.
 2. In the "Users" section, click "Add user".
 3. Fill in the required fields, such as username, password, and email address.
