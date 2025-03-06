@@ -1,9 +1,9 @@
 import argparse
 import logging
-from itertools import chain
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.util import resolve
 
@@ -28,14 +28,22 @@ parser.add_argument(
 )
 
 @search_command(parser)
-def explode(request, events, argv, environment):
+def explode(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Extract the nested JSON fields from an object and add them to the event. Also removes the original field.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with the nested JSON fields extracted and added to the event.
+    """
     args = explode.parser.parse_args(argv[1:])
     log = logging.getLogger(__name__)
     field = args.field
-    # log.info(f"Found field to explode: {field}")
-    # if isinstance(events, QuerySet):
-    #     log.debug(f"events is a QuerySet, converting to list of dicts")
-    #     events = list(events.values())
     events = resolve(events)
     for event in events:
         log.debug(f"Found event: {event}")

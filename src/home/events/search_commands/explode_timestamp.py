@@ -1,38 +1,43 @@
 import argparse
 import logging
-from itertools import chain
-from datetime import (
-    datetime,
-    date,
-    time,
-)
+from typing import Any, Dict, List, Union
+from datetime import datetime, date, time
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.util import resolve
 
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
-    prog="explode",
-    description="Extract the available fields in a timestamp field "
-                "and add them as fields to the event with the optional prefix",
+    prog="explode_timestamp",
+    description="Extract the available fields in a timestamp field and add them as fields to the event with the optional prefix",
 )
 parser.add_argument(
     "--prefix",
     default="",
-    help="String to be prefixed to the name of the fields "
-         "that the operation creates"
+    help="String to be prefixed to the name of the fields that the operation creates"
 )
 parser.add_argument(
     "field",
-    help="A field with a timestamp as the value. All available fields from "
-         "the timestamp (year, month, day, hour, etc) will be added to the event",
+    help="A field with a timestamp as the value. All available fields from the timestamp (year, month, day, hour, etc) will be added to the event",
 )
 
 @search_command(parser)
-def explode_timestamp(request, events, argv, environment):
+def explode_timestamp(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Extract the available fields in a timestamp field and add them as fields to the event with the optional prefix.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with the extracted timestamp fields added.
+    """
     args = explode_timestamp.parser.parse_args(argv[1:])
     log = logging.getLogger(__name__)
     field = args.field

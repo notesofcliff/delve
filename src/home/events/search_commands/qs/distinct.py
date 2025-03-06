@@ -1,30 +1,37 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
 distinct_parser = argparse.ArgumentParser(
     prog="distinct",
     description="Return distinct records from the QuerySet",
-) 
+)
+
 distinct_parser.add_argument(
-    "field_expressions",
+    "field_names",
     nargs="*",
-    help="The fields to consider for distinct records",
+    help="The field names to use for distinct records. "
+         "When you specify field names, you must provide "
+         "an order_by() in the QuerySet, and the fields in "
+         "order_by() must start with the fields in distinct(), "
+         "in the same order.",
 )
 
 @search_command(distinct_parser)
-def distinct(request, events, argv, environment):
+def distinct(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
     Return distinct records from the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
         QuerySet: A QuerySet with distinct records.
@@ -41,4 +48,4 @@ def distinct(request, events, argv, environment):
         )
     
     log.debug(f"Received {args=}")
-    return events.distinct(*args.field_expressions)
+    return events.distinct(*args.field_names)

@@ -1,9 +1,13 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
+from events.search_commands.util import has_permission_for_model
+
 from ._util import parse_field_expressions, generate_keyword_args
 
 update_parser = argparse.ArgumentParser(
@@ -17,15 +21,15 @@ update_parser.add_argument(
 )
 
 @search_command(update_parser)
-def update(request, events, argv, environment):
+def update(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> int:
     """
     Update the specified fields in the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
         int: The number of rows affected by the update.
@@ -40,6 +44,9 @@ def update(request, events, argv, environment):
             f"update can only operate on QuerySets like "
             "the output of the search command"
         )
+    model = events.query.model
+    if not has_permission_for_model('change', model, request):
+        raise PermissionError("Permission denied")
     
     log.debug(f"Received {args=}")
     parsed_expressions = parse_field_expressions(args.field_expressions)

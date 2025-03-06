@@ -5,6 +5,7 @@ from datetime import (
 import operator
 import logging
 from itertools import groupby
+from typing import Any, Dict, List, Union
 
 from dateutil import parser as date_parser
 
@@ -14,9 +15,11 @@ from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import Permission
+from django.http import HttpRequest
 
 from events.validators import MustBeFirst
 from events.util import resolve
+from .util import has_permission_for_model
 
 
 # from events.models import Event
@@ -29,10 +32,32 @@ from .decorators import search_command
 
 from django.db.models import F, Q
 
-def dict_search(request, events, args):
+def dict_search(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], args: argparse.Namespace) -> None:
+    """
+    Perform a dictionary-based search on the provided events.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        args (argparse.Namespace): Parsed command-line arguments.
+
+    Raises:
+        NotImplementedError: Always raised as this function must be implemented.
+    """
     raise NotImplementedError("Search must appear as the first search command.")
 
-def orm_search(request, events, args):
+def orm_search(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], args: argparse.Namespace) -> Union[QuerySet, List[Dict[str, Any]]]:
+    """
+    Perform an ORM-based search on the provided events.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        args (argparse.Namespace): Parsed command-line arguments.
+
+    Returns:
+        Union[QuerySet, List[Dict[str, Any]]]: A QuerySet or list of events matching the specified criteria.
+    """
     log = logging.getLogger(__name__)
     search_filters = []
     search_excludes = []
@@ -50,20 +75,8 @@ def orm_search(request, events, args):
     model = import_string(args.model)
 
     # Now check that the current user has view permission for the model
-    permission_names = [
-        f"{model._meta.app_label}.{perm.codename}" for perm in
-        Permission.objects.filter(
-            content_type__model=model._meta.model_name
-        )
-        if "view" in perm.codename
-    ]
-    if len(permission_names) > 1:
-        raise ValueError(f"Ambiguous permissions found: {permission_names}")
-    elif len(permission_names) < 1:
-        raise ValueError(f"No view permissions found for {model}")
-    else:
-        if not request.user.has_perm(permission_names[0]):
-            raise PermissionError(f"You do not have permission to access model {model._meta.model_name}")
+    if not has_permission_for_model('view', model, request):
+        raise PermissionError(f"Permission Denied")
 
     if args.using:
         ret = model.objects.using(args.using)
@@ -246,7 +259,19 @@ parser.add_argument(
         MustBeFirst,
     ]
 )
-def search(request, events, argv, environment):
+def search(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> Union[QuerySet, List[Dict[str, Any]]]:
+    """
+    Search for events based on the specified criteria.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        Union[QuerySet, List[Dict[str, Any]]]: A QuerySet or list of events matching the specified criteria.
+    """
     log = logging.getLogger(__name__)
     # log.info(f"Received {len(events)} events")
     events = resolve(events)

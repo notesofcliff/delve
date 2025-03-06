@@ -14,6 +14,7 @@ from .explain import explain
 from .filter import filter
 from .first import first
 from .last import last
+from .latest import latest
 from .only import only
 from .order_by import order_by
 from .reverse import reverse
@@ -21,3 +22,6 @@ from .select_related import select_related
 from .update import update
 from .using import using
 from .values import values
+from .group_by import group_by
+from .having import having
+from .limit import limit

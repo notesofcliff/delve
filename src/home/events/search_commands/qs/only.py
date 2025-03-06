@@ -1,31 +1,34 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 from ._util import parse_field_expressions
 
 only_parser = argparse.ArgumentParser(
     prog="only",
-    description="Load only the specified fields",
+    description="Load only the specified fields on the QuerySet",
 )
+
 only_parser.add_argument(
-    "field_expressions",
+    "fields",
     nargs="*",
-    help="The fields to load",
+    help="The fields to load on the QuerySet",
 )
 
 @search_command(only_parser)
-def only(request, events, argv, environment):
+def only(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
-    Load only the specified fields.
+    Load only the specified fields on the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
         QuerySet: A QuerySet with only the specified fields loaded.
@@ -42,6 +45,6 @@ def only(request, events, argv, environment):
         )
     
     log.debug(f"Received {args=}")
-    parsed_expressions = parse_field_expressions(args.field_expressions)
+    parsed_expressions = parse_field_expressions(args.fields)
     log.debug(f"Parsed expressions: {parsed_expressions}")
     return events.only(*parsed_expressions)

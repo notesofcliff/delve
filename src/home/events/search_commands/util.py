@@ -6,11 +6,11 @@ from types import GeneratorType
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import Permission
 from django.db import models
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 
 from events.util import cast
 
-def has_permission_for_model(permission_string: str, model: models.Model, request: HttpResponse):
+def has_permission_for_model(permission_string: str, model: models.Model, request: HttpRequest) -> bool:
     permission_names = [
         f"{model._meta.app_label}.{perm.codename}" for perm in
         Permission.objects.filter(

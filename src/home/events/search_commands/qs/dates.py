@@ -1,23 +1,28 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
 dates_parser = argparse.ArgumentParser(
     prog="dates",
-    description="Return a list of date objects representing all available dates in the QuerySet",
+    description="Return a QuerySet of dates based on the provided field and kind",
 )
+
 dates_parser.add_argument(
     "field",
-    help="The field to retrieve dates from",
+    help="The field to extract dates from",
 )
+
 dates_parser.add_argument(
     "kind",
     choices=["year", "month", "week", "day"],
-    help="The kind of dates to retrieve",
+    help="The kind of dates to return",
 )
+
 dates_parser.add_argument(
     "order",
     choices=["ASC", "DESC"],
@@ -25,18 +30,18 @@ dates_parser.add_argument(
 )
 
 @search_command(dates_parser)
-def dates(request, events, argv, environment):
+def dates(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
-    Return a list of date objects representing all available dates in the QuerySet.
+    Return a QuerySet of dates based on the provided field and kind.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
-        QuerySet: A QuerySet of date objects.
+        QuerySet: A QuerySet of dates.
     """
     log = logging.getLogger(__name__)
     log.info("In dates")

@@ -5,21 +5,39 @@ import inspect
 from itertools import chain
 from types import GeneratorType
 from io import StringIO
-
+from typing import Any, Dict, List, Union
 
 from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from .util import cast
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
     prog="transpose",
-    description="Invert the result set",
+    description="Transpose the result set, converting rows to columns and vice versa.",
+)
+parser.add_argument(
+    "fields",
+    nargs="+",
+    help="The fields to transpose",
 )
 
 @search_command(parser)
-def transpose(request, events, argv, environment):
+def transpose(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Transpose the result set, converting rows to columns and vice versa.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries representing the transposed result set.
+    """
     log = logging.getLogger(__name__)
     log.debug(f"Found events: {events}")
     if isinstance(events, QuerySet):

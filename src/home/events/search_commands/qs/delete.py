@@ -1,28 +1,31 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
+from events.util import has_permission_for_model
 
 delete_parser = argparse.ArgumentParser(
     prog="delete",
-    description="Delete the objects in the QuerySet",
+    description="Delete records from the QuerySet",
 )
 
 @search_command(delete_parser)
-def delete(request, events, argv, environment):
+def delete(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> int:
     """
-    Delete the objects in the QuerySet.
+    Delete records from the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
-        tuple: The number of objects deleted and a dictionary with the number of deletions per object type.
+        int: The number of records deleted.
     """
     log = logging.getLogger(__name__)
     log.info("In delete")
@@ -34,6 +37,12 @@ def delete(request, events, argv, environment):
             f"delete can only operate on QuerySets like "
             "the output of the search command"
         )
-    
+
+    model = events.query.model
+    if not has_permission_for_model('delete', model, request):
+        raise PermissionError("Permission denied")
+
+
     log.debug(f"Received {args=}")
-    return events.delete()
+    deleted_count, _ = events.delete()
+    return deleted_count

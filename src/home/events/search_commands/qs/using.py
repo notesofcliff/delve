@@ -1,7 +1,9 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
@@ -9,21 +11,22 @@ using_parser = argparse.ArgumentParser(
     prog="using",
     description="Select the database to use for the QuerySet",
 )
+
 using_parser.add_argument(
     "alias",
     help="The alias of the database to use",
 )
 
 @search_command(using_parser)
-def using(request, events, argv, environment):
+def using(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
     Select the database to use for the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
         QuerySet: A QuerySet using the specified database.

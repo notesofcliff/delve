@@ -1,28 +1,30 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
 last_parser = argparse.ArgumentParser(
     prog="last",
-    description="Return the last object in the QuerySet",
+    description="Return the last record in the QuerySet",
 )
 
 @search_command(last_parser)
-def last(request, events, argv, environment):
+def last(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Return the last object in the QuerySet.
+    Return the last record in the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
-        Model instance: The last object in the QuerySet.
+        Dict[str, Any]: The last record in the QuerySet.
     """
     log = logging.getLogger(__name__)
     log.info("In last")

@@ -1,8 +1,9 @@
-"""This test module is meant to test the distinct search
-command, located at events.search_commands.dedup.
+"""This test module is meant to test the eval search
+command, located at events.search_commands.eval.
 """
 import json
 from unittest.mock import MagicMock
+from typing import Any
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -28,7 +29,7 @@ TEST_ADMIN = "testadmin"
 TEST_ADMIN_PASS = "testadmin"
 
 class EvalTests(APITestCase):
-    def setUp(self, *args, **kwargs):
+    def setUp(self, *args: Any, **kwargs: Any) -> None:
         """For preparation, we are going to setup a user and
         an APIClient and add ten Events.
         """
@@ -39,8 +40,6 @@ class EvalTests(APITestCase):
             email='testuser@test.com',
             password='testuser',
         )
-        # self.user.is_superuser = True
-        # self.user.is_staff = True
         self.user.save()
         self.events = []
         for i in range(10):
@@ -62,10 +61,10 @@ class EvalTests(APITestCase):
             self.events.append(event)
         super().setUp(*args, **kwargs)
 
-    def test_eval_events_everything_else_worked(self):
-        """Basic sanity checks, if this does not work, it is not dedup,
+    def test_eval_events_everything_else_worked(self) -> None:
+        """Basic sanity checks, if this does not work, it is not eval,
         but rather something with event.models.Query or event.models.Query.resolve
-        or we were unable to create test events
+        or we were unable to create test events.
         """
         query = Query(
             name="test",
@@ -75,9 +74,8 @@ class EvalTests(APITestCase):
         results = query.resolve(request=MagicMock(user=self.user))
         self.assertEqual(len(results), 10)
 
-    def test_eval_creates_a_field(self):
-        """
-        """
+    def test_eval_creates_a_field(self) -> None:
+        """Test that eval correctly creates a field with the specified value."""
         query = Query(
             name="test",
             text="search index=test | eval test_field=test",
@@ -89,9 +87,8 @@ class EvalTests(APITestCase):
         self.assertEqual(len(results), 10)
         self.assertEqual(results[0]["test_field"], "test")
 
-    def test_eval_uses_dollarsign_substitution(self):
-        """
-        """
+    def test_eval_uses_dollarsign_substitution(self) -> None:
+        """Test that eval correctly uses dollar sign substitution for field values."""
         query = Query(
             name="test",
             text="search index=test | eval test_field=$sourcetype",

@@ -1,24 +1,21 @@
 import argparse
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import timedelta
 import logging
-import uuid
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
+from django.db.models import Q
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.contrib.auth.models import Permission
 
-
-from events.models import Event
 from events.util import resolve
-
 from .decorators import search_command
-from .util import cast
-
+from .util import (
+    cast,
+    has_permission_for_model,
+)
 
 parser = argparse.ArgumentParser(
     prog="join",
@@ -67,36 +64,37 @@ parser.add_argument(
 parser.add_argument(
     "-f", "--fields",
     help="Specify the fields to join on. "
-            "Specify in the format of LEFT_FIELD,RIGHT_FIELD",
+         "Specify in the format of LEFT_FIELD,RIGHT_FIELD",
 )
 parser.add_argument(
     "--model",
     default="events.models.Event",
     help="The import_string formatted model to query."
 )
-# parser.add_argument(
-#     "--serializer",
-#     default="events.serializers.EventSerializer",
-#     help="The serializer to use for results."
-# )
-# parser.add_argument(
-#     "--user-field",
-#     default="user",
-#     help="The field on the model that needs to point to logged-in user.",
-# )
 parser.add_argument(
     "terms",
     nargs="*",
     help="Provide one or more search terms, "
-            "must be in the form KEY=VALUE where key "
-            "is a reference to a field and VALUE is the value. "
-            "For KEY, django field lookups are supported.",
+         "must be in the form KEY=VALUE where key "
+         "is a reference to a field and VALUE is the value. "
+         "For KEY, django field lookups are supported.",
 )
 
 @search_command(parser)
-def join(request, events, argv, environment):
+def join(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Join the current result set to the results of this command.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with joined events.
+    """
     log = logging.getLogger(__name__)
-    # log.info(f"Received {len(events)} events")
     events = resolve(events)
     log.info(f"Received argv: {argv}")
     if "join" in argv:
@@ -104,7 +102,6 @@ def join(request, events, argv, environment):
     args = join.parser.parse_args(argv)
 
     if not events:
-    #     # Fail early, logic for join below
         raise ValueError(f"No events found to join.")
 
     log.info(f"Parsed args: {args}")
@@ -122,24 +119,9 @@ def join(request, events, argv, environment):
             else:
                 search_filters.append(Q(**{key: value}))
     model = import_string(args.model)
-    # serializer = import_string(args.serializer)
 
-    # Now check that the current user has view permission for the model
-    permission_names = [
-        f"{model._meta.app_label}.{perm.codename}" for perm in
-        Permission.objects.filter(
-            content_type__model=model._meta.model_name
-        )
-        if "view" in perm.codename
-    ]
-    if len(permission_names) > 1:
-        raise ValueError(f"Ambiguous permissions found: {permission_names}")
-    elif len(permission_names) < 1:
-        raise ValueError(f"No view permissions found for {model}")
-    else:
-        if not request.user.has_perm(permission_names[0]):
-            raise PermissionError(f"You do not have permission to access model {model._meta.model_name}")
-
+    if not has_permission_for_model('view', model, request):
+        raise PermissionError("Permission denied")
 
     ret = model.objects
     for search_filter in search_filters:
@@ -165,7 +147,7 @@ def join(request, events, argv, environment):
         )
     elif args.last_month:
         ret = ret.filter(
-            created__gte=timezone.now() - timedelta(months=1)
+            created__gte=timezone.now() - timedelta(days=30)
         )
 
     if args.order_by:
@@ -180,8 +162,6 @@ def join(request, events, argv, environment):
         for left_row in left:
             match = False
             for right_row in right:
-                # left_row.get and right_row.get have different defaults so there is no
-                # match if the field is not present in either row
                 if left_row.get(left_field, False) == right_row.get(right_field, "False"):
                     new_row = left_row.copy()
                     new_row.update(
@@ -189,14 +169,12 @@ def join(request, events, argv, environment):
                     )
                     yield new_row
                     match = True
-            if match == False:
+            if not match:
                 yield left_row
     elif args.type == "right":
         for right_row in right:
             match = False
             for left_row in left:
-                # left_row.get and right_row.get have different defaults so there is no
-                # match if the field is not present in either row
                 if right_row.get(right_field, False) == left_row.get(left_field, "False"):
                     new_row = right_row.copy()
                     new_row.update(
@@ -204,7 +182,7 @@ def join(request, events, argv, environment):
                     )
                     yield new_row
                     match = True
-            if match == False:
+            if not match:
                 yield right_row
     elif args.type == "full":
         raise NotImplementedError(f"Sorry {args.type} currently not supported")

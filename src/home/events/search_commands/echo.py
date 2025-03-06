@@ -1,30 +1,41 @@
 import argparse
 import logging
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
-
-from .util import cast
+from django.http import HttpRequest
 
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
     prog="echo",
-    description="Return the given expressionsn as an event appended to the result set."
+    description="Return the given expressions as an event appended to the result set.",
 )
 parser.add_argument(
     nargs="+",
     dest="expressions",
+    help="The expressions to return as events",
 )
 
 @search_command(parser)
-def echo(request, events, argv, environment):
+def echo(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Return the given expressions as an event appended to the result set.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with the given expressions as events.
+    """
     log = logging.getLogger(__name__)
     args = echo.parser.parse_args(argv[1:])
-    log.debug(f"Fount environment: {environment}")
+    log.debug(f"Found environment: {environment}")
     ret = []
     for expression in args.expressions:
-        # expression = expression.format(**environment)
         log.debug(f"Found expression: {type(expression)}({expression})")
         ret.append(
             {

@@ -1,15 +1,12 @@
 import argparse
-import logging 
+import logging
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.util import resolve
-from events.models import (
-    Query,
-    Event,
-)
-
+from events.models import Query, Event
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
@@ -18,18 +15,31 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument(
     "field",
-    # nargs="+",
-    help="The fields to extract the values from",
+    help="The field to extract the values from",
 )
 
 @search_command(parser)
-def value_list(request, events, argv, environment):
+def value_list(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Any]:
+    """
+    Reduce the result set to include the values from a given field.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Any]: A list of values for the specified field.
+    """
     log = logging.getLogger(__name__)
     args = value_list.parser.parse_args(argv[1:])
     log.info(f"Found args: {args}")
     events = resolve(events)
 
+    values = []
     for event in events:
         ret = event.get(args.field, "")
         log.info(f"Found ret: {ret}")
-        yield ret
+        values.append(ret)
+    return values

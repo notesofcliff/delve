@@ -1,13 +1,14 @@
 import logging
 import argparse
 import json
-from django.db.models.manager import Manager
+from typing import Any, Dict, List, Union
+
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 import records
 
 from events.util import resolve
-
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
@@ -23,14 +24,21 @@ parser.add_argument(
     "sql_query",
     help="The SQL query to issue."
 )
-# parser.add_argument(
-#     "params",
-#     nargs="*",
-#     help="The params to interpolate into query, should be in form of KEY=VALUE"
-# )
 
 @search_command(parser)
-def sql_query(request, events, argv, environment):
+def sql_query(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Perform a SQL query against the specified database.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries representing the results of the SQL query.
+    """
     log = logging.getLogger(__name__)
     events = resolve(events)
     if events:
@@ -38,10 +46,9 @@ def sql_query(request, events, argv, environment):
     log.debug(f"Parsing args")
     args = sql_query.parser.parse_args(argv[1:])
     log.debug(f"Found sql query: '{args.sql_query}'")
-    # params = {key: value for key, value in (param.split("=", 1) for param in args.params)}
     log.debug("Finished parsing args, connecting to database")
     db = records.Database(args.connection_string)
     log.debug("Querying the database")
     rows = db.query(args.sql_query)
     log.debug("returning results")
-    return json.loads(rows.export('json') )
+    return json.loads(rows.export('json'))

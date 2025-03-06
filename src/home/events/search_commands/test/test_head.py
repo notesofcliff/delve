@@ -1,8 +1,9 @@
-"""This test module is meant to test the dedup search
-command, located at events.search_commands.dedup.
+"""This test module is meant to test the head search
+command, located at events.search_commands.head.
 """
 import json
 from unittest.mock import MagicMock
+from typing import Any
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -21,14 +22,13 @@ from events.models import (
     Query,
 )
 
-
 TEST_USER = "testuser"
 TEST_USER_PASS = "testuser"
 TEST_ADMIN = "testadmin"
 TEST_ADMIN_PASS = "testadmin"
 
 class HeadTests(APITestCase):
-    def setUp(self, *args, **kwargs):
+    def setUp(self, *args: Any, **kwargs: Any) -> None:
         """For preparation, we are going to setup a user and
         an APIClient and add ten Events.
         """
@@ -39,8 +39,6 @@ class HeadTests(APITestCase):
             email='testuser@test.com',
             password='testuser',
         )
-        # self.user.is_superuser = True
-        # self.user.is_staff = True
         self.user.save()
         self.events = []
         for i in range(10):
@@ -62,10 +60,10 @@ class HeadTests(APITestCase):
             self.events.append(event)
         super().setUp(*args, **kwargs)
 
-    def test_head_everything_else_worked(self):
-        """Basic sanity checks, if this does not work, it is not dedup,
+    def test_head_everything_else_worked(self) -> None:
+        """Basic sanity checks, if this does not work, it is not head,
         but rather something with event.models.Query or event.models.Query.resolve
-        or we were unable to create test events
+        or we were unable to create test events.
         """
         query = Query(
             name="test",
@@ -75,8 +73,8 @@ class HeadTests(APITestCase):
         results = query.resolve(request=MagicMock(user=self.user))
         self.assertEqual(len(results), 10)
 
-    def test_head_limits_events(self):
-        """
+    def test_head_limits_events(self) -> None:
+        """Assert that the head command limits the number of events returned.
         """
         query = Query(
             name="test",

@@ -1,11 +1,12 @@
 import logging
 import argparse
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
-from .decorators import search_command
 from events.util import resolve
+from .decorators import search_command
 
 parser = argparse.ArgumentParser(
     prog="head",
@@ -19,7 +20,19 @@ parser.add_argument(
 )
 
 @search_command(parser)
-def head(request, events, argv, environment):
+def head(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Return the first n records of the result set.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with the first n records of the result set.
+    """
     log = logging.getLogger(__name__)
     events = resolve(events)
     log.debug(f"Received {len(events)} events")

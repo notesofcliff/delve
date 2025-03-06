@@ -2,20 +2,22 @@ import argparse
 import logging
 import json
 import html
+from typing import Any, Dict, List, Union
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.util import resolve, cast
 
 from .decorators import search_command
 
-def _pull_fields(event, fields):
+def _pull_fields(event: Dict[str, Any], fields: List[str]) -> Dict[str, Any]:
     ret = {}
     for field in fields:
         ret[field] = event.get(field, None) 
     return ret
 
-def encode(obj):
+def encode(obj: Any) -> str:
     try:
         obj = cast(obj)
     except:
@@ -40,7 +42,19 @@ parser.add_argument(
 )
 
 @search_command(parser)
-def table(request, events, argv, environment):
+def table(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Return the JSON configuration to make a table using datatables.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        Dict[str, Any]: A dictionary representing the JSON configuration for the table.
+    """
     log = logging.getLogger(__name__)
     args = table.parser.parse_args(argv[1:])
     fields = args.fields

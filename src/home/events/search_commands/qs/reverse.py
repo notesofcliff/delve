@@ -1,28 +1,30 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
 reverse_parser = argparse.ArgumentParser(
     prog="reverse",
-    description="Reverse the order of the QuerySet",
+    description="Reverse the order of the records in the QuerySet",
 )
 
 @search_command(reverse_parser)
-def reverse(request, events, argv, environment):
+def reverse(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
-    Reverse the order of the QuerySet.
+    Reverse the order of the records in the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
-        QuerySet: A reversed QuerySet.
+        QuerySet: A QuerySet with the order of the records reversed.
     """
     log = logging.getLogger(__name__)
     log.info("In reverse")

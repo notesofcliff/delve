@@ -1,16 +1,14 @@
 import logging
 import argparse
 import re
+from typing import Any, Dict, List, Union
 
-
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
-
+from events.util import resolve
 from .util import cast
 from .decorators import search_command
-from events.validators import QuerySetOrListOfDicts
-from events.util import resolve
 
 lookup_map = {
     "exact": lambda lhs, rhs: lhs == rhs,
@@ -31,18 +29,9 @@ lookup_map = {
     "isnull": lambda lhs, rhs: lhs is None if rhs is True else lhs is not None,
     "regex": lambda lhs, rhs: re.search(rhs, lhs),
     "iregex": lambda lhs, rhs: re.search(rhs, lhs, re.I),
-    # "range": ,
-    # "date": lambda
-    # "year": lambda lhs, rhs: lhs.year,
-    # "month": lambda lhs, rhs: lhs.month,
-    # "day": lambda lhs, rhs: lhs.day,
-    # "weekday": lambda lhs, rhs: lhs.weekday,
-    # "hour": lambda lhs, rhs: lhs.hour,
-    # "minute": lambda lhs, rhs: lhs.minute,
-    # "second": lambda lhs, rhs: lhs.second,
 }
 
-def resolve_field_lookup(expression, item):
+def resolve_field_lookup(expression: str, item: Dict[str, Any]) -> Any:
     log = logging.getLogger(__name__)
     if "__" not in expression or not expression.endswith(tuple([i for i in lookup_map.keys()])):
         log.debug(f"Found expression: {expression}, appending lookup.")
@@ -67,31 +56,32 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "terms",
     nargs="*",
-    help="Provide one or more search terms, "
-            "must be in the form KEY=VALUE where key "
-            "is a reference to a field and VALUE is the value. "
-            "For KEY, django field lookups are (kind of) supported.",
+    help="Provide one or more search terms, must be in the form KEY=VALUE where key is a reference to a field and VALUE is the value. For KEY, django field lookups are (kind of) supported.",
 )
 parser.add_argument(
     "--no-cast",
     action="store_true",
-    help="If specified, the value will not be cast to a type "
-            "before completing the test",
+    help="If specified, the value will not be cast to a type before completing the test",
 )
 
-@search_command(
-    parser,
-    # input_validators=[
-    #     QuerySetOrListOfDicts,
-    # ]
-)
-def filter(request, events, argv, environment):
+@search_command(parser)
+def filter(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Reduce the result set by removing events that don't meet the specified criteria.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with events that meet the specified criteria.
+    """
     log = logging.getLogger(__name__)
     log.debug(f"Received {events} events")
     events = resolve(events)
     log.debug(f"Resolved events: {events}")
-    # if isinstance(events, (Manager, QuerySet)):
-    #     events = list(events.values())
     log.debug(f"Received argv: {argv}")
     if "filter" in argv:
         argv.pop(argv.index("filter"))
@@ -102,7 +92,6 @@ def filter(request, events, argv, environment):
         log.debug(f"Found event: {event}")
         allowed = True
         for term in args.terms:
-            # lhs = left-hand side, rhs right-hand side
             log.debug(f"Found term: {term}")
             expression, rhs = term.split("=")
             if expression.startswith("!"):
@@ -121,7 +110,6 @@ def filter(request, events, argv, environment):
             if not args.no_cast:
                 rhs = cast(rhs)
                 log.debug(f"Cast rhs: {rhs} to {type(rhs)}")
-            # lhs = cast(lhs)
             if negate:
                 if predicate(lhs, rhs):
                     log.debug(f"negated {predicate}({lhs}, {rhs}) returned: {predicate(lhs, rhs)}")

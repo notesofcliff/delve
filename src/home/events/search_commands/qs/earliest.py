@@ -1,32 +1,35 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
 earliest_parser = argparse.ArgumentParser(
     prog="earliest",
-    description="Return the earliest object in the QuerySet based on the given field",
+    description="Return the earliest record in the QuerySet based on the provided field",
 )
+
 earliest_parser.add_argument(
     "field",
-    help="The field to use for determining the earliest object",
+    help="The field to determine the earliest record",
 )
 
 @search_command(earliest_parser)
-def earliest(request, events, argv, environment):
+def earliest(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Return the earliest object in the QuerySet based on the given field.
+    Return the earliest record in the QuerySet based on the provided field.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
-        Model: The earliest object in the QuerySet.
+        Dict[str, Any]: The earliest record in the QuerySet.
     """
     log = logging.getLogger(__name__)
     log.info("In earliest")

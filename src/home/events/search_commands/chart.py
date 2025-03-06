@@ -1,15 +1,13 @@
 import logging
 import argparse
-from itertools import (
-    groupby
-)
+from itertools import groupby
+from typing import Any, Dict, List, Union
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.validators import ListOfDicts
 from events.util import resolve
-
-# from .util import ensure_list
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
@@ -20,10 +18,7 @@ parser.add_argument(
     "-t",
     "--type",
     default="bar",
-    choices=(
-        "bar",
-        "line",
-    ),
+    choices=("bar", "line"),
     help="The type of chart to make",
 )
 parser.add_argument(
@@ -43,25 +38,27 @@ parser.add_argument(
 )
 parser.add_argument(
     "--time-x",
-    choices=(
-        "minute",
-        "hour",
-        "day",
-        "week",
-        "month",
-        "quarter",
-        "year",
-    ),
+    choices=("minute", "hour", "day", "week", "month", "quarter", "year"),
     help="If specified, the data of the x axis will be treated as time"
 )
 
 @search_command(
     parser,
-    input_validators=[
-        ListOfDicts,
-    ]
+    input_validators=[ListOfDicts],
 )
-def chart(request, events, argv, environment):
+def chart(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Return the JSON data to configure a Chart.js chart.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        Dict[str, Any]: A dictionary representing the chart data in Chart.js format.
+    """
     log = logging.getLogger(__name__)
     log.info("In search_command chart")
     args = chart.parser.parse_args(argv[1:])
@@ -71,9 +68,7 @@ def chart(request, events, argv, environment):
         log.debug(f"Found by_field: {args.by_field}")
         datasets = []
         log.debug(f"sorting events by by_field")
-        events.sort(
-            key=lambda x: x[args.by_field]
-        )
+        events.sort(key=lambda x: x[args.by_field])
         log.debug(f"Grouping by: {args.by_field}")
         for label, data_list in groupby(events, lambda x: x[args.by_field]):
             log.debug(f"Appending data for {label}")

@@ -1,8 +1,9 @@
-"""This test module is meant to test the dedup search
-command, located at events.search_commands.dedup.
+"""This test module is meant to test the autocast search
+command, located at events.search_commands.autocast.
 """
 import json
 from unittest.mock import MagicMock
+from typing import Any
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -14,7 +15,6 @@ from rest_framework.test import (
     APITestCase,
     APIRequestFactory,
     APIClient,
-    force_authenticate,
 )
 
 from events.models import (
@@ -22,17 +22,13 @@ from events.models import (
     Query,
 )
 
-
-# from apps.core import models, admin
-# from apps.rest import views
-
 TEST_USER = "testuser"
 TEST_USER_PASS = "testuser"
 TEST_ADMIN = "testadmin"
 TEST_ADMIN_PASS = "testadmin"
 
 class AutoCastTests(APITestCase):
-    def setUp(self, *args, **kwargs):
+    def setUp(self, *args: Any, **kwargs: Any) -> None:
         """For preparation, we are going to setup a user and
         an APIClient and add ten Events.
         """
@@ -43,8 +39,6 @@ class AutoCastTests(APITestCase):
             email='testuser@test.com',
             password='testuser',
         )
-        # self.user.is_superuser = True
-        # self.user.is_staff = True
         self.user.save()
         self.events = []
         for i in range(10):
@@ -70,7 +64,7 @@ class AutoCastTests(APITestCase):
             self.events.append(event)
         super().setUp(*args, **kwargs)
 
-    def test_autocast_everything_else_worked(self):
+    def test_autocast_everything_else_worked(self) -> None:
         """Basic sanity checks, if this does not work, it is not autocast,
         but rather something with event.models.Query or event.models.Query.resolve
         or we were unable to create test events
@@ -83,9 +77,8 @@ class AutoCastTests(APITestCase):
         results = query.resolve(request=MagicMock(user=self.user))
         self.assertEqual(len(results), 10)
 
-    def test_autocast_casts_ints(self):
-        """
-        """
+    def test_autocast_casts_ints(self) -> None:
+        """Test that autocast correctly casts integer fields."""
         query = Query(
             name="test",
             text="search index=test | explode extracted_fields | autocast int",
@@ -97,9 +90,8 @@ class AutoCastTests(APITestCase):
         self.assertEqual(len(results), 10)
         self.assertIsInstance(results[0]["int"], int)
 
-    def test_autocast_casts_float(self):
-        """
-        """
+    def test_autocast_casts_float(self) -> None:
+        """Test that autocast correctly casts float fields."""
         query = Query(
             name="test",
             text="search index=test | explode extracted_fields | autocast float",
@@ -111,9 +103,8 @@ class AutoCastTests(APITestCase):
         self.assertEqual(len(results), 10)
         self.assertIsInstance(results[0]["float"], float)
 
-    def test_autocast_casts_boolean(self):
-        """
-        """
+    def test_autocast_casts_boolean(self) -> None:
+        """Test that autocast correctly casts boolean fields."""
         query = Query(
             name="test",
             text="search index=test | explode extracted_fields | autocast boolean",
@@ -125,9 +116,8 @@ class AutoCastTests(APITestCase):
         self.assertEqual(len(results), 10)
         self.assertIsInstance(results[0]["boolean"], bool)
 
-    def test_autocast_casts_list(self):
-        """
-        """
+    def test_autocast_casts_list(self) -> None:
+        """Test that autocast correctly casts list fields."""
         query = Query(
             name="test",
             text="search index=test | explode extracted_fields | autocast list",
@@ -139,9 +129,8 @@ class AutoCastTests(APITestCase):
         self.assertEqual(len(results), 10)
         self.assertIsInstance(results[0]["list"], list)
 
-    def test_autocast_casts_dict(self):
-        """
-        """
+    def test_autocast_casts_dict(self) -> None:
+        """Test that autocast correctly casts dictionary fields."""
         query = Query(
             name="test",
             text="search index=test | explode extracted_fields | autocast dict",

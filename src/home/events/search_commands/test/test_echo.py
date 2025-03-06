@@ -1,8 +1,9 @@
-"""This test module is meant to test the distinct search
-command, located at events.search_commands.dedup.
+"""This test module is meant to test the echo search
+command, located at events.search_commands.echo.
 """
 import json
 from unittest.mock import MagicMock
+from typing import Any
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -21,14 +22,13 @@ from events.models import (
     Query,
 )
 
-
 TEST_USER = "testuser"
 TEST_USER_PASS = "testuser"
 TEST_ADMIN = "testadmin"
 TEST_ADMIN_PASS = "testadmin"
 
 class EchoTests(APITestCase):
-    def setUp(self, *args, **kwargs):
+    def setUp(self, *args: Any, **kwargs: Any) -> None:
         """For preparation, we are going to setup a user and
         an APIClient and add ten Events.
         """
@@ -42,10 +42,8 @@ class EchoTests(APITestCase):
         self.user.save()
         super().setUp(*args, **kwargs)
 
-    def test_echo_with_one_arg_returns_one_event(self):
-        """
-        """
-        # First there should be 10 events
+    def test_echo_with_one_arg_returns_one_event(self) -> None:
+        """Test the echo command with one argument to ensure it returns one event."""
         query = Query(
             name="test",
             text="echo test",
@@ -56,9 +54,8 @@ class EchoTests(APITestCase):
         )
         self.assertEqual(len(results), 1)
 
-    def test_echo_with_multiple_args_returns_multiple_events(self):
-        """
-        """
+    def test_echo_with_multiple_args_returns_multiple_events(self) -> None:
+        """Test the echo command with multiple arguments to ensure it returns multiple events."""
         query = Query(
             name="test",
             text="echo test-01 test-02",

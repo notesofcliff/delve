@@ -1,9 +1,9 @@
 import argparse
 import logging
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
-from django.forms.models import model_to_dict
+from django.http import HttpRequest
 
 from .decorators import search_command
 from events.util import resolve
@@ -30,7 +30,19 @@ parser.add_argument(
         QuerySetOrListOfDictsOrEvents,
     ]
 )
-def drop_fields(request, events, argv, environment):
+def drop_fields(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Remove the specified fields from the result set.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with specified fields removed.
+    """
     args = drop_fields.parser.parse_args(argv[1:])
     log = logging.getLogger(__name__)
     fields = args.fields

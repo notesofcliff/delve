@@ -1,7 +1,9 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
@@ -11,15 +13,15 @@ count_parser = argparse.ArgumentParser(
 )
 
 @search_command(count_parser)
-def count(request, events, argv, environment):
+def count(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> int:
     """
     Return the number of records in the QuerySet.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
         int: The number of records in the QuerySet.

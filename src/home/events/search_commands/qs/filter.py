@@ -1,34 +1,36 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 from ._util import parse_field_expressions, generate_keyword_args
 
 filter_parser = argparse.ArgumentParser(
     prog="filter",
-    description="Filter the QuerySet with the provided expressions",
+    description="Filter records from the QuerySet based on the provided expressions",
 ) 
 filter_parser.add_argument(
     "field_expressions",
     nargs="*",
-    help="The field/expression to filter the QuerySet with",
+    help="The field/expression to filter records from the QuerySet",
 )
 
 @search_command(filter_parser)
-def filter(request, events, argv, environment):
+def filter(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
-    Filter the QuerySet with the provided expressions.
+    Filter records from the QuerySet based on the provided expressions.
 
     Args:
-        request: The HTTP request object.
-        events: The QuerySet to operate on.
-        argv: List of command-line arguments.
-        environment: Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+        request (HttpRequest): The HTTP request object.
+        events (QuerySet): The QuerySet to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
 
     Returns:
-        QuerySet: A filtered QuerySet.
+        QuerySet: A QuerySet with filtered records.
     """
     log = logging.getLogger(__name__)
     log.info("In filter")

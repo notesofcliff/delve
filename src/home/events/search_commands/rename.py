@@ -1,10 +1,11 @@
 import argparse
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
-from .decorators import search_command
 from events.util import resolve
+from .decorators import search_command
 
 parser = argparse.ArgumentParser(
     prog="rename",
@@ -13,14 +14,28 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "-f",
     "--from-field",
+    help="The field to rename from",
 )
 parser.add_argument(
     "-t",
     "--to-field",
+    help="The field to rename to",
 )
 
 @search_command(parser)
-def rename(request, events, argv, environment):
+def rename(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Rename a field.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with the specified field renamed.
+    """
     events = resolve(events)
     args = rename.parser.parse_args(argv[1:])
     for event in events:

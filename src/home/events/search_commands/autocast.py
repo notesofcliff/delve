@@ -1,11 +1,9 @@
 import logging
 import argparse
-import re
+from typing import Any, Dict, List, Union
 
-
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
-
+from django.http import HttpRequest
 
 from .util import cast
 from .decorators import search_command
@@ -22,24 +20,25 @@ parser.add_argument(
     help="Provide one or more fields to autocast",
 )
 
-
-# def resolve_field_lookup(expression, item):
-#     log = logging.getLogger(__name__)
-#     ret = item
-#     log.info(f"Found ret: {ret}")
-#     for subexpr in expression.split("__")[:-1]:
-#         log.debug(f"ret: {ret}, subexpr: {subexpr}")
-#         ret = ret[subexpr]
-#         log.debug(f"Built ret: {ret}")
-#     return ret
-
 @search_command(
     parser,
     input_validators=[
         QuerySetOrListOfDicts,
     ],
 )
-def autocast(request, events, argv, environment):
+def autocast(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Attempt to cast fields to types based on their values.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with fields cast to appropriate types.
+    """
     log = logging.getLogger(__name__)
     log.info("In search_command autocast")
     events = resolve(events)

@@ -1,27 +1,32 @@
-import sys
 import logging
 import argparse
-import inspect
-import traceback
-from types import GeneratorType
-from itertools import chain
-from io import StringIO
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.util import resolve as resolve_events
-# from .util import cast
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
     prog="resolve",
-    description="Resolve the result set. This will unwrap any "
-                "generators or QuerySets.",
+    description="Resolve the result set. This will unwrap any generators or QuerySets.",
 )
 
 @search_command(parser)
-def resolve(request, events, argv, environment):
+def resolve(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Resolve the result set. This will unwrap any generators or QuerySets.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries representing the resolved result set.
+    """
     log = logging.getLogger(__name__)
     log.info(f"Received argv: {argv}")
     args = resolve.parser.parse_args(argv[1:])

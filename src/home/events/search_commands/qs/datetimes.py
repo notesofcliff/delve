@@ -1,7 +1,9 @@
 import logging
 import argparse
+from typing import Any, Dict, List
 
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
 
@@ -25,11 +27,12 @@ datetimes_parser.add_argument(
 )
 datetimes_parser.add_argument(
     "--tz",
+    default=None,
     help="The timezone to use for the datetimes",
 )
 
 @search_command(datetimes_parser)
-def datetimes(request, events, argv, environment):
+def datetimes(request: HttpRequest, events: QuerySet, argv: List[str], environment: Dict[str, Any]) -> QuerySet:
     """
     Return a list of datetime objects representing all available datetimes in the QuerySet.
 
@@ -54,4 +57,4 @@ def datetimes(request, events, argv, environment):
         )
     
     log.debug(f"Received {args=}")
-    return events.datetimes(args.field, args.kind, args.order, tz=args.tz)
+    return events.datetimes(args.field, args.kind, args.order, tzinfo=args.tz)

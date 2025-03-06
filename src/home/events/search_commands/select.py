@@ -2,9 +2,10 @@ import argparse
 import logging
 import inspect
 from types import GeneratorType
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 
 from .decorators import search_command
 
@@ -15,17 +16,29 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     nargs="+",
     dest="fields",
+    help="The fields to select from the result set",
 )
 
 @search_command(parser)
-def select(request, events, argv, environment):
+def select(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> Union[QuerySet, List[Dict[str, Any]]]:
+    """
+    Remove all but the specified fields from all events.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        Union[QuerySet, List[Dict[str, Any]]]: A QuerySet or list of events with only the specified fields.
+    """
     log = logging.getLogger(__name__)
     args = select.parser.parse_args(argv[1:])
-    log.warning(f"Found args: {args}")
+    log.info(f"In select, Found args: {args}")
     if isinstance(events, GeneratorType) or inspect.isgeneratorfunction(events) or isinstance(events, list):
         log.debug("Found events to be list or generator function.")
         for event in events:
-            # log.warning(f"Found event with fields: {event.keys()}")
             row = {}
             for field in args.fields:
                 item = event
@@ -41,14 +54,9 @@ def select(request, events, argv, environment):
                         item = getattr(item, segment)
                 row[field] = item
                 log.debug(f"row[field]: {row[field]}")
-            # if not all(value for value in row.values()):
-            #     pass
-            # else:
             log.debug(f"Yielding row: {row}")
             yield row
     elif isinstance(events, QuerySet):
-        # for field in args.fields:
-        #     events = events.exclude(**{f"{field}__isnull": True})
         log.debug(f"Found events to be instance of QuerySet.")
         for row in list(events.values(*args.fields)):
             log.debug(f"Yielding row: {row}")

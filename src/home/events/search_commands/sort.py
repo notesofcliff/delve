@@ -1,16 +1,12 @@
 import argparse
 import logging
-import inspect
-from types import GeneratorType
-from itertools import chain
-from operator import itemgetter, attrgetter, methodcaller
+from typing import Any, Dict, List, Union
 
-from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
+from operator import itemgetter
 
 from events.util import resolve
-
-from .util import cast
 from .decorators import search_command
 
 parser = argparse.ArgumentParser(
@@ -25,10 +21,23 @@ parser.add_argument(
 parser.add_argument(
     nargs="*",
     dest="fields",
+    help="The fields to sort by",
 )
 
 @search_command(parser)
-def sort(request, events, argv, environment):
+def sort(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], argv: List[str], environment: Dict[str, Any]) -> Union[QuerySet, List[Dict[str, Any]]]:
+    """
+    Sort the result set by the specified fields.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        events (Union[QuerySet, List[Dict[str, Any]]]): The result set to operate on.
+        argv (List[str]): List of command-line arguments.
+        environment (Dict[str, Any]): Dictionary used as a jinja2 environment (context) for rendering the arguments of a command.
+
+    Returns:
+        Union[QuerySet, List[Dict[str, Any]]]: A sorted QuerySet or list of events.
+    """
     log = logging.getLogger(__name__)
     log.debug(f"Found events: {events}")
     args = sort.parser.parse_args(argv[1:])
