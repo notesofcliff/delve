@@ -23,7 +23,7 @@ def has_permission_for_model(permission_string: str, model: models.Model, reques
     elif len(permission_names) < 1:
         raise ValueError(f"No {permission_string} permissions found for {model}")
     else:
-        if not request.user.has_permission(permission_names[0]):
+        if not request.user.has_perm(permission_names[0]):
             return False
     return True
 
