@@ -7,6 +7,8 @@ from unittest.mock import MagicMock
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -39,8 +41,16 @@ class SelectRelatedTests(APITestCase):
             email='testuser@test.com',
             password='testuser',
         )
+
+        # Add view permission for User model
+        content_type = ContentType.objects.get_for_model(get_user_model())
+        view_permission = Permission.objects.get(
+            content_type=content_type,
+            codename='view_user'
+        )
+        self.user.user_permissions.add(view_permission)
         self.user.save()
-        # self.related_model = get_user_model().objects.create(name="related")
+
         self.events = []
         for i in range(10):
             event = Event.objects.create(
@@ -49,7 +59,6 @@ class SelectRelatedTests(APITestCase):
                 source="test",
                 sourcetype="json",
                 user=self.user,
-                # related_model=self.related_model,
                 text=json.dumps(
                     {
                         "foo": i,
