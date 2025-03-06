@@ -38,7 +38,10 @@ def run_query(id, **kwargs):
     try:
         query = Query.objects.get(pk=id)
     except (Query.DoesNotExist, django.core.exceptions.ValidationError):
-        query = Query.objects.get(name=id)
+        try:
+            query = Query.objects.get(name=id)
+        except Query.DoesNotExist:
+            query = Query(text=id)
     class fake_request:
         user = query.user
     events = query.resolve(request=fake_request, context=kwargs)
@@ -85,6 +88,16 @@ def ensure_list(data):
     else:
         raise ValueError(f"Cannot convert {type(data)} to list.")
     
+def custom_model_to_dict(instance):
+    """
+    Convert a model instance to a dictionary, including all fields.
+    """
+    opts = instance._meta
+    data = {}
+    for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
+        data[f.name] = f.value_from_object(instance)
+    return data
+
 def resolve(events):
     from events.models import BaseEvent
     log = logging.getLogger(__name__)
@@ -98,7 +111,8 @@ def resolve(events):
     elif isinstance(events, Model):
         log.debug(f"Casting matching events, detected {type(events)}")
         # log.info(f"Found {type(events)=}")
-        events = events.as_dict()
+        # events = events.as_dict()
+        events = custom_model_to_dict(events)
     elif isinstance(events, QuerySet):
         log.debug(f"Casting matching events, detected {type(events)}")
         log.info(f"Found {type(events)=}")
@@ -139,7 +153,7 @@ def resolve(events):
         # Peek at the data type of the first item
         if events and isinstance(events[0], BaseEvent):
             log.debug(f"Found list of Events, converting to dicts")
-            events = [model_to_dict(event) for event in events]
+            events = [custom_model_to_dict(event) for event in events]
             log.debug(f"Successfully converted to dicts")
         if events and isinstance(events[0], dict):
             # keys is a set of all keys from all events in matching_events
