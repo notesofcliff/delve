@@ -6,7 +6,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest
 
 from events.search_commands.decorators import search_command
-from events.util import has_permission_for_model
+from events.search_commands.util import has_permission_for_model
 
 delete_parser = argparse.ArgumentParser(
     prog="delete",
