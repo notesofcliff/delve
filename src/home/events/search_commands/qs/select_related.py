@@ -2,6 +2,7 @@ import logging
 import argparse
 from typing import Any, Dict, List
 
+from django.db import models
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 
@@ -43,15 +44,38 @@ def select_related(request: HttpRequest, events: QuerySet, argv: List[str], envi
             "the output of the search command"
         )
     event_model = events.query.model
-    related_models = event_model._meta.related_objects
-    related_models = [related_model.related_model for related_model in related_models]
-    related_models = {related_model.__name__: related_model for related_model in related_models}
+    log.debug(f"{event_model=}")
+    
+    # Get forward relations (ForeignKey fields)
+    forward_relations = [
+        f for f in event_model._meta.fields 
+        if isinstance(f, models.ForeignKey)
+    ]
+    
+    # Get reverse relations
+    reverse_relations = event_model._meta.related_objects
+    
+    # Combine both types of relations
+    related_fields = {}
+    for relation in forward_relations:
+        related_fields[relation.name] = relation.related_model
+    for relation in reverse_relations:
+        related_fields[relation.name] = relation.related_model
+        
+    log.debug(f"Related fields: {related_fields}")
+    
     for related_field in args.related_fields:
-        if related_field not in related_models:
-            raise ValueError(f"Related field {related_field} not found in {event_model.__name__}")
+        log.debug(f"\t{related_field=}")
+        base_field = related_field.split('__')[0]  # Handle nested relationships like 'user__username'
+        if base_field not in related_fields:
+            log.debug(f"\t{base_field=} not in {event_model.__name__}")
+            raise ValueError(f"Related field {base_field} not found in {event_model.__name__}")
         else:
-            model = related_models[related_field]
+            log.debug(f"\t{base_field=} found in {event_model.__name__}")
+            model = related_fields[base_field]
+            log.debug(f"\t{model=}")
             if not has_permission_for_model('view', model, request):
+                log.debug(f"\t{model=} does not have view permission")
                 raise PermissionError("Permission denied")
 
     log.debug(f"Received {args=}")
