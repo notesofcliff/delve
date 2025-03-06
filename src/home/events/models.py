@@ -10,7 +10,6 @@ from django.db import models
 from django.conf import settings
 from django.db.models.query import QuerySet
 from django.db.models.manager import Manager
-from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.module_loading import import_string
@@ -223,7 +222,7 @@ class Query(models.Model):
             try:
                 log.debug(f"Attempting to apply operation: {operation}")
                 matching_events = operation(request, matching_events, argv, context)
-                log.debug(f"Successfully called operation: {operation}, matching_events: {matching_events}")
+                log.debug(f"Successfully called operation: {operation}")
             except (Exception, SystemExit) as exception:
                 logging.exception("An unhandled exception occurred.")
                 try:
@@ -299,6 +298,15 @@ class BaseEvent(models.Model):
 
     class Meta:
         abstract = True
+        # fields = (
+        #     "created",
+        #     "index",
+        #     "source",
+        #     "sourcetype",
+        #     "host",
+        #     "text",
+        #     "extracted_fields",
+        # )
     
     def extract_fields(self):
         log = logging.getLogger(__name__)
