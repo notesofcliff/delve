@@ -33,11 +33,16 @@ def get_client_ip(request):
     return ip
 
 @login_required()
-def docs(request, filename):
-    path = settings.FLASHLIGHT_DOCUMENTATION_DIRECTORY.joinpath(filename)
+def docs(request, manual, filename):
+    log = logging.getLogger(__name__)
+    log.debug(f"Requested documentation file: {filename}, from manual: {manual}")
+    path = settings.FLASHLIGHT_DOCUMENTATION_DIRECTORY.joinpath(manual).joinpath(filename)
+    log.debug(f"Path to documentation file: {path}")
     if path.exists():
+        log.debug(f"Found documentation file: {path}")
         content = path.read_text()
     else:
+        log.debug(f"Documentation file not found: {path}")
         content = "Sorry, couldn't find that for you."
     # formatter = markdown.HtmlFormatter(noclasses=True)
     html = markdown.markdown(

@@ -35,7 +35,7 @@ urlpatterns = [
     path('api/query/', ResolveQueryView.as_view(), name='api_query'),
     path('api/', include(router.urls)),
     path('globals/', edit_global_context, name='globals'),
-    path('docs/<str:filename>', docs, name='docs'),
+    path('docs/<str:manual>/<str:filename>', docs, name='docs'),
     path('ingress/<str:index>/<str:source>/<str:sourcetype>/', ingress, name='ingress'),
     path('', index, name='index'),
 ]
