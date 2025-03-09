@@ -23,6 +23,8 @@ Follow these steps to install Flashlight:
    cp ./flashlight/example-urls.py ./flashlight/urls.py
    ```
 
+**Important**: It is very important to change your `SECRET_KEY` setting.
+
 4. **Run Migrations**: Create the database and run migrations.
 
    ```
