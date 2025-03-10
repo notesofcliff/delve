@@ -2,7 +2,16 @@
 
 Creating users and groups, as well as assigning permissions, is an essential part of managing your Flashlight instance. This section covers how to perform these tasks through the Django Admin Interface.
 
+## Creating Admin Users from the Command Line
+
+The following command can be used to create an Admin user from the command line:
+
+```python
+./fl createsuperuser
+```
+
 ## Creating Users
+
 To create a new user, follow these steps:
 
 1. Log in to the Django Admin Interface using your admin credentials.
@@ -11,6 +20,7 @@ To create a new user, follow these steps:
 4. Click "Save" to create the user.
 
 ## Creating Groups
+
 To create a new group, follow these steps:
 
 1. Log in to the Django Admin Interface using your admin credentials.
@@ -20,6 +30,7 @@ To create a new group, follow these steps:
 5. Click "Save" to create the group.
 
 ## Assigning Permissions
+
 To assign permissions to a user or group, follow these steps:
 
 1. Log in to the Django Admin Interface using your admin credentials.
@@ -29,6 +40,7 @@ To assign permissions to a user or group, follow these steps:
 5. Click "Save" to apply the changes.
 
 ## Adding a User to a Group
+
 To add a user to a group, follow these steps:
 
 1. Log in to the Django Admin Interface using your admin credentials.
@@ -40,4 +52,4 @@ By following these steps, you can effectively manage users, groups, and permissi
 
 ---
 
-[Previous: Configuration](Configuration.md) | [Next: Monitoring and Maintenance](Monitoring_and_Maintenance.md)
+[Previous: Ingesting Data](Ingesting_Data.md.md) | [Next: Monitoring and Maintenance](Monitoring_and_Maintenance.md)

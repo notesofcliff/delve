@@ -57,11 +57,11 @@ Flashlight has several specific configuration options that you can set in `setti
 - **FLASHLIGHT_SERVER_HOST**: The host on which to serve the Flashlight web UI (must also be in `ALLOWED_HOSTS` setting).
 - **FLASHLIGHT_SERVER_PORT**: The TCP port on which to serve the Flashlight web UI.
 - **FLASHLIGHT_SERVER_LOG_STDOUT**: If `True`, send HTTP server logging to stdout.
-- **FLASHLIGHT_MAX_REQUEST_BODY_SIZE**: The size in bytes for request body size.
+- **FLASHLIGHT_MAX_REQUEST_BODY_SIZE**: The max size in bytes for request body size.
 - **FLASHLIGHT_MAX_REQUEST_HEADER_SIZE**: The max size in bytes for request headers.
 - **FLASHLIGHT_SSL_PRIVATE_KEY**: The TLS Private Key (in PEM format) to use for TLS.
 - **FLASHLIGHT_SSL_CERTIFICATE**: The TLS Certificate (in PEM format) to use for TLS.
-- **FLASHLIGHT_SSL_MODULE**: The SSL module to use with the web server.
+- **FLASHLIGHT_SSL_MODULE**: The SSL module to use with the web server (`builtin` or `openssl`).
 - **FLASHLIGHT_SOCKET_TIMEOUT**: The number of seconds to wait for sockets to be established.
 - **FLASHLIGHT_SOCKET_QUEUE_SIZE**: The number of connections to allow to queue before being rejected.
 - **FLASHLIGHT_ACCEPTED_QUEUE_TIMEOUT**: How long to wait for an HTTP request to be accepted before timing out.
@@ -75,7 +75,7 @@ Flashlight has several specific configuration options that you can set in `setti
 - **FLASHLIGHT_EXTRACTION_MAP**: A mapping of sourcetype to field extraction function to be called on each event with the specified sourcetype.
 - **FLASHLIGHT_PROCESSOR_MAP**: A mapping of sourcetype and processor function to be called on each event with the specified sourcetype.
 - **FLASHLIGHT_NAV_MENU**: A mapping of title and view to add to the side nav of the Flashlight web UI.
-- **FLASHLIGHT_SEARCH_COMMANDS**: A mapping of search commands to their implementations.
+- **FLASHLIGHT_SEARCH_COMMANDS**: A mapping of search commands to their functions.
 - **Q_CLUSTER**: Not specific to Flashlight, but is the task scheduler used by Flashlight.
 - **FLASHLIGHT_SERVICE_COMMANDS**: The commands specifying the processes for the Flashlight Supervisor Service to spawn and keep alive.
 - **FLASHLIGHT_SERVICE_INTERVAL**: The number of seconds to sleep before the next check on the processes for the Flashlight Supervisor Service.
@@ -233,4 +233,4 @@ FLASHLIGHT_SERVICE_INTERVAL = 60
 
 ---
 
-[Previous: Installation and Setup](Installation_and_Setup.md) | [Next: User and Group Management](User_and_Group_Management.md)
+[Previous: Installation and Setup](Installation_and_Setup.md) | [Next: Ingesting Data](Ingesting_Data.md)

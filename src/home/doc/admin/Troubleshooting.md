@@ -14,17 +14,9 @@ Here are some common issues you might encounter and their solutions:
 ## Using Django Debug Toolbar
 The Django Debug Toolbar, which comes pre-installed but disabled, is a helpful tool for debugging and profiling Django applications. To enable it, follow these steps:
 
-1. Add it to the `INSTALLED_APPS` and `MIDDLEWARE` settings in `settings.py`:
+1. Set `DEBUG` to True:
    ```python
-   INSTALLED_APPS = [
-       // ...existing code...
-       'debug_toolbar',
-   ]
-
-   MIDDLEWARE = [
-       // ...existing code...
-       'debug_toolbar.middleware.DebugToolbarMiddleware',
-   ]
+   DEBUG = True
    ```
 
 2. Configure the internal IPs in `settings.py`:
@@ -32,46 +24,27 @@ The Django Debug Toolbar, which comes pre-installed but disabled, is a helpful t
    INTERNAL_IPS = ['127.0.0.1']
    ```
 
-3. Include the debug toolbar URLs in your `urls.py`:
-   ```python
-   from django.urls import include, path
-
-   urlpatterns = [
-       // ...existing code...
-       path('__debug__/', include('debug_toolbar.urls')),
-   ]
-   ```
-
-**Note**: The Django Debug Toolbar can be misleading because it only really engages during page loads, so AJAX calls (like submitting a search in the Explore UI) may not show in the results. To see the Debug Toolbar with information relevant to the Query, you can enable the Debug Toolbar and navigate to `/api/query` and submit your query in JSON (ie. `{"text": "search --last-15-minutes"}`).
+**Note**: The Django Debug Toolbar can be misleading because it only really engages during page loads, so AJAX calls (like submitting a search in the Explore UI) may not show in the results. To see the Debug Toolbar with information relevant to the Query, you can enable the Debug Toolbar and navigate to `/api/query` and submit your query in JSON format (ie. `{"text": "search --last-15-minutes"}`).
 
 ## Using Django Extensions
-Django Extensions provides additional management commands and utilities for Django projects. To install and enable it, follow these steps:
+Django Extensions provides additional management commands and utilities for Django projects. Django Extensions are installed and enabled by default in Flashlight.
 
-1. Install Django Extensions:
-   ```bash
-   pip install django-extensions
-   ```
-
-2. Add it to the `INSTALLED_APPS` setting in `settings.py`:
-   ```python
-   INSTALLED_APPS = [
-       // ...existing code...
-       'django_extensions',
-   ]
-   ```
-
-3. Use the additional management commands provided by Django Extensions. Some useful commands include:
-   - **`shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
+Some useful commands include:
+   - **`./fl shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
      ```bash
      fl shell_plus
      ```
-   - **`graph_models`**: Creates a GraphViz dot file (or JSON file) for the specified app names.
+   - **`./fl graph_models`**: Creates a GraphViz dot file (or JSON file) for the specified app names.
      ```bash
      fl graph_models events
      ```
 
 ## Checking Logs
-Regularly check the application logs for errors, warnings, and other important messages. Logs can be found in the `log` directory. You can also configure logging settings in `settings.py` to customize log levels, formats, and handlers.
+Regularly check the application logs for errors, warnings, and other important messages.
+
+Logs for the web server and qcluster can be found in the `log` directory, while logs from the utility commands (ie. `syslog-receiver`) will be found in `./utilities/log/`.
+
+You can also configure logging settings in `settings.py` to customize log levels, formats, and handlers. See [Advanced Logging](Advanced_Logging.md) for more details.
 
 ## Accessing Support Resources
 If you encounter issues that you cannot resolve, consider accessing support resources such as:
@@ -80,7 +53,7 @@ If you encounter issues that you cannot resolve, consider accessing support reso
 - **Django Rest Framework Documentation**: [https://www.django-rest-framework.org/](https://www.django-rest-framework.org/)
 - **Django Extensions Documentation**: [https://django-extensions.readthedocs.io/](https://django-extensions.readthedocs.io/)
 - **Flashlight Documentation**: Included with every Flashlight documentation in the `doc` directory, available in the Flashlight Web UI (default http://127.0.0.1:8000/docs/) and in the [Github Repository](https://github.com/DelveCorp/flashlight/blob/main/src/home/doc/index)
-- **Flashlight Community**: Refer to the [Community](Community.md) section for information on reporting issues, submitting feature requests, and contacting the project maintainers.
+- **Flashlight Community**: Refer our [Github Repository](https://github.com/DelveCorp/flashlight) for reporting issues, submitting feature requests, and contacting the project maintainers.
 
 By following these troubleshooting techniques and utilizing available resources, you can effectively diagnose and resolve issues with your Flashlight instance.
 

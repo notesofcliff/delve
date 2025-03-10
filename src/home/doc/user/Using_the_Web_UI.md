@@ -32,11 +32,7 @@ To create a new event, send a POST request to `/api/events/` with the following 
 The Documentation section provides comprehensive information on using and configuring Flashlight. It includes user guides, administration manuals, and API references.
 
 ### Accessing the Documentation
-To access the documentation, navigate to `/docs/` in your browser. You will find various sections, including:
-
-- User Guide
-- Administration Manual
-- API Reference
+To access the documentation, navigate to The Administration Manual at `/docs/admin/index.md` or to the User Manual at `/docs/user/index.md` in your browser.
 
 ## Explore UI
 The Explore UI is a dynamic, universal search interface that allows you to perform interactive searches and visualize the results.
@@ -56,14 +52,6 @@ The Admin UI is an administrative dashboard for managing users, data sources, an
 
 ### Accessing the Admin UI
 To access the Admin UI, navigate to `/admin/` in your browser. You will need to log in with your admin credentials.
-
-### Example Usage
-To create a new user, follow these steps:
-
-1. Log in to the Admin UI.
-2. In the "Users" section, click "Add user".
-3. Fill in the required fields, such as username, password, and email address.
-4. Click "Save" to create the user.
 
 ---
 

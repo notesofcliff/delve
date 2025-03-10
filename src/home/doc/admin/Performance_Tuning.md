@@ -78,8 +78,8 @@ def my_view(request):
 Optimizing your queries can have a significant impact on performance. Here are some tips for query optimization:
 
 - **Select Only Required Fields**: Use the `only` or `defer` methods to select only the fields you need.
-- **Use `select_related` and `prefetch_related`**: These methods can help reduce the number of queries by fetching related objects in a single query.
-- **Avoid N+1 Queries**: Use `select_related` and `prefetch_related` to avoid the N+1 query problem.
+- **Use `select_related`**: This method can help reduce the number of queries by fetching related objects in a single query.
+- **Avoid N+1 Queries**: Use `select_related` to avoid the N+1 query problem.
 
 ### Example Query Optimization
 Here is an example of how to optimize queries:
@@ -103,7 +103,8 @@ def my_view(request):
 Here are some general tips for improving the performance of your Django application:
 
 - **Set DEBUG to False**: Ensure that `DEBUG` is set to `False` in production to disable debug mode.
-- **Use a Production-Ready Web Server**: Flashlight uses CherryPy by default, but you can also use another production-ready web server like Gunicorn or uWSGI to serve your Django application which could improve performance.
+- **Check Your Logging Configuration**: If excessive logging is enabled, it can seriously impact performance. 
+- **Use another Production-Ready Web Server**: Flashlight uses CherryPy by default which is production ready, but you can also use another production-ready web server like Gunicorn or uWSGI to serve your Django application which could improve performance.
 - **Enable Gzip Compression**: Enable Gzip compression to reduce the size of responses.
 - **Optimize Static Files**: Use Django's `collectstatic` command to collect and optimize static files by serving them with you web server instead of having Django serve them with whitenoise (the default).
 

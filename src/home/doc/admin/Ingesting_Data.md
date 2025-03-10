@@ -276,4 +276,4 @@ make_events --save
 
 ---
 
-[Previous: Using the Web UI](Using_the_Web_UI.md) | [Next: Searching, Filtering and More](Searching_Filtering_and_More.md)
+[Previous: Configuration](Using_the_Web_UI.md) | [Next: User and Group Management](User_and_Group_Management.md)

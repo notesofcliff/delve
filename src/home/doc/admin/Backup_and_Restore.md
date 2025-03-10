@@ -36,12 +36,7 @@ To restore data from a backup file, run the following command:
 fl loaddata backup.json
 ```
 
-### Restoring Specific Apps
-To restore specific apps (e.g., `users`, `auth`), run the following command:
-
-```bash
-fl loaddata backup_users_auth.json
-```
+The `loaddata` command will load the data into the proper app automatically.
 
 ## Custom User Model
 Flashlight includes a custom user model in the `users` app. However, the default Django `Group` and `Permission` models are used for managing user roles and permissions. When performing backups and restores, ensure that data from the `users` app and the `auth` app is included to maintain user accounts and permissions.
@@ -61,10 +56,9 @@ Here is an example backup script for Linux:
 
 # Set the path to the Flashlight directory
 FLASHLIGHT_DIR="/path/to/flashlight"
-cd $FLASHLIGHT_DIR
 
 # Run the backup command
-fl dumpdata > "$FLASHLIGHT_DIR/backups/backup_$(date +\%F).json"
+$FLASHLIGHT_DIR/fl dumpdata > "$FLASHLIGHT_DIR/backups/backup_$(date +\%F).json"
 ```
 
 ### Automating Restores
@@ -79,10 +73,9 @@ Here is an example restore script for Linux:
 
 # Set the path to the Flashlight directory
 FLASHLIGHT_DIR="/path/to/flashlight"
-cd $FLASHLIGHT_DIR
 
 # Run the restore command
-fl loaddata "$FLASHLIGHT_DIR/backups/backup.json"
+$FLASHLIGHT_DIR/fl loaddata "$FLASHLIGHT_DIR/backups/backup.json"
 ```
 
 By following these steps, you can effectively back up and restore your Flashlight instance, ensuring that your data is protected and can be quickly recovered in case of an issue.
