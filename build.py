@@ -250,7 +250,7 @@ release_names = [name for name in release_names if TARGET_PYTHON_VERSION in name
 log.debug(f"Found correct python version release_names: {release_names}")
 # Filter to only platform and architecture that we are interested in
 if platform == 'windows':
-    release_names = [name for name in release_names if 'windows-msvc-shared' in name]
+    release_names = [name for name in release_names if 'windows-msvc' in name]
 elif platform == 'linux':
     release_names = [name for name in release_names if 'unknown-linux-gnu' in name]
 elif platform == 'darwin':
