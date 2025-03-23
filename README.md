@@ -14,7 +14,7 @@ Flashlight is a versatile and powerful platform for ingesting, transforming, and
 
 # Documentation
 
-For detailed documentation, please refer to the [Flashlight Documentation](./src/home/doc/Introduction.md).
+For detailed documentation, please refer to the [Admin Manual](./src/home/doc/admin/index.md) or the [User Manual](./src/home/doc/user/index.md).
 
 # Installation
 
