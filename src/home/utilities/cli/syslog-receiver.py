@@ -69,51 +69,54 @@ def parse_argv(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--server",
-        default="http://localhost:8000",
+        default=os.getenv("SYSLOG_RECEIVER_SERVER", "http://localhost:8000"),
         help="The scheme, host and port of the server (ie. http://localhost:8000)"
     )
     parser.add_argument(
         "--no-verify",
         action="store_true",
+        default=os.getenv("SYSLOG_RECEIVER_NO_VERIFY", "false").lower() in ("1", "true", "yes"),
         help="If specified, TLS hostname verification will be disabled"
     )
     parser.add_argument(
         "-i",
         "--index",
-        default="default",
+        default=os.getenv("SYSLOG_RECEIVER_INDEX", "default"),
         help="The index in which to store the event",
     )
     parser.add_argument(
         "-H",
         "--host",
-        default=None,
+        default=os.getenv("SYSLOG_RECEIVER_HOST", None),
         help="The host to assign to the event, By default will assign "
              "the IP address of the client as the host",
     )
     parser.add_argument(
         "-s",
         "--source",
-        default="text/syslog",
+        default=os.getenv("SYSLOG_RECEIVER_SOURCE", "text/syslog"),
         help="The source to associate with the event",
     )
     parser.add_argument(
         "-t",
         "--sourcetype",
-        default="text/syslog",
+        default=os.getenv("SYSLOG_RECEIVER_SOURCETYPE", "text/syslog"),
         help="The sourcetype to associate with the event (also controls field "
-            "extraction)",
+             "extraction)",
     )
     parser.add_argument(
         "-u",
         "--username",
-        help="The username to use for authentication (if omitted, you will be "
-            "prompted)",
+        default=os.getenv("SYSLOG_RECEIVER_FLASHLIGHT_USERNAME", None),
+        help="The username to use for authentication to Flashlight (if omitted, you will be "
+             "prompted)",
     )
     parser.add_argument(
         "-p",
         "--password",
-        help="The password to use for authentication (if omitted, you will "
-            "be prompted)",
+        default=os.getenv("SYSLOG_RECEIVER_FLASHLIGHT_PASSWORD", None),
+        help="The password to use for authentication to Flashlight (if omitted, you will "
+             "be prompted)",
     )
     parser.add_argument(
         "--line-ending",
@@ -122,66 +125,71 @@ def parse_argv(argv):
             "macos",
             "windows",
         ),
-        default="linux",
+        default=os.getenv("SYSLOG_RECEIVER_LINE_ENDING", "linux"),
         help="Type of line endings to expect",
     )
     parser.add_argument(
         "--udp",
         action="store_true",
+        default=os.getenv("SYSLOG_RECEIVER_UDP", "false").lower() in ("1", "true", "yes"),
         help="If specified, will listen for UDP messages",
     )
     parser.add_argument(
         "--tcp",
         action="store_true",
+        default=os.getenv("SYSLOG_RECEIVER_TCP", "false").lower() in ("1", "true", "yes"),
         help="If specified, will listen for TCP messages",
     )
     parser.add_argument(
         "--tcp-port",
         type=int,
-        default=1514,
+        default=int(os.getenv("SYSLOG_RECEIVER_TCP_PORT", 1514)),
         help="The TCP port to listen on",
     )
     parser.add_argument(
         "--tcp-cert",
+        default=os.getenv("SYSLOG_RECEIVER_TCP_CERT", None),
         help="If this and --tcp-key are specified, the TCP listener will use TLS",
     )
     parser.add_argument(
         "--tcp-key",
+        default=os.getenv("SYSLOG_RECEIVER_TCP_KEY", None),
         help="If this and --tcp-cert are specified, the TCP listener will use TLS",
     )
     parser.add_argument(
         "--udp-port",
         type=int,
-        default=2514,
+        default=int(os.getenv("SYSLOG_RECEIVER_UDP_PORT", 2514)),
         help="The UDP port to listen on",
     )
     parser.add_argument(
         "--hostname",
+        default=os.getenv("SYSLOG_RECEIVER_HOSTNAME", "127.0.0.1"),
         help="The hostname (or IP) to listen on"
     )
     parser.add_argument(
         "-v",
         "--verbose",
         action="count",
-        default=0,
+        default=int(os.getenv("SYSLOG_RECEIVER_VERBOSE", 0)),
         help="If specified, increase logging verbosity (can be specified multiple times)",
     )
     parser.add_argument(
         "-l",
         "--log-file",
         type=Path,
-        default=LOG_DIRECTORY / f"syslog-receiver-{os.getpid()}.log",
+        default=Path(os.getenv("SYSLOG_RECEIVER_LOG_FILE", LOG_DIRECTORY / f"syslog-receiver-{os.getpid()}.log")),
     )
     parser.add_argument(
         "--batch-size",
         type=int,
-        default=10_000,
+        default=int(os.getenv("SYSLOG_RECEIVER_BATCH_SIZE", 10_000)),
         help="The number of events to send to the flashlight server per request",
     )
     parser.add_argument(
         "--max-queue-size",
         type=int,
-        default=10_000,
+        default=int(os.getenv("SYSLOG_RECEIVER_MAX_QUEUE_SIZE", 10_000)),
         help="The max number of events waiting to be uploaded to flashlight",
     )
     return parser.parse_args(argv)
