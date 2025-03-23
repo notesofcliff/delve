@@ -383,17 +383,6 @@ FLASHLIGHT_SEARCH_COMMANDS = {
     'qs_group_by': 'events.search_commands.qs.group_by',
     'qs_having': 'events.search_commands.qs.having',
     'qs_limit': 'events.search_commands.qs.limit',
-
-    'dp_list': 'datapower.search_commands.dp_list',
-    'dp_get_status': 'datapower.search_commands.get_status',
-    'dp_get_config': 'datapower.search_commands.get_config',
-    'dp_get_providers': 'datapower.search_commands.get_providers',
-    'dp_get_cert_details': 'datapower.search_commands.get_cert_details',
-    'dp_patch': 'datapower.search_commands.patch',
-    'dp_export': 'datapower.search_commands.export',
-    'dp_import': 'datapower.search_commands.dp_import',
-    'dp_list_exports': 'datapower.search_commands.list_exports',
-    'dp_parse_extLatency': 'datapower.search_commands.parse_extLatency'
 }
 
 
