@@ -153,7 +153,7 @@ DATABASES = {
         'OPTIONS': {
             "timeout": 120, 
             "init_command": "PRAGMA journal_mode=WAL;", 
-            "transaction_mode": "IMMEDIATE"), 
+            "transaction_mode": "IMMEDIATE", 
         },
     }
 }
