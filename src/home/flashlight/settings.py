@@ -50,7 +50,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 # FLASHLIGHT_Q_CLUSTER_BULK: Bulk size for the Q cluster. Default: 10.
 # FLASHLIGHT_Q_CLUSTER_POLL: Poll interval for the Q cluster. Default: 1.
 # FLASHLIGHT_Q_CLUSTER_ORM: ORM for the Q cluster. Default: 'default'.
-# FLASHLIGHT_PYTHON_VERSION: Python version to use. Default: '3.13.1'.
+# FLASHLIGHT_PYTHON_VERSION: Python version to use. Default: '3.13.2'.
 # FLASHLIGHT_SERVICE_INTERVAL: Interval for the service commands. Default: 5.
 
 # Note: Please keep this list up to date with any new environment variables added to the settings.
@@ -146,15 +146,44 @@ WSGI_APPLICATION = 'flashlight.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # Database configuration
+
+# Example configuration for SQLite:
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3', 
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'OPTIONS': {
+#             "timeout": 120, 
+#             "init_command": "PRAGMA journal_mode=WAL;", 
+#             "transaction_mode": "IMMEDIATE", 
+#         },
+#     }
+# }
+
+# Example configuration for MySQL:
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.getenv('FLASHLIGHT_DATABASE_NAME', 'flashlight'),
+#         'USER': os.getenv('FLASHLIGHT_DATABASE_USER', None),
+#         'PASSWORD': os.getenv('FLASHLIGHT_DATABASE_PASSWORD', None),
+#         'HOST': os.getenv('FLASHLIGHT_DATABASE_HOST', 'localhost'),  # Default: localhost
+#         'PORT': os.getenv('FLASHLIGHT_DATABASE_PORT', '3306'),  # Default MySQL port
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
+
+# Example configuration for PostgreSQL:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {
-            "timeout": 120, 
-            "init_command": "PRAGMA journal_mode=WAL;", 
-            "transaction_mode": "IMMEDIATE"), 
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('FLASHLIGHT_DATABASE_NAME', 'flashlight'),
+        'USER': os.getenv('FLASHLIGHT_DATABASE_USER', None),
+        'PASSWORD': os.getenv('FLASHLIGHT_DATABASE_PASSWORD', None),
+        'HOST': os.getenv('FLASHLIGHT_DATABASE_HOST', 'localhost'),  # Default: localhost
+        'PORT': os.getenv('FLASHLIGHT_DATABASE_PORT', '5432'),  # Default PostgreSQL port
     }
 }
 
@@ -284,7 +313,7 @@ MEDIA_URL = os.getenv('FLASHLIGHT_MEDIA_URL', "uploads/")  # Media URL
 FLASHLIGHT_AUTORELOAD = os.getenv('FLASHLIGHT_AUTORELOAD', 'False') == 'True'
 FLASHLIGHT_SERVER_HOST = os.getenv('FLASHLIGHT_SERVER_HOST', '127.0.0.1')
 FLASHLIGHT_SERVER_PORT = int(os.getenv('FLASHLIGHT_SERVER_PORT', 8000))
-FLASHLIGHT_SERVER_LOG_STDOUT = os.getenv('FLASHLIGHT_SERVER_LOG_STDOUT', 'True') == 'True'
+FLASHLIGHT_SERVER_LOG_STDOUT = os.getenv('FLASHLIGHT_SERVER_LOG_STDOUT', 'False') == 'True'
 FLASHLIGHT_MAX_REQUEST_BODY_SIZE = int(os.getenv('FLASHLIGHT_MAX_REQUEST_BODY_SIZE', 104857600))
 FLASHLIGHT_MAX_REQUEST_HEADER_SIZE = int(os.getenv('FLASHLIGHT_MAX_REQUEST_HEADER_SIZE', 512000))
 FLASHLIGHT_SSL_PRIVATE_KEY = os.getenv('FLASHLIGHT_SSL_PRIVATE_KEY', None)
@@ -383,17 +412,6 @@ FLASHLIGHT_SEARCH_COMMANDS = {
     'qs_group_by': 'events.search_commands.qs.group_by',
     'qs_having': 'events.search_commands.qs.having',
     'qs_limit': 'events.search_commands.qs.limit',
-
-    'dp_list': 'datapower.search_commands.dp_list',
-    'dp_get_status': 'datapower.search_commands.get_status',
-    'dp_get_config': 'datapower.search_commands.get_config',
-    'dp_get_providers': 'datapower.search_commands.get_providers',
-    'dp_get_cert_details': 'datapower.search_commands.get_cert_details',
-    'dp_patch': 'datapower.search_commands.patch',
-    'dp_export': 'datapower.search_commands.export',
-    'dp_import': 'datapower.search_commands.dp_import',
-    'dp_list_exports': 'datapower.search_commands.list_exports',
-    'dp_parse_extLatency': 'datapower.search_commands.parse_extLatency'
 }
 
 
@@ -410,7 +428,7 @@ Q_CLUSTER = {
     'orm': os.getenv('FLASHLIGHT_Q_CLUSTER_ORM', 'default')
 }
 
-python = BASE_DIR / 'python' / os.getenv('FLASHLIGHT_PYTHON_VERSION', '3.13.1') / 'python.exe'
+python = BASE_DIR / 'python' / os.getenv('FLASHLIGHT_PYTHON_VERSION', '3.13.2') / 'python.exe'
 syslog_script = BASE_DIR / 'utilities' / 'cli' / 'syslog-receiver.py'
 # syslog_command = f'{python} {syslog_script} --server http://127.0.0.1:8000 --index datapower_logs --tcp-cert C:/Users/cliff/projects/mast3/build/assemble/etc/crypto/cert/mast.crt --tcp-key C:/Users/cliff/projects/mast3/build/assemble/etc/crypto/private/mast.key -u FLASHLIGHT_USER -p FLASHLIGHT_PASSWORD --line-ending linux --tcp --tcp-port 1514 --hostname 192.168.0.190 -vvvvvv'
 
