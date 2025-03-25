@@ -150,13 +150,12 @@ WSGI_APPLICATION = 'flashlight.wsgi.application'
 # Example configuration for SQLite:
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3', 
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#         'OPTIONS': {
-#             "timeout": 120, 
-#             "init_command": "PRAGMA journal_mode=WAL;", 
-#             "transaction_mode": "IMMEDIATE", 
-#         },
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('FLASHLIGHT_DATABASE_NAME', 'flashlight'),
+#         'USER': os.getenv('FLASHLIGHT_DATABASE_USER', None),
+#         'PASSWORD': os.getenv('FLASHLIGHT_DATABASE_PASSWORD', None),
+#         'HOST': os.getenv('FLASHLIGHT_DATABASE_HOST', 'localhost'),  # Default: localhost
+#         'PORT': os.getenv('FLASHLIGHT_DATABASE_PORT', '5432'),  # Default PostgreSQL port
 #     }
 # }
 
@@ -178,12 +177,13 @@ WSGI_APPLICATION = 'flashlight.wsgi.application'
 # Example configuration for PostgreSQL:
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('FLASHLIGHT_DATABASE_NAME', 'flashlight'),
-        'USER': os.getenv('FLASHLIGHT_DATABASE_USER', None),
-        'PASSWORD': os.getenv('FLASHLIGHT_DATABASE_PASSWORD', None),
-        'HOST': os.getenv('FLASHLIGHT_DATABASE_HOST', 'localhost'),  # Default: localhost
-        'PORT': os.getenv('FLASHLIGHT_DATABASE_PORT', '5432'),  # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.sqlite3', 
+        'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            "timeout": 120, 
+            "init_command": "PRAGMA journal_mode=WAL;", 
+            "transaction_mode": "IMMEDIATE", 
+        },
     }
 }
 
