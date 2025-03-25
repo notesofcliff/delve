@@ -437,6 +437,10 @@ command = f'{python_executable} {ASSEMBLE_DIRECTORY}/manage.py version'
 output = subprocess.check_output(command, shell=True)
 flashligt_version = output.strip().decode()
 
+# Generate a versioned requirements.txt file
+versioned_requirements_file = ASSEMBLE_DIRECTORY.joinpath(f'flashlight-{flashligt_version}_{requirements_file.name}')
+shutil.copy(requirements_file, versioned_requirements_file)
+
 # Clean up any __pycache__ directories in the source code-only directory
 for p in ASSEMBLE_DIRECTORY.glob("**/__pycache__"):
     log.debug(f"Removing: {p}")
@@ -471,84 +475,50 @@ shutil.make_archive(
     base_dir='.',
 )
 
-# Create a new directory for the source code-only archive
-SRC_ONLY_DIRECTORY = BUILD_DIRECTORY.joinpath('src_only')
-shutil.rmtree(SRC_ONLY_DIRECTORY, ignore_errors=True)
-SRC_ONLY_DIRECTORY.mkdir()
 
-# Copy only the source code and necessary files to the new directory
-for item in HOME_DIRECTORY.iterdir():
-    if item.is_dir() and item.name not in ['__pycache__', 'db.sqlite3', '.venv']:
-        shutil.copytree(
-            item,
-            SRC_ONLY_DIRECTORY.joinpath(item.name),
-        )
-    elif item.is_file() and item.name not in ['db.sqlite3']:
-        shutil.copy(
-            item,
-            SRC_ONLY_DIRECTORY.joinpath(item.name),
-        )
+# Rename SRC_ONLY_DIRECTORY to UPDATE_PACKAGE_DIRECTORY
+UPDATE_PACKAGE_DIRECTORY = BUILD_DIRECTORY.joinpath('update_package')
+shutil.rmtree(UPDATE_PACKAGE_DIRECTORY, ignore_errors=True)
 
-# Copy frontend assets to the source code-only directory
-for item in DIST_DIRECTORY.glob("staticfiles/*"):
-    shutil.copy(item, SRC_ONLY_DIRECTORY.joinpath("staticfiles").joinpath(item.name))
+# Copy ASSEMBLE_DIRECTORY to UPDATE_PACKAGE_DIRECTORY
+shutil.copytree(ASSEMBLE_DIRECTORY, UPDATE_PACKAGE_DIRECTORY)
 
-# Rename settings file, so we don't overwrite user settings if they are updating in-place
-SRC_ONLY_DIRECTORY.joinpath("flashlight").joinpath("settings.py").rename(
-    SRC_ONLY_DIRECTORY.joinpath("flashlight").joinpath("example-settings.py")
-)
-SRC_ONLY_DIRECTORY.joinpath("flashlight").joinpath("urls.py").rename(
-    SRC_ONLY_DIRECTORY.joinpath("flashlight").joinpath("example-urls.py")
-)
+# Remove the python subdirectory from the update package
+python_subdir = UPDATE_PACKAGE_DIRECTORY.joinpath('python')
+if python_subdir.exists():
+    shutil.rmtree(python_subdir)
 
-# Generate a versioned requirements.txt file
-versioned_requirements_file = SRC_ONLY_DIRECTORY.joinpath(f'flashlight-{flashligt_version}_{requirements_file.name}')
-shutil.copy(requirements_file, versioned_requirements_file)
-
-# Copy invocation scripts to the source code-only directory
-for item in script_dir.iterdir():
-    if item.name.startswith('set-env'):
-        contents = item.read_text()
-        contents = contents.replace('{PYTHON_VERSION}', TARGET_PYTHON_VERSION)
-        file_path = SRC_ONLY_DIRECTORY.joinpath(item.name)
-        file_path.write_text(contents)
-    else:
-        file_path = SRC_ONLY_DIRECTORY.joinpath(item.name)
-        shutil.copy(item, file_path)
-    if platform.lower() != "windows":
-        file_path.chmod(0o750)
-
-# Clean up any __pycache__ directories in the source code-only directory
-for p in SRC_ONLY_DIRECTORY.glob("**/__pycache__"):
+# Clean up any __pycache__ directories in the update package
+for p in UPDATE_PACKAGE_DIRECTORY.glob("**/__pycache__"):
     log.debug(f"Removing: {p}")
     shutil.rmtree(p)
 
-# Clean up any .pyc files in the source code-only directory
-# for p in SRC_ONLY_DIRECTORY.glob("**/*.pyc"):
+# Clean up any .pyc files in the update package
+# for p in UPDATE_PACKAGE_DIRECTORY.glob("**/*.pyc"):
 #     log.debug(f"Removing: {p}")
 #     p.unlink()
 
-# Clean up any .pyo files in the source code-only directory
-# for p in SRC_ONLY_DIRECTORY.glob("**/*.pyo"):
+# Clean up any .pyo files in the update package
+# for p in UPDATE_PACKAGE_DIRECTORY.glob("**/*.pyo"):
 #     log.debug(f"Removing: {p}")
 #     p.unlink()
 
-# # Clean up any .pyd files in the source code-only directory
-# for p in SRC_ONLY_DIRECTORY.glob("**/*.pyd"):
+# Clean up any .pyd files in the update package
+# for p in UPDATE_PACKAGE_DIRECTORY.glob("**/*.pyd"):
 #     log.debug(f"Removing: {p}")
 #     p.unlink()
 
-# clean up log files
-for p in SRC_ONLY_DIRECTORY.glob("**/*.log"):
+# Clean up log files in the update package
+for p in UPDATE_PACKAGE_DIRECTORY.glob("**/*.log"):
     log.debug(f"Removing: {p}")
     p.unlink()
 
-# Create a zip archive from the source code-only directory
+# Create a zip archive from the update package directory
 shutil.make_archive(
     DIST_DIRECTORY.joinpath(
         f'FLASHLIGHT-{flashligt_version}_py{TARGET_PYTHON_VERSION}_{platform}_update',
     ),
     format='zip',
-    root_dir=SRC_ONLY_DIRECTORY,
+    root_dir=UPDATE_PACKAGE_DIRECTORY,
     base_dir='.',
 )
