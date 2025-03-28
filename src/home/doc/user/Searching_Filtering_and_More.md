@@ -72,6 +72,26 @@ search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted
 
 The `qs_group_by` command is a powerful tool for aggregating and analyzing data within Flashlight, allowing you to perform complex queries and calculations on grouped records.
 
+## Difference between Events and events
+
+When talking about Queries in Flashlight, we can distinguish between `Event` instances, which are `Event`s stored in the database, and 'events' as the unit of data passed between search commands within the context of a Query execution.
+
+Let's take a look at an example:
+
+```bash
+search --last-15-minutes index=default
+| select extracted_fields
+| explode extracted_fields
+```
+
+In this example, we start with the same result set that was produced with the previous query, but now the results of the `search` search command have been passed to the `select` search command.
+
+The `select` search command is used to select which fields from the events to keep. The result of this `select` will be that all fields other than `extracted_fields` will be dropped.
+
+The `explode` search command is used to take a field that contains key-value pairs and expand that object to several fields, one for each key-value pair at the top.
+
+So, as you can see, the 'events' passed between the search commands can contain fields other than those of the `Event` instances.
+
 ## Example Usage
 Here are some example commands to use the search functionality:
 
@@ -184,7 +204,9 @@ To register the custom command, add it to `settings.py`:
 ```python
 # filepath: /flashlight/settings.py
 FLASHLIGHT_SEARCH_COMMANDS = {
+    ...
     'custom_command': 'flashlight.search_commands.custom_command.custom_command',
+    ...
 }
 ```
 

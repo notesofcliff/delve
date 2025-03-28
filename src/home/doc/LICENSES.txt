@@ -1,0 +1,43 @@
+This is a informational document and not an actual license. 
+
+# Security and QA testing
+
+You are free to use Flashlight if you are performing Security Testing or Quality Assurance Testing.
+
+You can use Flashlight for any purpose relating to testing the security and quality of the Flashlight Software.
+
+# Evaluation
+
+You are free to use Flashlight free for 30 days. There is no restriction on the use for the 30 days, but if you would like to continue using Flashlight you will need to purchase a license.
+
+Unlimited instances of Flashlight are allowed. 
+
+# Single User License
+
+A single-user license will entitle that user to use Flashlight without limitation except that the licensee must only provision one user for Flashlight.
+
+That single user must be identical on each instance of Flashlight.
+
+Unlimited instances of Flashlight are allowed.
+
+# Group License
+
+A group license will entitle up to 25 users to be provisioned on each instance of Flashlight.
+
+The users must be identical on each instance of Flashlight.
+
+Unlimited instances of Flashlight are allowed.
+
+# Enterprise
+
+An enterprise license will entitle unlimited users to be provisioned on each instance of Flashlight.
+
+# Failover license
+
+If your license expires at any time, you are entitled to continue using Flashlight provided that you do not update Flashlight, make any changes to the configuration, or alter any code or dashboards.
+
+# Source Availability
+
+The source code for Flashlight will remain publicly available.
+
+The source code will be released under the terms of the MIT license 2 years from the date of release. Pre-release versions do not count.
