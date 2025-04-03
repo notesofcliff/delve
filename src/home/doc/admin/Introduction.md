@@ -23,9 +23,10 @@ As an administrator, you will be responsible for the following key tasks:
 ### Data Management
 
 - **Ingesting Data**: Configure and manage data ingestion from various sources, such as log files, REST APIs, and syslog.
-- **Data Retention**: Manage data retention policies to ensure that data is stored and archived appropriately.
-- **Field Extractions**: Define and manage field extraction rules to parse and normalize data.
+- **Data Retention**: Use scheduled searches or management commands to remove stale data
+- **Field Extractions**: Define and manage field extractions
 - **Real-Time Alert Processing**: Set up real-time alerts to notify users of important events and conditions.
+- **Scheduled Alert Processing**: Set up scheduled searches to alert based on events and conditions
 
 ### System Configuration
 
@@ -38,7 +39,7 @@ As an administrator, you will be responsible for the following key tasks:
 - **System Health Monitoring**: Monitor system resources, application logs, and performance metrics to ensure the smooth operation of Flashlight.
 - **Using Django Management Commands**: Use Django management commands to perform various maintenance tasks, such as running migrations and creating superusers.
 - **Performing Backups**: Regularly back up data to prevent data loss and ensure data integrity.
-- **Hosting with CherryPy**: Use CherryPy to host the Flashlight web app and configure the web server settings.
+- **Hosting with CherryPy**: CherryPy is the default server and it is included with Flashlight, but should be configured.
 
 ### Security
 

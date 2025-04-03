@@ -7,14 +7,14 @@ Before installing Flashlight, ensure your system meets the following requirement
 
 - **Operating System**: Windows, macOS, or Linux
 - **Python**: Version 3.8 or higher
-- **Database**: SQLite (default), PostgreSQL, or MySQL
+- **Database**: SQLite (default), PostgreSQL, Oracle or MySQL
 - **Disk Space**: Minimum 10 GB of free disk space
 - **Memory**: Minimum 4 GB of RAM
 
 ## Installation Steps
 Follow these steps to install Flashlight:
 
-1. **Download Flashlight**: Download the latest release from the [releases page](#).
+1. **Download Flashlight**: Download the latest release from the [releases page](https://github.com/DelveCorp/flashlight/releases).
 2. **Extract Files**: Unzip the downloaded file to your desired location.
 3. **Configure Settings**: Copy the example settings and URL files.
 
@@ -46,12 +46,16 @@ Follow these steps to install Flashlight:
 6. **Start the Server**: Start the Flashlight web server, task scheduler, syslog server and/or file-tail utility.
 
    ```
+   # Start the web server (Explore UI, Admin UI and REST API)
    ./fl serve
 
+   # Start the task scheduler
    ./fl qcluster
    
+   # Start the syslog server
    ./python/$PYTHON_VERSION/bin/python ./utilities/cli/syslog-receiver.py
    
+   # Start monitoring all files that match /var/log/*.log
    ./python/$PYTHON_VERSION/bin/python ./utilities/cli/tail-files.py /var/log/*.log
    ```
 
@@ -80,8 +84,10 @@ The following settings in `settings.py` control the behavior of the CherryPy web
 - **FLASHLIGHT_ACCEPTED_QUEUE_TIMEOUT**: How long to wait for an HTTP request to be accepted before timing out.
 - **FLASHLIGHT_SERVER_MAX_THREADS**: The max number of threads to spawn to handle web requests.
 
+**NOTE**: The provided example-settings.py will check environment variables of the same name for all of these server-specific configurations as well as other settings. 
+
 ## Initial Configuration
-After installation, perform the initial configuration to tailor Flashlight to your needs. Most configuration settings are found in the `settings.py` file.
+After installation, perform the initial configuration to tailor Flashlight to your needs. Configuration settings are found in the `settings.py` file.
 
 ## Flashlight Supervisor
 
