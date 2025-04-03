@@ -147,7 +147,7 @@ WSGI_APPLICATION = 'flashlight.wsgi.application'
 
 # Database configuration
 
-# Example configuration for SQLite:
+# Example configuration for PostgreSQL:
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -174,7 +174,7 @@ WSGI_APPLICATION = 'flashlight.wsgi.application'
 #     }
 # }
 
-# Example configuration for PostgreSQL:
+# Example configuration for SQLite:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', 
