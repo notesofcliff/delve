@@ -1,20 +1,44 @@
-# **IMPORTANT**
+# Flashlight - Enterprise Data Analytics Platform
 
-Flashlight is being released in a Public Alpha to guage user interest and to seek feedback on any requested features, bugs, use cases and custom apps being built.
+**IMPORTANT**: Flashlight is currently in Public Alpha to gather user feedback and validate enterprise use cases.
 
-You are free to use Flashlight for evaluation, development and even work during this public Alpha and the subsequent public Beta. When Flashlight reaches General Availability, you will need to purchase a license to use Flashlight. We will have individual plans starting at $20/month, larger Group plans starting at $50/month and larger Enterprise plans subject to negotiations.
+## Licensing
+During the Alpha and Beta phases, Flashlight is free to use for evaluation, development, and production workloads. Upon General Availability, the following licensing tiers will be available:
 
-Please use the Issues section of this repository to communicate with the project.
+- **Individual**: Starting at $20/month
+  - Ideal for consultants and independent analysts
+- **Team**: Starting at $50/month
+  - Perfect for small to medium teams
+- **Enterprise**: Custom pricing
+  - Tailored for large-scale deployments
+  - High availability configurations
+  - Priority support
+  - Custom integrations
 
-**Please Note** - The documentation is currently lacking. We are working on it. The documentation ships with Flashlight in the `doc` directory. It can also be found in this repository in `./src/home/doc`.
+Please use the Issues section of this repository for feature requests, bug reports, and general feedback.
 
-# Introduction
+## Overview
 
-Flashlight is a versatile and powerful platform for ingesting, transforming, and searching through structured, unstructured, and semi-structured data. It allows for interactive searches, dashboards, alerts, and more.
+Flashlight is an enterprise-grade platform for ingesting, analyzing, and deriving insights from any data source. Key capabilities include:
 
-# Documentation
-
-For detailed documentation, please refer to the [Admin Manual](./src/home/doc/admin/index.md) or the [User Manual](./src/home/doc/user/index.md).
+- **Data Integration**
+  - REST API endpoints
+  - Syslog receiver (UDP/TCP/TLS)
+  - File monitoring and ingestion
+  - Direct uploads
+  
+- **Analysis & Visualization**
+  - Interactive search interface
+  - Pipeline-based query language
+  - Custom dashboards
+  - Real-time alerts
+  
+- **Enterprise Features**
+  - Role-based access control
+  - Custom app development
+  - API-first architecture
+  - Extensible search commands
+  - Scheduled tasks and automation
 
 # Installation
 
@@ -52,6 +76,12 @@ cp ./flashlight/example-urls.py ./flashlight/urls.py
 # In another window, you can start the task runner
 ./fl qcluster
 ```
+
+## Documentation
+
+- [Admin Manual](./src/home/doc/admin/index.md): Deployment, configuration, and system administration
+- [User Manual](./src/home/doc/user/index.md): Search syntax, dashboards, and data analysis
+- API Documentation: Available at `/api/docs` after installation
 
 # Configuration
 
