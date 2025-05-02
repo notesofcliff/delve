@@ -7,7 +7,7 @@ import platform as _platform
 import subprocess
 import logging.config
 from pathlib import Path
-
+from time import  sleep
 import requests
 
 ERRORS = {
@@ -22,8 +22,8 @@ cli = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpForma
 cli.add_argument(
     "-p",
     "--python-version",
-    help="The version of cPython to target. (i.e. 3.13.2)",
-    default="3.13.2",
+    help="The version of cPython to target. (i.e. 3.13.3)",
+    default="3.13.3",
 )
 cli.add_argument(
     "--hash-buff-size",
@@ -484,6 +484,7 @@ shutil.rmtree(UPDATE_PACKAGE_DIRECTORY, ignore_errors=True)
 shutil.copytree(ASSEMBLE_DIRECTORY, UPDATE_PACKAGE_DIRECTORY)
 
 # Remove the python subdirectory from the update package
+sleep(5)
 python_subdir = UPDATE_PACKAGE_DIRECTORY.joinpath('python')
 if python_subdir.exists():
     shutil.rmtree(python_subdir)
