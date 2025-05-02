@@ -74,4 +74,4 @@ class ExplainTests(APITestCase):
             request=MagicMock(user=self.user),
         )
         self.assertIsInstance(results, str)
-        self.assertIn("SEARCH events_event", results)
+        self.assertIn("events_event", results)

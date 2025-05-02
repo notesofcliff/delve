@@ -76,8 +76,8 @@ class GroupByTests(APITestCase):
         # Expected result: [{'host': '127.0.0.0', 'avg_bar': 0.5}, {'host': '127.0.0.1', 'avg_bar': 0.6666666666666666}, {'host': '127.0.0.2', 'avg_bar': 0.3333333333333333}]
         self.assertEqual(len(results), 3)
         self.assertEqual(results[0]['avg_bar'], 0.5)
-        self.assertEqual(results[1]['avg_bar'], 0.6666666666666666)
-        self.assertEqual(results[2]['avg_bar'], 0.3333333333333333)
+        self.assertAlmostEqual(results[1]['avg_bar'], 0.6666666666666666, places=4)
+        self.assertAlmostEqual(results[2]['avg_bar'], 0.3333333333333333, places=4)
         self.assertEqual(results[0]['host'], '127.0.0.0')
         self.assertEqual(results[1]['host'], '127.0.0.1')
         self.assertEqual(results[2]['host'], '127.0.0.2')

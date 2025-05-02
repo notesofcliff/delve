@@ -67,7 +67,7 @@ class AnnotateTests(APITestCase):
         """
         query = Query(
             name="test",
-            text="search index=test | qs_annotate foo=KT(extracted_fields__foo) bar=KT(extracted_fields__bar)",
+            text="search index=test | qs_annotate foo=Cast(KT(extracted_fields__foo),IntegerField) bar=Cast(KT(extracted_fields__bar),IntegerField)",
             user=self.user,
         )
         results = query.resolve(

@@ -67,7 +67,7 @@ class HavingTests(APITestCase):
         """
         query = Query(
             name="test",
-            text="search index=test | qs_group_by extracted_fields__foo bar=KT(extracted_fields__bar) | qs_having extracted_fields__foo__gt=1",
+            text="search index=test | qs_group_by extracted_fields__foo bar=Cast(KT(extracted_fields__bar),IntegerField) | qs_having extracted_fields__foo__gt=1",
             user=self.user,
         )
         results = query.resolve(
