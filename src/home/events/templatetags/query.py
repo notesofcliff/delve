@@ -1,5 +1,6 @@
 import json
 from django import template
+import logging
 from uuid import uuid4
 
 from events.models import Query
@@ -9,14 +10,20 @@ register = template.Library()
 
 @register.inclusion_tag('events/query-table.html', takes_context=True)
 def query_table(context, query_string, form=None, kwargs=None):
+    log = logging.getLogger(__name__)
+    log.debug(f"Received {query_string=}")
     ctx = {}
     if form and form.is_valid():
+        log.debug(f"Form is valid: {form.cleaned_data}")
         ctx = form.cleaned_data
     else:
+        log.debug(f"Form is not valid: {form.errors}")
         ctx = {}
     if kwargs:
+        log.debug(f"kwargs: {kwargs}")
         ctx.update(kwargs)
     query_obj = Query(text=query_string)
+    log.debug(f"Query object: {query_obj}")
     results = query_obj.resolve(request=context["request"], context=ctx)
     results = resolve(results)
     if results:
@@ -30,13 +37,19 @@ def query_table(context, query_string, form=None, kwargs=None):
 
 @register.inclusion_tag('events/query-chart.html', takes_context=True)
 def query_chart(context, query_string, form=None, kwargs=None):
+    log = logging.getLogger(__name__)
+    log.debug(f"Received {query_string=}")
     if form and form.is_valid():
+        log.debug(f"Form is valid: {form.cleaned_data}")
         ctx = form.cleaned_data
     else:
+        log.debug(f"Form is not valid: {form.errors}")
         ctx = {}
     if kwargs:
+        log.debug(f"kwargs: {kwargs}")
         ctx.update(kwargs)
     query_obj = Query(text=query_string)
+    log.debug(f"Query object: {query_obj}")
     results = query_obj.resolve(request=context["request"], context=ctx)
     try:
         results = resolve(results)[0]
