@@ -25,7 +25,7 @@ This endpoint is provided to allow the resolution of queries.
 
 The `/api/query` endpoint is what is used to power the Explore UI which is available at `/explore`.
 
-The browsable REST API which is available from a browser at `/api/query` can be really useful for debugging if you have the Django Debug Toolbar enabled as it allows you to track the SQL statements issued by search commands as well as a ton of other useful information.
+The browsable REST API, which is returned when accessing `/api/query` from a browser can be really useful for debugging if you enable `DEBUG` in your `settings.py` as it allows you to track the SQL statements issued by search commands as well as a ton of other useful information.
 
 ### Example Usage
 
@@ -43,6 +43,8 @@ To create a new event, send a POST request to `/api/events/` with the following 
 
 ## File-tail Utility
 The file-tail utility allows you to ingest data from log files in near real-time. This utility monitors specified log files and sends new entries to Flashlight as they are written. This is particularly useful for continuously monitoring log files for new data.
+
+**NOTE**: If a log file is rotated (renamed or moved by the system or a log rotation utility), Flashlight will automatically detect the change and continue monitoring the new file with the same filename.
 
 ### Usage
 The file-tail utility is a command-line tool that can be used to monitor log files and send new entries to Flashlight. Below are the steps to use the file-tail utility:
