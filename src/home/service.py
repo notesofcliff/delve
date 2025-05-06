@@ -8,7 +8,7 @@ import subprocess
 import socket
 
 import django
-os.environ["DJANGO_SETTINGS_MODULE"] = "flashlight.settings"
+os.environ["DJANGO_SETTINGS_MODULE"] = "delve.settings"
 django.setup()
 from django.conf import settings
 
@@ -26,12 +26,12 @@ def kill(proc_pid):
 
 class PySvc(win32serviceutil.ServiceFramework):
     # you can NET START/STOP the service by the following name
-    _svc_name_ = "flashlight"
+    _svc_name_ = "delve"
     # this text shows up as the service name in the Service
     # Control Manager (SCM)
-    _svc_display_name_ = "Flashlight (supervisor)"
+    _svc_display_name_ = "Delve (supervisor)"
     # this text shows up as the description in the SCM
-    _svc_description_ = "Supervisor process for flashlight"
+    _svc_description_ = "Supervisor process for delve"
 
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self,args)
@@ -41,9 +41,9 @@ class PySvc(win32serviceutil.ServiceFramework):
         self.stop_requested = False
 
     def SvcDoRun(self):
-        log = logging.getLogger(f"flashlight.{__name__}")
+        log = logging.getLogger(f"delve.{__name__}")
         import servicemanager
-        commands = settings.FLASHLIGHT_SERVICE_COMMANDS
+        commands = settings.DELVE_SERVICE_COMMANDS
         # log.debug(f"Found {commands=}")
         rc = None
         # if the stop event hasn't been fired keep looping
@@ -56,9 +56,9 @@ class PySvc(win32serviceutil.ServiceFramework):
             if processes:
                 # Not first run
                 log.debug(f"{processes=}")
-                log.debug(f"Sleeping for {settings.FLASHLIGHT_SERVICE_INTERVAL} seconds.")
-                sleep(settings.FLASHLIGHT_SERVICE_INTERVAL)
-                # rc = win32event.WaitForSingleObject(self.hWaitStop, settings.FLASHLIGHT_SERVICE_INTERVAL*1000)
+                log.debug(f"Sleeping for {settings.DELVE_SERVICE_INTERVAL} seconds.")
+                sleep(settings.DELVE_SERVICE_INTERVAL)
+                # rc = win32event.WaitForSingleObject(self.hWaitStop, settings.DELVE_SERVICE_INTERVAL*1000)
             for command in commands:
                 if command not in processes:
                     # First run
@@ -136,7 +136,7 @@ class PySvc(win32serviceutil.ServiceFramework):
                 log.debug(f"Failed to gracefully stop process, {exception=}")
 
     def SvcStop(self):
-        log = logging.getLogger(f"flashlight.{__name__}")
+        log = logging.getLogger(f"delve.{__name__}")
         log.warning("Shutting down")
         # tell the SCM we're shutting down
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)

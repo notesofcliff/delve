@@ -1,13 +1,13 @@
 # Searching, Filtering and More
 
-Flashlight provides a comprehensive search interface that supports a wide range of search commands and the ability to define custom search commands. These commands are categorized into four types: Data Sources, Queryset Transformations, Generic Transformations, and Visualization Commands.
+Delve provides a comprehensive search interface that supports a wide range of search commands and the ability to define custom search commands. These commands are categorized into four types: Data Sources, Queryset Transformations, Generic Transformations, and Visualization Commands.
 
 ## Data Sources
-Data source commands are used to pull data into your results. These commands retrieve data from various sources and integrate it into the Flashlight platform.
+Data source commands are used to pull data into your results. These commands retrieve data from various sources and integrate it into the Delve platform.
 
 ### Example Commands
 
-- `search`: Retrieve data through Flashlight, including the models of registered apps.
+- `search`: Retrieve data through Delve, including the models of registered apps.
 - `request`: Perform an HTTP request and return the data.
 - `read_file`: Retrieve data from an uploaded file.
 
@@ -70,11 +70,11 @@ search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted
 - `qs_group_by extracted_fields__foo extracted_fields__bar count=Count('id')`: Groups records by the `extracted_fields__foo` and `extracted_fields__bar` fields and counts the number of records in each group.
 - `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField)) | qs_having avg_bar__gt=1`: Groups records by the `extracted_fields__foo` field, calculates the average of the `extracted_fields__bar` field, and filters the groups to include only those with an average greater than 1.
 
-The `qs_group_by` command is a powerful tool for aggregating and analyzing data within Flashlight, allowing you to perform complex queries and calculations on grouped records.
+The `qs_group_by` command is a powerful tool for aggregating and analyzing data within Delve, allowing you to perform complex queries and calculations on grouped records.
 
 ## Difference between Events and events
 
-When talking about Queries in Flashlight, we can distinguish between `Event` instances, which are `Event`s stored in the database, and 'events' as the unit of data passed between search commands within the context of a Query execution.
+When talking about Queries in Delve, we can distinguish between `Event` instances, which are `Event`s stored in the database, and 'events' as the unit of data passed between search commands within the context of a Query execution.
 
 Let's take a look at an example:
 
@@ -96,7 +96,7 @@ So, as you can see, the 'events' passed between the search commands can contain 
 Here are some example commands to use the search functionality:
 
 ```bash
-# Basic search to retrieve data from the flashlight database  
+# Basic search to retrieve data from the Delve database  
 search --index default text__icontains="error"
 
 # Perform an HTTP request and return the data
@@ -116,7 +116,7 @@ chart --type bar --x-field date --y-field count
 ```
 
 ## Using Pipe Characters to Create Pipelines
-Flashlight allows you to chain multiple search commands together using the pipe character `|`. This creates a pipeline where the output of one command is passed as input to the next command. For example:
+Delve allows you to chain multiple search commands together using the pipe character `|`. This creates a pipeline where the output of one command is passed as input to the next command. For example:
 
 ```bash
 search --index default text__icontains="error" | rename --from-field old_field --to-field new_field | chart --type bar --x-field date --y-field count
@@ -125,7 +125,7 @@ search --index default text__icontains="error" | rename --from-field old_field -
 In this example, the `search` command retrieves data, the `rename` command renames a field, and the `chart` command generates a bar chart based on the result set.
 
 ## Jinja2 Templating
-Flashlight supports Jinja2 templating for search commands. This allows you to dynamically generate search commands based on context variables. The context is built by merging the user's GlobalContext and the LocalContext included in the request. For example:
+Delve supports Jinja2 templating for search commands. This allows you to dynamically generate search commands based on context variables. The context is built by merging the user's GlobalContext and the LocalContext included in the request. For example:
 
 ```bash
 search --index {{ index }} text__icontains="{{ keyword }}"
@@ -145,7 +145,7 @@ search --index default text__icontains="error" | send_email to="team@example.com
 In this example, the `send_email` command sends an email to `team@example.com` with the subject "Error Alert" if the search command finds any errors.
 
 ## make_events Command
-The `make_events` command allows you to generate events based on the current result set and index them into the Flashlight database. This command is useful for creating new events from existing data or external sources gathered with other search commands like `request`.
+The `make_events` command allows you to generate events based on the current result set and index them into the Delve database. This command is useful for creating new events from existing data or external sources gathered with other search commands like `request`.
 
 ### Command-line Arguments
 The `make_events` command accepts the following command-line arguments:
@@ -175,13 +175,13 @@ make_events --save
 ```
 
 ## Custom Search Commands
-Flashlight allows you to create custom search commands in Python and register them in `settings.py` under `FLASHLIGHT_SEARCH_COMMANDS`. This provides powerful and flexible ways to manipulate the result set.
+Delve allows you to create custom search commands in Python and register them in `settings.py` under `DELVE_SEARCH_COMMANDS`. This provides powerful and flexible ways to manipulate the result set.
 
 ### Example Custom Command
 Here is an example of a custom search command:
 
 ```python
-# filepath: /flashlight/search_commands/custom_command.py
+# filepath: /delve/search_commands/custom_command.py
 def custom_command(events, **kwargs):
     # Custom logic to process events
     for event in events:
@@ -192,7 +192,7 @@ def custom_command(events, **kwargs):
 Alternatively, you could write it as a generator which could possibly improve memory usage:
 
 ```python
-# filepath: /flashlight/search_commands/custom_command.py
+# filepath: /delve/search_commands/custom_command.py
 def custom_command(events, **kwargs):
     # Custom logic to process events
     for event in events:
@@ -202,10 +202,10 @@ def custom_command(events, **kwargs):
 To register the custom command, add it to `settings.py`:
 
 ```python
-# filepath: /flashlight/settings.py
-FLASHLIGHT_SEARCH_COMMANDS = {
+# filepath: /delve/settings.py
+DELVE_SEARCH_COMMANDS = {
     ...
-    'custom_command': 'flashlight.search_commands.custom_command.custom_command',
+    'custom_command': 'delve.search_commands.custom_command.custom_command',
     ...
 }
 ```

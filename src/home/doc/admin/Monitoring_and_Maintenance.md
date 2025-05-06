@@ -1,16 +1,16 @@
 # Monitoring and Maintenance
 
-Monitoring and maintaining Flashlight is crucial for ensuring its smooth operation and performance. This section covers various aspects of monitoring and maintenance, including using Django management commands and performing backups.
+Monitoring and maintaining Delve is crucial for ensuring its smooth operation and performance. This section covers various aspects of monitoring and maintenance, including using Django management commands and performing backups.
 
 ## Monitoring System Health
-Monitoring the health of your Flashlight instance involves keeping an eye on system resources, application logs, and performance metrics. Here are some key areas to monitor:
+Monitoring the health of your Delve instance involves keeping an eye on system resources, application logs, and performance metrics. Here are some key areas to monitor:
 
 - **System Resources**: Monitor CPU, memory, and disk usage to ensure the system has enough resources to handle the workload. Also look for oportunities to streamline certain data flows to improve resource usage.
 - **Application Logs**: Regularly check application logs for errors, warnings, and other important messages. Logs can be found in the `log` directory.
 - **Performance Metrics**: Monitor response times, request rates, and other performance metrics to identify potential bottlenecks and optimize performance. The logging system can be fine-tuned to gain insights into these metrics without allowing the logs to become overly verbose.
 
 ## Using Django Management Commands
-Django provides several management commands that are useful for monitoring and maintaining your Flashlight instance. Some key commands include (see the output of `./fl --help` for a complete list):
+Django provides several management commands that are useful for monitoring and maintaining your Delve instance. Some key commands include (see the output of `./fl --help` for a complete list):
 
 - **`./fl check`**: Checks the entire Django project for potential problems.
 
@@ -38,7 +38,7 @@ Django provides several management commands that are useful for monitoring and m
 
 ### Django Extension Commands
 
-The Django Extensions module provides a number of helpful commands. Here are some of the more useful ones in the context of Flashlight:
+The Django Extensions module provides a number of helpful commands. Here are some of the more useful ones in the context of Delve:
 
 - **`./fl shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
     ```bash
@@ -83,7 +83,7 @@ fl loaddata backup_users_auth.json
 ```
 
 ### Custom User Model
-Flashlight includes a custom user model in the `users` app. However, the default Django `Group` and `Permission` models are used for managing user roles and permissions. When performing backups and restores, ensure that data from the `users` app and the `auth` app is included to maintain user accounts and permissions.
+Delve includes a custom user model in the `users` app. However, the default Django `Group` and `Permission` models are used for managing user roles and permissions. When performing backups and restores, ensure that data from the `users` app and the `auth` app is included to maintain user accounts and permissions.
 
 ---
 

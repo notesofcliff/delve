@@ -2,9 +2,9 @@
 
 ## General Tips
 
-- **Regular Backups**: Ensure you regularly back up your Flashlight data to prevent data loss.
-- **Monitor Performance**: Use the monitoring tools provided by Flashlight to keep an eye on system performance and address any issues promptly.
-- **Stay Updated**: Keep your Flashlight installation up to date with the latest releases to benefit from new features and security patches.
+- **Regular Backups**: Ensure you regularly back up your Delve data to prevent data loss.
+- **Monitor Performance**: Use the monitoring tools provided by Delve to keep an eye on system performance and address any issues promptly.
+- **Stay Updated**: Keep your Delve installation up to date with the latest releases to benefit from new features and security patches.
 
 ## Search Tips
 
@@ -18,15 +18,15 @@
 
 ## Customization Tips
 
-- **Custom Search Commands**: Create custom search commands to extend Flashlight's functionality and tailor it to your specific needs.
+- **Custom Search Commands**: Create custom search commands to extend Delve's functionality and tailor it to your specific needs.
 - **Custom Dashboards**: Design custom dashboards to visualize your data in a meaningful way. Use charts, tables, and other visualizations to present your data effectively.
 - **Custom Alerts**: Set up custom alerts to notify you of important events or issues. Use the `send_email` command or custom processors to send notifications based on specific criteria.
 
 ## Security Tips
 
-- **Secure Configuration**: Ensure your Flashlight configuration is secure. Use strong passwords, enable TLS, and follow best practices for securing your Django application.
+- **Secure Configuration**: Ensure your Delve configuration is secure. Use strong passwords, enable TLS, and follow best practices for securing your Django application.
 - **Access Controls**: Implement proper access controls to restrict access to sensitive data and functionality. Use Django's authentication and authorization system to manage user permissions.
-- **Regular Audits**: Perform regular security audits to identify and address potential vulnerabilities in your Flashlight installation.
+- **Regular Audits**: Perform regular security audits to identify and address potential vulnerabilities in your Delve installation.
 
 ---
 

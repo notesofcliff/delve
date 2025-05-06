@@ -157,9 +157,9 @@ class Query(models.Model):
             log.debug(f"Found argv: {argv}")
             funcname = argv[0]
             log.debug(f"Found funcname: {funcname}")
-            if funcname not in settings.FLASHLIGHT_SEARCH_COMMANDS:
+            if funcname not in settings.DELVE_SEARCH_COMMANDS:
                 raise ValueError(f"{funcname} is not a recognized search command.")
-            funcpath = settings.FLASHLIGHT_SEARCH_COMMANDS[funcname]
+            funcpath = settings.DELVE_SEARCH_COMMANDS[funcname]
             log.debug(f"Found funcpath: {funcpath}")
             func = import_string(funcpath)
             log.debug(f"Found func: {func}")
@@ -211,7 +211,7 @@ class Query(models.Model):
             sys.stderr = StringIO()
             sys.stdout = StringIO()
             log.debug(f"Checking for search_command validators")
-            if settings.FLASHLIGHT_STRICT_VALIDATION:
+            if settings.DELVE_STRICT_VALIDATION:
                 if operation.input_validators is not None:
                     log.debug(f"Found Input validators: {operation.input_validators}")
                     for validator in operation.input_validators:
@@ -311,7 +311,7 @@ class BaseEvent(models.Model):
     def extract_fields(self):
         log = logging.getLogger(__name__)
         log.debug("Inside extract_fields")
-        extraction_map = settings.FLASHLIGHT_EXTRACTION_MAP
+        extraction_map = settings.DELVE_EXTRACTION_MAP
         log.debug(f"Found {extraction_map=}")
         ret = {}
         for sourcetype, extractions in extraction_map.items():
@@ -338,7 +338,7 @@ class BaseEvent(models.Model):
     def process(self):
         log = logging.getLogger(__name__)
         log.debug("Inside process")
-        processor_map = settings.FLASHLIGHT_PROCESSOR_MAP
+        processor_map = settings.DELVE_PROCESSOR_MAP
         log.debug(f"Found {processor_map=}")
         ret = []
         for sourcetype, processors in processor_map.items():

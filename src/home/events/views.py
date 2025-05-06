@@ -36,7 +36,7 @@ def get_client_ip(request):
 def docs(request, manual, filename):
     log = logging.getLogger(__name__)
     log.debug(f"Requested documentation file: {filename}, from manual: {manual}")
-    path = settings.FLASHLIGHT_DOCUMENTATION_DIRECTORY.joinpath(manual).joinpath(filename)
+    path = settings.DELVE_DOCUMENTATION_DIRECTORY.joinpath(manual).joinpath(filename)
     log.debug(f"Path to documentation file: {path}")
     if path.exists():
         log.debug(f"Found documentation file: {path}")
@@ -119,9 +119,9 @@ def ingress(request, index, source, sourcetype):
         sourcetype=sourcetype,
         text=request.body.decode(),
     )
-    if settings.FLASHLIGHT_ENABLE_EXTRACTIONS_ON_CREATE:
+    if settings.DELVE_ENABLE_EXTRACTIONS_ON_CREATE:
         event.extract_fields()
-    if settings.FLASHLIGHT_ENABLE_PROCESSORSS_ON_CREATE:
+    if settings.DELVE_ENABLE_PROCESSORSS_ON_CREATE:
         event.process()
     event.save()
     return HttpResponse(

@@ -101,7 +101,7 @@ class SearchCommandViewSet(viewsets.ViewSet):
 
     def list(self, request):
         log = logging.getLogger(__name__)
-        search_commands = settings.FLASHLIGHT_SEARCH_COMMANDS
+        search_commands = settings.DELVE_SEARCH_COMMANDS
         log.debug(f"Found {len(search_commands)} search_commands")
         ret = []
         for name, path in search_commands.items():

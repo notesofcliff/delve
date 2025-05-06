@@ -1,5 +1,5 @@
-"""A CLI program to tail a file and create events in flashlight
-through the flashlight REST API.
+"""A CLI program to tail a file and create events in delve
+through the delve REST API.
 """
 import sys
 import glob
@@ -26,7 +26,7 @@ LOG_DIRECTORY = HERE / "log"
 
 def parse_argv(argv):
     parser = argparse.ArgumentParser(
-        description="Create events through the Flashlight REST API",
+        description="Create events through the Delve REST API",
     )
     parser.add_argument(
         "--server",
@@ -98,13 +98,13 @@ def parse_argv(argv):
         "--batch-size",
         type=int,
         default=1_000,
-        help="The number of events to send to the flashlight server per request",
+        help="The number of events to send to the delve server per request",
     )
     parser.add_argument(
         "--max-queue-size",
         type=int,
         default=10_000,
-        help="The max number of events waiting to be uploaded to flashlight",
+        help="The max number of events waiting to be uploaded to delve",
     )
     # parser.add_argument(
     #     "-w",
@@ -268,7 +268,7 @@ def main(argv=None):
     event_queue = multiprocessing.Queue(maxsize=max_queue_size)
     logging_queue = multiprocessing.Queue(maxsize=max_queue_size)
     sender_process = multiprocessing.Process(
-        target=send_to_flashlight,
+        target=send_to_delve,
         args=(
             event_queue,
             logging_queue,
@@ -355,7 +355,7 @@ def main(argv=None):
                 log.debug(f"Found {level=}, {message=}")
                 log.log(level=level, msg=message)
 
-def send_to_flashlight(event_queue, logging_queue, url, session, batch_size):
+def send_to_delve(event_queue, logging_queue, url, session, batch_size):
     timeout = 1 # seconds
     current_batch = []
     logging_queue.put((logging.DEBUG, "Sender process entering main loop."))
@@ -370,7 +370,7 @@ def send_to_flashlight(event_queue, logging_queue, url, session, batch_size):
             except queue.Empty:
                 logging_queue.put((logging.DEBUG, f"Event queue is empty"))
                 if len(current_batch) > 0:
-                    logging_queue.put((logging.INFO, "Sending request to flashlight"))
+                    logging_queue.put((logging.INFO, "Sending request to delve"))
                     try:
                         response = session.post(
                             url,
@@ -380,16 +380,16 @@ def send_to_flashlight(event_queue, logging_queue, url, session, batch_size):
                     except Exception as e:
                         logging_queue.put((logging.ERROR, f"Found exception: {e=}"))
                         raise
-                    logging_queue.put((logging.INFO, f"Received {response=} from flashlight"))
+                    logging_queue.put((logging.INFO, f"Received {response=} from delve"))
                     current_batch.clear()
                 sleep(0.25)
         if len(current_batch) > 0:
-            logging_queue.put((logging.INFO, "Sending request to flashlight"))
+            logging_queue.put((logging.INFO, "Sending request to delve"))
             response = session.post(
                 url,
                 json=current_batch,
             )
-            logging_queue.put((logging.INFO, f"Received {response=} from flashlight"))
+            logging_queue.put((logging.INFO, f"Received {response=} from delve"))
             current_batch.clear()
         
 if __name__ == "__main__":

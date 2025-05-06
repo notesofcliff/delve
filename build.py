@@ -413,11 +413,11 @@ for item in HOME_DIRECTORY.iterdir():
         )
 
 # Rename settings file, so we don't overwrite user settings if they are updating in-place
-ASSEMBLE_DIRECTORY.joinpath("flashlight").joinpath("settings.py").rename(
-    ASSEMBLE_DIRECTORY.joinpath("flashlight").joinpath("example-settings.py")
+ASSEMBLE_DIRECTORY.joinpath("delve").joinpath("settings.py").rename(
+    ASSEMBLE_DIRECTORY.joinpath("delve").joinpath("example-settings.py")
 )
-ASSEMBLE_DIRECTORY.joinpath("flashlight").joinpath("urls.py").rename(
-    ASSEMBLE_DIRECTORY.joinpath("flashlight").joinpath("example-urls.py")
+ASSEMBLE_DIRECTORY.joinpath("delve").joinpath("urls.py").rename(
+    ASSEMBLE_DIRECTORY.joinpath("delve").joinpath("example-urls.py")
 )
 
 # Copy all invocation scripts from src/invocation_scripts/{platform} to DIST_DIRECTORY
@@ -438,7 +438,7 @@ output = subprocess.check_output(command, shell=True)
 flashligt_version = output.strip().decode()
 
 # Generate a versioned requirements.txt file
-versioned_requirements_file = ASSEMBLE_DIRECTORY.joinpath(f'flashlight-{flashligt_version}_{requirements_file.name}')
+versioned_requirements_file = ASSEMBLE_DIRECTORY.joinpath(f'delve-{flashligt_version}_{requirements_file.name}')
 shutil.copy(requirements_file, versioned_requirements_file)
 
 # Clean up any __pycache__ directories in the source code-only directory
@@ -468,7 +468,7 @@ for p in ASSEMBLE_DIRECTORY.glob("**/*.log"):
 
 shutil.make_archive(
     DIST_DIRECTORY.joinpath(
-        f'FLASHLIGHT-{flashligt_version}_py{TARGET_PYTHON_VERSION}_{platform}_install',
+        f'DELVE-{flashligt_version}_py{TARGET_PYTHON_VERSION}_{platform}_install',
     ),
     format='zip',
     root_dir=ASSEMBLE_DIRECTORY,
@@ -517,7 +517,7 @@ for p in UPDATE_PACKAGE_DIRECTORY.glob("**/*.log"):
 # Create a zip archive from the update package directory
 shutil.make_archive(
     DIST_DIRECTORY.joinpath(
-        f'FLASHLIGHT-{flashligt_version}_py{TARGET_PYTHON_VERSION}_{platform}_update',
+        f'DELVE-{flashligt_version}_py{TARGET_PYTHON_VERSION}_{platform}_update',
     ),
     format='zip',
     root_dir=UPDATE_PACKAGE_DIRECTORY,

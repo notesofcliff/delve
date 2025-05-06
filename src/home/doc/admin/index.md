@@ -1,24 +1,24 @@
-# Flashlight Administration Manual
+# Delve Administration Manual
 
 ## Introduction
-This section provides an overview of Flashlight administration and outlines the key responsibilities of an administrator. As an administrator, you will be responsible for installing, configuring, and maintaining the Flashlight platform to ensure it runs smoothly and efficiently.
+This section provides an overview of Delve administration and outlines the key responsibilities of an administrator. As an administrator, you will be responsible for installing, configuring, and maintaining the Delve platform to ensure it runs smoothly and efficiently.
 
 ## Table of Contents
 1. [Introduction](Introduction.md)
-     * [Overview of Flashlight Administration](Introduction.md#overview-of-flashlight-administration)
+     * [Overview of Delve Administration](Introduction.md#overview-of-delve-administration)
      * [Key Responsibilities of an Administrator](Introduction.md#key-responsibilities-of-an-administrator)
 2. [Installation and Setup](Installation_and_Setup.md)
      * [System Requirements](Installation_and_Setup.md#system-requirements)
      * [Installation Steps](Installation_and_Setup.md#installation-steps)
      * [Initial Configuration](Installation_and_Setup.md#initial-configuration)
-     * [Installing Flashlight Supervisor Service on Windows](Installation_and_Setup.md#installing-flashlight-supervisor-service-on-windows)
-     * [Installing Flashlight Supervisor Service on Other Platforms](Installation_and_Setup.md#installing-flashlight-supervisor-service-on-other-platforms)
+     * [Installing Delve Supervisor Service on Windows](Installation_and_Setup.md#installing-delve-supervisor-service-on-windows)
+     * [Installing Delve Supervisor Service on Other Platforms](Installation_and_Setup.md#installing-delve-supervisor-service-on-other-platforms)
 3. [Configuration](Configuration.md)
      * [Overview of Django Configuration](Configuration.md#overview-of-django-configuration)
      * [Using Environment Variables](Configuration.md#using-environment-variables)
-     * [Flashlight-Specific Configuration Options](Configuration.md#flashlight-specific-configuration-options)
+     * [Delve-Specific Configuration Options](Configuration.md#delve-specific-configuration-options)
 4. [Ingesting Data](Ingesting_Data.md)
-   - [Flashlight's REST API](Ingesting_Data.md#flashlights-rest-api)
+   - [Delve's REST API](Ingesting_Data.md#delves-rest-api)
    - [File-tail Utility](Ingesting_Data.md#file-tail-utility)
    - [Syslog (UDP/TCP/TCPw/TLS)](Ingesting_Data.md#syslog-udptcptcpwtls)
    - [Upload a File Directly](Ingesting_Data.md#upload-a-file-directly)
@@ -47,3 +47,5 @@ This section provides an overview of Flashlight administration and outlines the 
 10. [Backup and Restore](Backup_and_Restore.md)
 11. [Scaling and Load Balancing](Scaling_and_Load_Balancing.md)
 12. [Advanced Logging](Advanced_Logging.md)
+
+[Previous: Table of Contents](index.md) | [Next: Installation and Setup](Installation_and_Setup.md)

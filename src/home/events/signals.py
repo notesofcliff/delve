@@ -35,15 +35,15 @@ def extract_fields_and_process(sender, instance, **kwargs):
     created = instance._state.adding
     log.debug(f"instance found to be created: {created}")
 
-    if created and settings.FLASHLIGHT_ENABLE_EXTRACTIONS_ON_CREATE:
+    if created and settings.DELVE_ENABLE_EXTRACTIONS_ON_CREATE:
         log.debug(f"Extracting fields on new event: {instance}")
         instance.extract_fields()
-    if created and settings.FLASHLIGHT_ENABLE_PROCESSORSS_ON_CREATE:
+    if created and settings.DELVE_ENABLE_PROCESSORSS_ON_CREATE:
         log.debug(f"Processing new event: {instance}")
         instance.process()
-    if not created and settings.FLASHLIGHT_ENABLE_EXTRACTIONS_ON_UPDATE:
+    if not created and settings.DELVE_ENABLE_EXTRACTIONS_ON_UPDATE:
         log.debug(f"Extracting fields on existing event: {instance}")
         instance.extract_fields()
-    if not created and settings.FLASHLIGHT_ENABLE_PROCESSORSS_ON_UPDATE:
+    if not created and settings.DELVE_ENABLE_PROCESSORSS_ON_UPDATE:
         log.debug(f"Processing existing event: {instance}")
         instance.process()

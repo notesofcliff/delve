@@ -1,6 +1,6 @@
 # Backup and Restore
 
-Performing regular backups is essential to prevent data loss and ensure data integrity. This section covers how to back up and restore your Flashlight instance using Django's `dumpdata` and `loaddata` commands.
+Performing regular backups is essential to prevent data loss and ensure data integrity. This section covers how to back up and restore your Delve instance using Django's `dumpdata` and `loaddata` commands.
 
 ## Backing Up Data
 Use the `dumpdata` command to export data from the database to a JSON file. This command can be used to back up specific apps or the entire database.
@@ -23,7 +23,7 @@ fl dumpdata users auth > backup_users_auth.json
 You can schedule regular backups using a task scheduler like `cron` on Linux or Task Scheduler on Windows. Here is an example of a `cron` job that runs a backup every day at midnight:
 
 ```cron
-0 0 * * * /path/to/flashlight/venv/bin/fl dumpdata > /path/to/backups/backup_$(date +\%F).json
+0 0 * * * /path/to/delve/venv/bin/fl dumpdata > /path/to/backups/backup_$(date +\%F).json
 ```
 
 ## Restoring Data
@@ -39,7 +39,7 @@ fl loaddata backup.json
 The `loaddata` command will load the data into the proper app automatically.
 
 ## Custom User Model
-Flashlight includes a custom user model in the `users` app. However, the default Django `Group` and `Permission` models are used for managing user roles and permissions. When performing backups and restores, ensure that data from the `users` app and the `auth` app is included to maintain user accounts and permissions.
+Delve includes a custom user model in the `users` app. However, the default Django `Group` and `Permission` models are used for managing user roles and permissions. When performing backups and restores, ensure that data from the `users` app and the `auth` app is included to maintain user accounts and permissions.
 
 ## Automating Backups and Restores
 Automating backups and restores can help ensure that your data is always protected and can be quickly restored in case of an issue. Here are some tips for automating these processes:
@@ -54,11 +54,11 @@ Here is an example backup script for Linux:
 ```bash
 #!/bin/bash
 
-# Set the path to the Flashlight directory
-FLASHLIGHT_DIR="/path/to/flashlight"
+# Set the path to the Delve directory
+DELVE_DIR="/path/to/delve"
 
 # Run the backup command
-$FLASHLIGHT_DIR/fl dumpdata > "$FLASHLIGHT_DIR/backups/backup_$(date +\%F).json"
+$DELVE_DIR/fl dumpdata > "$DELVE_DIR/backups/backup_$(date +\%F).json"
 ```
 
 ### Automating Restores
@@ -71,14 +71,14 @@ Here is an example restore script for Linux:
 ```bash
 #!/bin/bash
 
-# Set the path to the Flashlight directory
-FLASHLIGHT_DIR="/path/to/flashlight"
+# Set the path to the Delve directory
+DELVE_DIR="/path/to/delve"
 
 # Run the restore command
-$FLASHLIGHT_DIR/fl loaddata "$FLASHLIGHT_DIR/backups/backup.json"
+$DELVE_DIR/fl loaddata "$DELVE_DIR/backups/backup.json"
 ```
 
-By following these steps, you can effectively back up and restore your Flashlight instance, ensuring that your data is protected and can be quickly recovered in case of an issue.
+By following these steps, you can effectively back up and restore your Delve instance, ensuring that your data is protected and can be quickly recovered in case of an issue.
 
 ---
 

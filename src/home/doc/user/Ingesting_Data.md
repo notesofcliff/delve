@@ -1,10 +1,10 @@
 # Ingesting Data
 
-Flashlight supports data ingestion from various sources, including log files, REST APIs, syslog, and more. This guide covers the different methods for ingesting data into Flashlight and provides detailed instructions for each method.
+Delve supports data ingestion from various sources, including log files, REST APIs, syslog, and more. This guide covers the different methods for ingesting data into Delve and provides detailed instructions for each method.
 
-## Flashlight's REST API
+## Delve's REST API
 
-Flashlight provides a REST API for data ingestion, allowing you to programmatically send data to the platform. This method is ideal for integrating with other applications and services that generate data.
+Delve provides a REST API for data ingestion, allowing you to programmatically send data to the platform. This method is ideal for integrating with other applications and services that generate data.
 
 ### Accessing the browsable REST API
 
@@ -19,7 +19,7 @@ To access the browsable REST API, navigate to `/api/` in your browser. You will 
 
 #### The `/api/query` Endpoint
 
-While not useful to Ingesting data, the `/api/query` should be mentioned when discussing the Flashlight REST API as it does not appear in the list of endpoints you see at `/api` from a browser.
+While not useful to Ingesting data, the `/api/query` should be mentioned when discussing the Delve REST API as it does not appear in the list of endpoints you see at `/api` from a browser.
 
 This endpoint is provided to allow the resolution of queries.
 
@@ -42,13 +42,13 @@ To create a new event, send a POST request to `/api/events/` with the following 
 ```
 
 ## File-tail Utility
-The file-tail utility allows you to ingest data from log files in near real-time. This utility monitors specified log files and sends new entries to Flashlight as they are written. This is particularly useful for continuously monitoring log files for new data.
+The file-tail utility allows you to ingest data from log files in near real-time. This utility monitors specified log files and sends new entries to Delve as they are written. This is particularly useful for continuously monitoring log files for new data.
 
 ### Usage
-The file-tail utility is a command-line tool that can be used to monitor log files and send new entries to Flashlight. Below are the steps to use the file-tail utility:
+The file-tail utility is a command-line tool that can be used to monitor log files and send new entries to Delve. Below are the steps to use the file-tail utility:
 
 1. Open a terminal or command prompt.
-2. Navigate to the Flashlight directory.
+2. Navigate to the Delve directory.
 3. Execute `set-env.bat` (Windows) or `source set-env` (Linux/Mac).
 4. Execute `python utilities/cli/tail-files.py --help`.
 5. Run the script with the appropriate arguments.
@@ -56,7 +56,7 @@ The file-tail utility is a command-line tool that can be used to monitor log fil
 ### Command-line Arguments
 The `tail-files.py` script accepts the following command-line arguments:
 
-- `--server`: The scheme, host, and port of the Flashlight server (default: `http://localhost:8000`).
+- `--server`: The scheme, host, and port of the Delve server (default: `http://localhost:8000`).
 - `--no-verify`: If specified, TLS hostname verification will be disabled.
 - `-i, --index`: The index in which to store the event (default: `default`).
 - `-H, --host`: The host to associate with the event (default: `localhost`).
@@ -66,8 +66,8 @@ The `tail-files.py` script accepts the following command-line arguments:
 - `-v, --verbose`: Increase verbosity of log output.
 - `-l, --log-file`: The file to which logs will be written (default: `log/tail-files.log`).
 - `-d, --delay`: The number of seconds to sleep between API POST requests (default: `1`).
-- `--batch-size`: The number of events to send to the Flashlight server per request (default: `1000`).
-- `--max-queue-size`: The maximum number of events waiting to be uploaded to Flashlight (default: `10000`).
+- `--batch-size`: The number of events to send to the Delve server per request (default: `1000`).
+- `--max-queue-size`: The maximum number of events waiting to be uploaded to Delve (default: `10000`).
 - `patterns`: Glob patterns matching files to monitor (quote this to prevent shell expansion).
 
 ### Example Usage
@@ -83,8 +83,8 @@ python tail-files.py --index "my_index" "/path/to/logfile.log"
 # Specify a custom sourcetype
 python tail-files.py --sourcetype "my_sourcetype" "/path/to/logfile.log"
 
-# Disable TLS hostname verification for the flashlight server
-python tail-files.py --no-verify --server "https://flashlight.example.com" "/path/to/logfile.log"
+# Disable TLS hostname verification for the Delve server
+python tail-files.py --no-verify --server "https://delve.example.com" "/path/to/logfile.log"
 
 # Provide username and password for authentication to prevent being prompted
 python tail-files.py --username "myuser" --password "mypassword" "/path/to/logfile.log"
@@ -105,13 +105,13 @@ The file-tail utility maintains the position of the last read entry in each moni
 The utility batches events to improve performance. You can configure the batch size and the maximum queue size using the `--batch-size` and `--max-queue-size` arguments, respectively.
 
 ## Syslog (UDP/TCP/TLS)
-Flashlight supports Syslog for data ingestion over UDP, TCP, and TCP with TLS. This method is commonly used for collecting logs from network devices, servers, and other infrastructure components.
+Delve supports Syslog for data ingestion over UDP, TCP, and TCP with TLS. This method is commonly used for collecting logs from network devices, servers, and other infrastructure components.
 
 ### Usage
-The syslog-receiver utility is a command-line tool that can be used to receive syslog messages and send them to Flashlight. Below are the steps to use the syslog-receiver utility:
+The syslog-receiver utility is a command-line tool that can be used to receive syslog messages and send them to Delve. Below are the steps to use the syslog-receiver utility:
 
 1. Open a terminal or command prompt.
-2. Navigate to the Flashlight directory.
+2. Navigate to the Delve directory.
 3. Execute `set-env.bat` (Windows) or `source set-env` (Linux/Mac).
 4. Execute `python utilities/cli/syslog-receiver.py --help`.
 5. Run the script with the appropriate arguments.
@@ -119,7 +119,7 @@ The syslog-receiver utility is a command-line tool that can be used to receive s
 ### Command-line Arguments
 The `syslog-receiver.py` script accepts the following command-line arguments:
 
-- `--server`: The scheme, host, and port of the Flashlight server (default: `http://localhost:8000`).
+- `--server`: The scheme, host, and port of the Delve server (default: `http://localhost:8000`).
 - `--no-verify`: If specified, TLS hostname verification will be disabled.
 - `-i, --index`: The index in which to store the event (default: `default`).
 - `-H, --host`: The host to associate with the event (default: the IP address of the client).
@@ -137,8 +137,8 @@ The `syslog-receiver.py` script accepts the following command-line arguments:
 - `--hostname`: The hostname (or IP) to listen on.
 - `-v, --verbose`: Increase verbosity of log output.
 - `-l, --log-file`: The file to which logs will be written (default: `log/syslog-receiver-<pid>.log`).
-- `--batch-size`: The number of events to send to the Flashlight server per request (default: `10000`).
-- `--max-queue-size`: The maximum number of events waiting to be uploaded to Flashlight (default: `10000`).
+- `--batch-size`: The number of events to send to the Delve server per request (default: `10000`).
+- `--max-queue-size`: The maximum number of events waiting to be uploaded to Delve (default: `10000`).
 
 ### Example Usage
 Here are some example commands to use the syslog-receiver utility:
@@ -165,8 +165,8 @@ python syslog-receiver.py --tcp --index "my_index" --sourcetype "my_sourcetype"
 # Use TLS for TCP with specified certificate and key
 python syslog-receiver.py --tcp --tcp-cert "/path/to/cert.pem" --tcp-key "/path/to/key.pem"
 
-# Disable TLS hostname verification for the Flashlight server
-python syslog-receiver.py --no-verify --server "https://flashlight.example.com" --tcp
+# Disable TLS hostname verification for the Delve server
+python syslog-receiver.py --no-verify --server "https://delve.example.com" --tcp
 
 # Provide username and password for authentication to prevent being prompted
 python syslog-receiver.py --username "myuser" --password "mypassword" --udp
@@ -184,7 +184,7 @@ The syslog-receiver utility supports both UDP and TCP for receiving syslog messa
 The utility batches events to improve performance. You can configure the batch size and the maximum queue size using the `--batch-size` and `--max-queue-size` arguments, respectively.
 
 ## Upload a File Directly
-Flashlight allows direct file uploads for data ingestion, facilitating one-time or batch data imports from various file formats. The upload interface enables users to select and upload files, which are subsequently processed and ingested into the platform.
+Delve allows direct file uploads for data ingestion, facilitating one-time or batch data imports from various file formats. The upload interface enables users to select and upload files, which are subsequently processed and ingested into the platform.
 
 ### Methods of Upload
 Files can be uploaded using the following methods:
@@ -215,26 +215,26 @@ The following parse options are currently available:
 - `xml`
 
 ## Through Searches (Interactive and Scheduled)
-Flashlight supports both interactive and scheduled searches, allowing users to define search queries that retrieve data from external sources and import it into Flashlight on a regular basis or on-demand.
+Delve supports both interactive and scheduled searches, allowing users to define search queries that retrieve data from external sources and import it into Delve on a regular basis or on-demand.
 
 ### Search Commands
-Flashlight provides several built-in search commands to retrieve, parse, and transform data. Some of the key search commands include:
+Delve provides several built-in search commands to retrieve, parse, and transform data. Some of the key search commands include:
 
-- `search`: Retrieve data through Flashlight, including the models of registered apps.
+- `search`: Retrieve data through Delve, including the models of registered apps.
 - `request`: Perform an HTTP request and return the data.
 - `read_file`: Retrieve data from an uploaded file.
 
 Custom search commands can also be defined to retrieve, parse, and/or transform data.
 
-Check the [Search Command Reference](Search_Command_Reference.md) for a list of all search commands included with Flashlight.
+Check the [Search Command Reference](Search_Command_Reference.md) for a list of all search commands included with Delve.
 
-Custom or third-party Flashlight apps can also define search commands, but all search commands must be configured in `settings.py` under `FLASHLIGHT_SEARCH_COMMANDS` in order to be used.
+Custom or third-party Delve apps can also define search commands, but all search commands must be configured in `settings.py` under `DELVE_SEARCH_COMMANDS` in order to be used.
 
 ### Example Usage
 Here are some example commands to use the search functionality:
 
 ```bash
-# Basic search to retrieve data from the flashlight database  
+# Basic search to retrieve data from the delve database  
 search --index default text__icontains="error"
 
 # Perform an HTTP request and return the data
@@ -245,7 +245,7 @@ read_file example.xml
 ```
 
 ### make_events Command
-The `make_events` command allows you to generate events based on the current result set and index them into the Flashlight database. This command is useful for creating new events from existing data or external sources gathered with other search commands like `request`.
+The `make_events` command allows you to generate events based on the current result set and index them into the Delve database. This command is useful for creating new events from existing data or external sources gathered with other search commands like `request`.
 
 #### Command-line Arguments
 The `make_events` command accepts the following command-line arguments:

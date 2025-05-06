@@ -107,15 +107,15 @@ def parse_argv(argv):
     parser.add_argument(
         "-u",
         "--username",
-        default=os.getenv("SYSLOG_RECEIVER_FLASHLIGHT_USERNAME", None),
-        help="The username to use for authentication to Flashlight (if omitted, you will be "
+        default=os.getenv("SYSLOG_RECEIVER_DELVE_USERNAME", None),
+        help="The username to use for authentication to Delve (if omitted, you will be "
              "prompted)",
     )
     parser.add_argument(
         "-p",
         "--password",
-        default=os.getenv("SYSLOG_RECEIVER_FLASHLIGHT_PASSWORD", None),
-        help="The password to use for authentication to Flashlight (if omitted, you will "
+        default=os.getenv("SYSLOG_RECEIVER_DELVE_PASSWORD", None),
+        help="The password to use for authentication to Delve (if omitted, you will "
              "be prompted)",
     )
     parser.add_argument(
@@ -184,13 +184,13 @@ def parse_argv(argv):
         "--batch-size",
         type=int,
         default=int(os.getenv("SYSLOG_RECEIVER_BATCH_SIZE", 10_000)),
-        help="The number of events to send to the flashlight server per request",
+        help="The number of events to send to the delve server per request",
     )
     parser.add_argument(
         "--max-queue-size",
         type=int,
         default=int(os.getenv("SYSLOG_RECEIVER_MAX_QUEUE_SIZE", 10_000)),
-        help="The max number of events waiting to be uploaded to flashlight",
+        help="The max number of events waiting to be uploaded to delve",
     )
     return parser.parse_args(argv)
 
@@ -406,7 +406,7 @@ def main(argv=None):
 
     log.debug("Starting sender_process")
     sender_process = multiprocessing.Process(
-        target=send_to_flashlight,
+        target=send_to_delve,
         args=(
             event_queue,
             url,
@@ -475,7 +475,7 @@ def main(argv=None):
             tcp_server.server_close()
     return 0
 
-def send_to_flashlight(event_queue, url, session, batch_size, log_level):
+def send_to_delve(event_queue, url, session, batch_size, log_level):
     # configure_logging(level=log_level, filename=LOG_DIRECTORY / f'sender-{os.getpid()}.log')
     log = logging.getLogger(__name__)
     # logging.basicConfig(filename=LOG_DIRECTORY / 'sender.log', level=logging.DEBUG)
@@ -496,7 +496,7 @@ def send_to_flashlight(event_queue, url, session, batch_size, log_level):
                 log.debug("Queue was empty")
                 if len(current_batch) > 0:
                     try:
-                        log.debug("Sending request to flashlight")
+                        log.debug("Sending request to delve")
                         response = session.post(
                             url,
                             json=current_batch,
@@ -509,7 +509,7 @@ def send_to_flashlight(event_queue, url, session, batch_size, log_level):
                     current_batch.clear()
                     break
                 sleep(0.25)
-        log.debug("Batch size reached, sending to flashlight")
+        log.debug("Batch size reached, sending to delve")
         if len(current_batch) > 0:
             response = session.post(
                 url,

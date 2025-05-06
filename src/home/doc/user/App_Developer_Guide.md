@@ -1,39 +1,39 @@
 # Application Developer Guide
 
-This document is for developers looking to build a Flashlight App to integrate one or more data sources into Flashlight in a more tailored way than Flashlight makes possible out-of-the-box.
+This document is for developers looking to build a Delve App to integrate one or more data sources into Delve in a more tailored way than Delve makes possible out-of-the-box.
 
 ## Introduction
 
-The most important thing to know about Flashlight Apps is that they are, at their core, Django Apps. This means that the world-class documentation that Django provides, as well as years of questions and answers on sites like Stack Overflow, applies to Flashlight as well.
+The most important thing to know about Delve Apps is that they are, at their core, Django Apps. This means that the world-class documentation that Django provides, as well as years of questions and answers on sites like Stack Overflow, applies to Delve as well.
 
 Be sure to review and refer to the [Django documentation](https://docs.djangoproject.com/).
 
-Flashlight is a data platform designed to be lightweight, easy, versatile, and scalable. Flashlight is built on Django and Django Rest Framework.
+Delve is a data platform designed to be lightweight, easy, versatile, and scalable. Delve is built on Django and Django Rest Framework.
 
-Flashlight is made up of the following parts:
+Delve is made up of the following parts:
 
-- **REST API** - A fully-featured and tested REST API providing access to almost all of the data that Flashlight has.
+- **REST API** - A fully-featured and tested REST API providing access to almost all of the data that Delve has.
 - **Web UI** - A convenient web interface featuring a dynamic, universal search interface, and a simple navigation bar showing available dashboards.
 - **Admin UI** - A one-stop-shop administrative dashboard.
-- **CLI Utilities** - Utilities that are useful for Flashlight but don't fit neatly into the web-server paradigm, like file-tailing and syslog receivers.
+- **CLI Utilities** - Utilities that are useful for Delve but don't fit neatly into the web-server paradigm, like file-tailing and syslog receivers.
 - **An Extensible Query Language** - Designed on the idea of shell pipelines, search commands are provided to access and transform data. Queries are parsed according to shell-style semantics but are also rendered in Jinja2 context, providing templating capabilities useful for updating a dashboard panel with a form, for instance.
 
-A custom app can tie into every piece of Flashlight.
+A custom app can tie into every piece of Delve.
 
 ## Creating a Custom Application
 
-To create a Flashlight application, follow these steps:
+To create a Delve application, follow these steps:
 
 1. **Create the Application:**
-   Run the following command to create a new Flashlight application:
+   Run the following command to create a new Delve application:
    ```bash
    ./fl startapp your_app_name
    ```
 
 2. **Register the Application:**
-   Add your new application to the `INSTALLED_APPS` list in `./flashlight/settings.py`:
+   Add your new application to the `INSTALLED_APPS` list in `./delve/settings.py`:
    ```python
-   # filepath: ./flashlight/settings.py
+   # filepath: ./delve/settings.py
    INSTALLED_APPS = [
        # ...existing code...
        'your_app_name',
@@ -42,7 +42,7 @@ To create a Flashlight application, follow these steps:
 
 ### Creating a Data Model
 
-Creating data models for your app provides a number of benefits. While Flashlight Events are designed to be a flexible, general-purpose data container, custom data models can be tailored to your specific use case:
+Creating data models for your app provides a number of benefits. While Delve Events are designed to be a flexible, general-purpose data container, custom data models can be tailored to your specific use case:
 
 - Data is stored in a separate database table.
 - Allows custom data permissions.
@@ -127,11 +127,11 @@ Here is an example template for the view:
 
 ### Creating Custom Search Commands
 
-Flashlight allows you to create custom search commands in Python and register them in `settings.py` under `FLASHLIGHT_SEARCH_COMMANDS`. This provides powerful and flexible ways to manipulate the result set.
+Delve allows you to create custom search commands in Python and register them in `settings.py` under `DELVE_SEARCH_COMMANDS`. This provides powerful and flexible ways to manipulate the result set.
 
 Here is an example of a custom search command:
 ```python
-# filepath: /flashlight/search_commands/custom_command.py
+# filepath: /delve/search_commands/custom_command.py
 def custom_command(events, **kwargs):
     # Custom logic to process events
     for event in events:
@@ -141,19 +141,19 @@ def custom_command(events, **kwargs):
 
 To register the custom command, add it to `settings.py`:
 ```python
-# filepath: /flashlight/settings.py
-FLASHLIGHT_SEARCH_COMMANDS = {
-    'custom_command': 'flashlight.search_commands.custom_command.custom_command',
+# filepath: /delve/settings.py
+DELVE_SEARCH_COMMANDS = {
+    'custom_command': 'delve.search_commands.custom_command.custom_command',
 }
 ```
 
 ### Creating Custom Parsers
 
-Parsers in Flashlight are used to extract fields from events based on their sourcetype. You can create custom parsers to handle specific data formats.
+Parsers in Delve are used to extract fields from events based on their sourcetype. You can create custom parsers to handle specific data formats.
 
 Here is an example of a custom parser:
 ```python
-# filepath: /flashlight/parsers/custom_parser.py
+# filepath: /delve/parsers/custom_parser.py
 def custom_parser(event_text):
     # Custom logic to extract fields from event_text
     extracted_fields = {
@@ -165,19 +165,19 @@ def custom_parser(event_text):
 
 To register the custom parser, add it to `settings.py`:
 ```python
-# filepath: /flashlight/settings.py
-FLASHLIGHT_EXTRACTION_MAP = {
-    'custom_sourcetype': 'flashlight.parsers.custom_parser.custom_parser',
+# filepath: /delve/settings.py
+DELVE_EXTRACTION_MAP = {
+    'custom_sourcetype': 'delve.parsers.custom_parser.custom_parser',
 }
 ```
 
 ### Creating Custom Processors
 
-Processors in Flashlight are used to process events based on their sourcetype. You can create custom processors to handle specific processing logic.
+Processors in Delve are used to process events based on their sourcetype. You can create custom processors to handle specific processing logic.
 
 Here is an example of a custom processor:
 ```python
-# filepath: /flashlight/processors/custom_processor.py
+# filepath: /delve/processors/custom_processor.py
 def custom_processor(event):
     # Custom logic to process the event
     if 'error' in event.text:
@@ -188,9 +188,9 @@ def custom_processor(event):
 
 To register the custom processor, add it to `settings.py`:
 ```python
-# filepath: /flashlight/settings.py
-FLASHLIGHT_PROCESSOR_MAP = {
-    'custom_sourcetype': 'flashlight.processors.custom_processor.custom_processor',
+# filepath: /delve/settings.py
+DELVE_PROCESSOR_MAP = {
+    'custom_sourcetype': 'delve.processors.custom_processor.custom_processor',
 }
 ```
 
@@ -213,7 +213,7 @@ class Command(BaseCommand):
 
 ### Creating Custom Dashboards
 
-Flashlight allows you to create custom dashboards to visualize your data. Dashboards can include charts, tables, and other visualizations.
+Delve allows you to create custom dashboards to visualize your data. Dashboards can include charts, tables, and other visualizations.
 
 Here is an example of a custom dashboard view:
 ```python
@@ -269,7 +269,7 @@ Here is an example template for the custom dashboard:
 
 ### Creating Custom Alerts and Notifications
 
-Flashlight provides two methods for implementing alerts: search-based alerts using the `send_email` command and processor-based alerts using the `FLASHLIGHT_PROCESSOR_MAP`.
+Delve provides two methods for implementing alerts: search-based alerts using the `send_email` command and processor-based alerts using the `DELVE_PROCESSOR_MAP`.
 
 #### Search-based Alerts
 
@@ -309,14 +309,14 @@ search --last-15-minutes text__icontains=fail index=logs
       - `Next Run`: When the schedule should start
       - `Cluster`: Leave as default
 
-Note: For Windows installations using the Flashlight service, make sure the service is running to process scheduled tasks (ie. make sure a `qcluster` command is included FLASHLIGHT_SERVICE_COMMANDS). You can check the service status in Windows Services (services.msc).
+Note: For Windows installations using the Delve service, make sure the service is running to process scheduled tasks (ie. make sure a `qcluster` command is included DELVE_SERVICE_COMMANDS). You can check the service status in Windows Services (services.msc).
 
 #### Processor-based Alerts
 
-For immediate alerts when specific events are ingested, use the `FLASHLIGHT_PROCESSOR_MAP`:
+For immediate alerts when specific events are ingested, use the `DELVE_PROCESSOR_MAP`:
 
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 def alert_on_critical_error(event):
     from django.core.mail import send_mail
     
@@ -328,7 +328,7 @@ def alert_on_critical_error(event):
             recipient_list=['team@example.com'],
         )
 
-FLASHLIGHT_PROCESSOR_MAP = {
+DELVE_PROCESSOR_MAP = {
     'error_logs': alert_on_critical_error,
     'security_events': 'myapp.processors.security_alert_processor',
 }
@@ -349,7 +349,7 @@ Here are some best practices for ensuring security and permissions:
 
 ### Writing Reusable Apps
 
-Writing reusable apps is a key aspect of developing with Django and Flashlight. Reusable apps can be shared across multiple projects, making it easier to maintain and extend functionality.
+Writing reusable apps is a key aspect of developing with Django and Delve. Reusable apps can be shared across multiple projects, making it easier to maintain and extend functionality.
 
 Here are some tips for writing reusable apps:
 
@@ -359,7 +359,7 @@ Here are some tips for writing reusable apps:
 - **Write Tests**: Write tests for your app to ensure that it works as expected and to catch any regressions. Use Django's testing framework to write unit tests, integration tests, and functional tests.
 - **Consider Dependencies**: Minimize dependencies on other apps and libraries to make your app more portable. If your app depends on other libraries, clearly document these dependencies and provide installation instructions.
 
-By following these guidelines, you can create powerful and flexible Flashlight apps that integrate seamlessly with the platform and provide valuable functionality to users.
+By following these guidelines, you can create powerful and flexible Delve apps that integrate seamlessly with the platform and provide valuable functionality to users.
 
 ---
 

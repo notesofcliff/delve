@@ -1,9 +1,9 @@
 # Scaling and Load Balancing
 
-Scaling and load balancing are essential for ensuring that your Flashlight instance can handle increased load and provide high availability. This section covers scaling and load balancing for the database, web app, and task scheduler.
+Scaling and load balancing are essential for ensuring that your Delve instance can handle increased load and provide high availability. This section covers scaling and load balancing for the database, web app, and task scheduler.
 
 ## Database Scaling and Load Balancing
-Flashlight supports any database supported by Django ORM, including SQLite, PostgreSQL, MySQL, and others. The scaling and load balancing strategies depend on the database in use.
+Delve supports any database supported by Django ORM, including SQLite, PostgreSQL, MySQL, and others. The scaling and load balancing strategies depend on the database in use.
 
 ### PostgreSQL
 PostgreSQL is a powerful, open-source relational database that supports various scaling and load balancing techniques.
@@ -28,7 +28,7 @@ MySQL is another popular relational database that supports various scaling and l
 - **HAProxy**: A high-availability load balancer that can distribute database connections across multiple servers.
 
 ## Web App Scaling and Load Balancing
-The Flashlight web app is a WSGI application and uses CherryPy as the built-in production web server. For load balancing, you can run multiple instances of the web app and use a load balancer to distribute traffic.
+The Delve web app is a WSGI application and uses CherryPy as the built-in production web server. For load balancing, you can run multiple instances of the web app and use a load balancer to distribute traffic.
 
 ### Scaling
 - **Vertical Scaling**: Increase the resources (CPU, memory) of the web server.
@@ -40,7 +40,7 @@ The Flashlight web app is a WSGI application and uses CherryPy as the built-in p
 - **AWS Elastic Load Balancing (ELB)**: A managed load balancing service provided by AWS.
 
 ## Task Scheduler Scaling
-Flashlight uses Django Q as the task scheduler, which supports various scaling options.
+Delve uses Django Q as the task scheduler, which supports various scaling options.
 
 ### Scaling
 - **Vertical Scaling**: Increase the resources (CPU, memory) of the task scheduler server.
@@ -56,9 +56,9 @@ pip install django-q[redis]
 
 #### Configure Django Q to use Redis in `settings.py`
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 Q_CLUSTER = {
-    'name': 'flashlight',
+    'name': 'delve',
     'workers': 4,  # Number of worker processes
     'recycle': 500,
     'timeout': 60,
@@ -91,9 +91,9 @@ In addition to Redis, Django Q supports other backends such as IronMQ, SQS, and 
 
 #### IronMQ
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 Q_CLUSTER = {
-    'name': 'flashlight',
+    'name': 'delve',
     'workers': 4,
     'recycle': 500,
     'timeout': 60,
@@ -111,9 +111,9 @@ Q_CLUSTER = {
 
 #### SQS (Amazon Simple Queue Service)
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 Q_CLUSTER = {
-    'name': 'flashlight',
+    'name': 'delve',
     'workers': 4,
     'recycle': 500,
     'timeout': 60,
@@ -132,9 +132,9 @@ Q_CLUSTER = {
 
 #### MongoDB
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 Q_CLUSTER = {
-    'name': 'flashlight',
+    'name': 'delve',
     'workers': 4,
     'recycle': 500,
     'timeout': 60,
@@ -154,10 +154,10 @@ Q_CLUSTER = {
 }
 ```
 
-## Ports Used by Flashlight
-Flashlight uses several ports for different services. Here is a list of ports used by Flashlight and other common ports that might be relevant depending on the use case:
+## Ports Used by Delve
+Delve uses several ports for different services. Here is a list of ports used by Delve and other common ports that might be relevant depending on the use case:
 
-- **Flashlight Web UI**: Default port 8000 (configurable in `settings.py` with `FLASHLIGHT_SERVER_PORT`)
+- **Delve Web UI**: Default port 8000 (configurable in `settings.py` with `DELVE_SERVER_PORT`)
 - **Django Q Task Scheduler**: No specific port, runs as a background process
 - **Syslog (UDP)**: Default port 514 (configurable in `syslog-receiver.py` with `--udp-port`)
 - **Syslog (TCP)**: Default port 1514 (configurable in `syslog-receiver.py` with `--tcp-port`)
@@ -168,7 +168,7 @@ Flashlight uses several ports for different services. Here is a list of ports us
 - **Nginx**: Default port 80 (HTTP) and 443 (HTTPS)
 - **HAProxy**: Configurable, commonly uses ports 80 (HTTP) and 443 (HTTPS)
 
-By following these scaling and load balancing strategies, you can ensure that your Flashlight instance can handle increased load and provide high availability.
+By following these scaling and load balancing strategies, you can ensure that your Delve instance can handle increased load and provide high availability.
 
 ---
 

@@ -1,6 +1,6 @@
 # User and Group Management
 
-Creating users and groups, as well as assigning permissions, is an essential part of managing your Flashlight instance. This section covers how to perform these tasks through the Django Admin Interface.
+Creating users and groups, as well as assigning permissions, is an essential part of managing your Delve instance. This section covers how to perform these tasks through the Django Admin Interface.
 
 ## Creating Admin Users from the Command Line
 
@@ -48,7 +48,7 @@ To add a user to a group, follow these steps:
 3. In the "Groups" section, select the group(s) you want to add the user to.
 4. Click "Save" to apply the changes.
 
-By following these steps, you can effectively manage users, groups, and permissions in your Flashlight instance.
+By following these steps, you can effectively manage users, groups, and permissions in your Delve instance.
 
 ---
 

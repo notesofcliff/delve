@@ -1,7 +1,7 @@
-# Flashlight User Manual
+# Delve User Manual
 
 ## Introduction
-Welcome to the Flashlight User Manual. This guide is intended for end-users who will be using Flashlight for their daily tasks.
+Welcome to the Delve User Manual. This guide is intended for end-users who will be using Delve for their daily tasks.
 
 ## Table of Contents
 1. [Getting Started](Getting_Started.md)
@@ -25,7 +25,7 @@ Welcome to the Flashlight User Manual. This guide is intended for end-users who 
    - [Explore UI](Using_the_Web_UI.md#explore-ui)
    - [Admin UI](Using_the_Web_UI.md#admin-ui)
 3. [Ingesting Data](Ingesting_Data.md)
-   - [Flashlight's REST API](Ingesting_Data.md#flashlights-rest-api)
+   - [Delve's REST API](Ingesting_Data.md#delves-rest-api)
    - [File-tail Utility](Ingesting_Data.md#file-tail-utility)
    - [Syslog (UDP/TCP/TCPw/TLS)](Ingesting_Data.md#syslog-udptcptcpwtls)
    - [Upload a File Directly](Ingesting_Data.md#upload-a-file-directly)

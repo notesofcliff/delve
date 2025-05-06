@@ -1,7 +1,7 @@
 # Advanced Logging
 
 ## Introduction
-This section provides detailed information on configuring Python's logging system for use with Django, Django REST framework, Django Q, and Flashlight. Proper logging is crucial for monitoring application behavior, debugging issues, and maintaining security.
+This section provides detailed information on configuring Python's logging system for use with Django, Django REST framework, Django Q, and Delve. Proper logging is crucial for monitoring application behavior, debugging issues, and maintaining security.
 
 ## Table of Contents
 1. [Configuring Python Logging](#configuring-python-logging)

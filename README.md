@@ -1,9 +1,9 @@
-# Flashlight - Enterprise Data Analytics Platform
+# Delve - Enterprise Data Analytics Platform
 
-**IMPORTANT**: Flashlight is currently in Public Alpha to gather user feedback and validate enterprise use cases.
+**IMPORTANT**: Delve is currently in Public Alpha to gather user feedback and validate enterprise use cases.
 
 ## Licensing
-During the Alpha and Beta phases, Flashlight is free to use for evaluation, development, and production workloads. Upon General Availability, the following licensing tiers will be available:
+During the Alpha and Beta phases, Delve is free to use for evaluation, development, and production workloads. Upon General Availability, the following licensing tiers will be available:
 
 - **Individual**: Starting at $20/month
   - Ideal for consultants and independent analysts
@@ -19,7 +19,7 @@ Please use the Issues section of this repository for feature requests, bug repor
 
 ## Overview
 
-Flashlight is an enterprise-grade platform for ingesting, analyzing, and deriving insights from any data source. Key capabilities include:
+Delve is an enterprise-grade platform for ingesting, analyzing, and deriving insights from any data source. Key capabilities include:
 
 - **Data Integration**
   - REST API endpoints
@@ -42,7 +42,7 @@ Flashlight is an enterprise-grade platform for ingesting, analyzing, and derivin
 
 # Installation
 
-1. Download one of the pre-built zip files from the [releases page](https://github.com/DelveCorp/flashlight/releases/).
+1. Download one of the pre-built zip files from the [releases page](https://github.com/DelveCorp/delve/releases/).
 2. Unzip the file in the desired location.
 3. That's it!
 
@@ -54,27 +54,27 @@ The simplest setup involves using the default settings. The default settings are
 
 This use-case can be quite handy if you need to quickly troubleshoot an issue or would like to crawl a REST API for information.
 
-To start using Flashlight with the simplest setup, use the following commands:
+To start using Delve with the simplest setup, use the following commands:
 
 ```bash
 # Copy the example settings and urls files
-cp ./flashlight/example-settings.py ./flashlight/settings.py
-cp ./flashlight/example-urls.py ./flashlight/urls.py
+cp ./delve/example-settings.py ./delve/settings.py
+cp ./delve/example-urls.py ./delve/urls.py
 
 # Create the database
-./fl migrate
+./dl migrate
 
 # Run the tests
-./fl test
+./dl test
 
 # Create an admin user
-./fl createsuperuser
+./dl createsuperuser
 
 # Start serving the web UI
-./fl serve
+./dl serve
 
 # In another window, you can start the task runner
-./fl qcluster
+./dl qcluster
 ```
 
 ## Documentation
@@ -85,22 +85,22 @@ cp ./flashlight/example-urls.py ./flashlight/urls.py
 
 # Configuration
 
-Configuration settings are located in `$FLASHLIGHT_HOME/flashlight/settings.py`.
+Configuration settings are located in `$DELVE_HOME/delve/settings.py`.
 
-On a fresh install, there is no settings.py or urls.py. This is done to prevent overwriting a user's settings.py or urls.py if the install package is used as an update. So, if you are using the default configuration, you must copy the files `./flashlight/example-settings.py` and `./flashlight/example-urls.py` like in the command above. 
+On a fresh install, there is no settings.py or urls.py. This is done to prevent overwriting a user's settings.py or urls.py if the install package is used as an update. So, if you are using the default configuration, you must copy the files `./delve/example-settings.py` and `./delve/example-urls.py` like in the command above. 
 
-All Flashlight-specific settings are prefixed with `FLASHLIGHT`.
+All Delve-specific settings are prefixed with `DELVE`.
 
 The other settings in `settings.py` are specific to Django and the Django Rest Framework and can be found throughout the file.
 
 # Development
 
-In order to run flashlight directly from the repo for development purposes,
+In order to run Delve directly from the repo for development purposes,
 use the following commands to start:
 
 ```bash
 git clone $REPO_DIR    # TODO
-cd flashlight
+cd delve
 
 # Provision backend db, python requirements, etc
 cd src
@@ -123,19 +123,19 @@ python manage.py collectstatic --no-input
 cd ..
 cd ..
 npx webpack --config webpack.config.js
-npx webpack --config fltable-webpack.config.js
-npx webpack --config flchart-webpack.config.js
+npx webpack --config dltable-webpack.config.js
+npx webpack --config dlchart-webpack.config.js
 
 # Copy frontend assets
 mkdir src\home\staticfiles\js\
-cp dist/staticfiles/fl-explore.js src/home/staticfiles/js/fl-explore.js
-cp dist/staticfiles/fl-explore.js.LICENSE.txt src/home/staticfiles/js/fl-explore.js.LICENSE.txt
+cp dist/staticfiles/dl-explore.js src/home/staticfiles/js/dl-explore.js
+cp dist/staticfiles/dl-explore.js.LICENSE.txt src/home/staticfiles/js/dl-explore.js.LICENSE.txt
 
-cp dist/staticfiles/fl-chart.js src/home/staticfiles/js/fl-chart.js
-cp dist/staticfiles/fl-chart.js.LICENSE.txt src/home/staticfiles/js/fl-chart.js.LICENSE.txt
+cp dist/staticfiles/dl-chart.js src/home/staticfiles/js/dl-chart.js
+cp dist/staticfiles/dl-chart.js.LICENSE.txt src/home/staticfiles/js/dl-chart.js.LICENSE.txt
 
-cp dist/staticfiles/fl-table.js src/home/staticfiles/js/fl-table.js
-cp dist/staticfiles/fl-table.js.LICENSE.txt src/home/staticfiles/js/fl-table.js.LICENSE.txt
+cp dist/staticfiles/dl-table.js src/home/staticfiles/js/dl-table.js
+cp dist/staticfiles/dl-table.js.LICENSE.txt src/home/staticfiles/js/dl-table.js.LICENSE.txt
 
 cp dist/main.css src/home/staticfiles/css/main.css
 cp dist/*.woff src/home/staticfiles/css/

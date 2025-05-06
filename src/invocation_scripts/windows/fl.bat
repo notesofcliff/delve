@@ -1,10 +1,10 @@
 @echo off
 setlocal
 
-SET FLASHLIGHT_HOME=%~dp0
+SET DELVE_HOME=%~dp0
 
-cd /d %FLASHLIGHT_HOME%
+cd /d %DELVE_HOME%
 call set-env.bat
 
-%FLASHLIGHT_HOME%\python\%PYTHON_VERSION%\python manage.py %*
+%DELVE_HOME%\python\%PYTHON_VERSION%\python manage.py %*
 endlocal

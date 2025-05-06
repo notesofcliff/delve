@@ -109,7 +109,7 @@ class QuerySerializer(serializers.ModelSerializer):
 
 class BulkEventSerializer(serializers.ListSerializer):
     def create(self, validated_data):
-        log = logging.getLogger("flashlight")
+        log = logging.getLogger("delve")
         result = []
         for attrs in validated_data:
             log.debug(f"Creating events, found {attrs=}")
@@ -151,9 +151,9 @@ class EventSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         instance = Event(**validated_data)
-        if settings.FLASHLIGHT_ENABLE_EXTRACTIONS_ON_CREATE:
+        if settings.DELVE_ENABLE_EXTRACTIONS_ON_CREATE:
             instance.extract_fields()
-        if settings.FLASHLIGHT_ENABLE_PROCESSORSS_ON_CREATE:
+        if settings.DELVE_ENABLE_PROCESSORSS_ON_CREATE:
             instance.process()
         if isinstance(self._kwargs["data"], dict):
             instance.save()
@@ -162,9 +162,9 @@ class EventSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         for key, value in validated_data.items(): 
             setattr(instance, key, value)
-        if settings.FLASHLIGHT_ENABLE_EXTRACTIONS_ON_UPDATE:
+        if settings.DELVE_ENABLE_EXTRACTIONS_ON_UPDATE:
             instance.extract_fields()
-        if settings.FLASHLIGHT_ENABLE_PROCESSORSS_ON_UPDATE:
+        if settings.DELVE_ENABLE_PROCESSORSS_ON_UPDATE:
             instance.process()
         instance.save()
         return instance

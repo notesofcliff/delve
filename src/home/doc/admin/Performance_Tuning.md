@@ -1,6 +1,6 @@
 # Performance Tuning
 
-Optimizing the performance of your Flashlight instance is crucial for ensuring it can handle large volumes of data and provide fast response times. This section covers various performance tuning techniques, including PRAGMA options for SQLite, database indexing, caching strategies, and general Django performance tips.
+Optimizing the performance of your Delve instance is crucial for ensuring it can handle large volumes of data and provide fast response times. This section covers various performance tuning techniques, including PRAGMA options for SQLite, database indexing, caching strategies, and general Django performance tips.
 
 ## PRAGMA Options for SQLite
 SQLite provides several PRAGMA options that can help improve performance. These options can be set in the `settings.py` file under the `DATABASES` configuration.
@@ -9,7 +9,7 @@ SQLite provides several PRAGMA options that can help improve performance. These 
 Here is an example configuration with some common PRAGMA options:
 
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -52,7 +52,7 @@ Caching can help reduce the load on your database and improve response times. Dj
 Here is an example configuration for using in-memory caching:
 
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -104,7 +104,7 @@ Here are some general tips for improving the performance of your Django applicat
 
 - **Set DEBUG to False**: Ensure that `DEBUG` is set to `False` in production to disable debug mode.
 - **Check Your Logging Configuration**: If excessive logging is enabled, it can seriously impact performance. 
-- **Use another Production-Ready Web Server**: Flashlight uses CherryPy by default which is production ready, but you can also use another production-ready web server like Gunicorn or uWSGI to serve your Django application which could improve performance.
+- **Use another Production-Ready Web Server**: Delve uses CherryPy by default which is production ready, but you can also use another production-ready web server like Gunicorn or uWSGI to serve your Django application which could improve performance.
 - **Enable Gzip Compression**: Enable Gzip compression to reduce the size of responses.
 - **Optimize Static Files**: Use Django's `collectstatic` command to collect and optimize static files by serving them with you web server instead of having Django serve them with whitenoise (the default).
 
@@ -112,7 +112,7 @@ Here are some general tips for improving the performance of your Django applicat
 Here is an example configuration for setting `DEBUG` to `False` and enabling Gzip compression:
 
 ```python
-# filepath: /flashlight/settings.py
+# filepath: /delve/settings.py
 DEBUG = False
 
 MIDDLEWARE = [
@@ -121,7 +121,7 @@ MIDDLEWARE = [
 ]
 ```
 
-By following these performance tuning techniques, you can optimize your Flashlight instance to handle large volumes of data and provide fast response times.
+By following these performance tuning techniques, you can optimize your Delve instance to handle large volumes of data and provide fast response times.
 
 ---
 

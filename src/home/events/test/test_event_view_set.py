@@ -110,7 +110,7 @@ class EventViewsetTests(APITestCase):
             'sourcetype': 'json',
             'text': '{"foo": "bar"}',
         }
-        with self.settings(FLASHLIGHT_ENABLE_EXTRACTIONS_ON_CREATE=True):
+        with self.settings(DELVE_ENABLE_EXTRACTIONS_ON_CREATE=True):
             self.client.login(username='testadmin', password='testadmin')
             response = self.client.post(url, data)
             # response_json = response.json()
@@ -133,7 +133,7 @@ class EventViewsetTests(APITestCase):
             'sourcetype': 'json',
             'text': '{"foo": "bar"}',
         }
-        with self.settings(FLASHLIGHT_ENABLE_EXTRACTIONS_ON_CREATE=False):
+        with self.settings(DELVE_ENABLE_EXTRACTIONS_ON_CREATE=False):
             self.client.login(username='testadmin', password='testadmin')
             response = self.client.post(url, data)
             # response_json = response.json()
@@ -164,7 +164,7 @@ class EventViewsetTests(APITestCase):
         self.assertEqual(Event.objects.get().extracted_fields['foo'], 'bar')
         # self.assertEqual(response_json['extracted_fields']['foo'], 'bar')
 
-        with self.settings(FLASHLIGHT_ENABLE_EXTRACTIONS_ON_UPDATE=True):
+        with self.settings(DELVE_ENABLE_EXTRACTIONS_ON_UPDATE=True):
             # With this setting as True, fields should be re-extracted during an update
             response = self.client.patch(
                 reverse('event-detail', args=[Event.objects.get().id]),
@@ -202,7 +202,7 @@ class EventViewsetTests(APITestCase):
         self.assertEqual(Event.objects.get().extracted_fields['foo'], 'bar')
         # self.assertEqual(response_json['extracted_fields']['foo'], 'bar')
 
-        with self.settings(FLASHLIGHT_ENABLE_EXTRACTIONS_ON_UPDATE=False):
+        with self.settings(DELVE_ENABLE_EXTRACTIONS_ON_UPDATE=False):
             # With this setting as False, fields should NOT be re-extracted during an update
             response = self.client.patch(
                 reverse('event-detail', args=[Event.objects.get().id]),

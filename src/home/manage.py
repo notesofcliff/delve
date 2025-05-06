@@ -3,12 +3,12 @@
 import os
 import sys
 
-from flashlight import __version__
+from delve import __version__
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'flashlight.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'delve.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

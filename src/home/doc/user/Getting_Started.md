@@ -1,7 +1,7 @@
 # Getting Started
 
 ## Overview
-Flashlight is a versatile and powerful platform for ingesting, transforming, and searching through structured, unstructured, and semi-structured data. It allows for interactive searches, dashboards, alerts, and more.
+Delve is a versatile and powerful platform for ingesting, transforming, and searching through structured, unstructured, and semi-structured data. It allows for interactive searches, dashboards, alerts, and more.
 
 ## Key Features
 - Ingest data from various sources
@@ -26,12 +26,12 @@ Flashlight is a versatile and powerful platform for ingesting, transforming, and
 - Facilitate real-time alerting and notifications
 
 ## Basic Concepts
-Flashlight is built around several core concepts that enable its powerful functionality:
+Delve is built around several core concepts that enable its powerful functionality:
 
 ### Events
-Events are the basic unit of data in Flashlight. They are stored in a database and consist of indexed fields such as `created`, `index`, `source`, and `host`. Additionally, events contain a JSON field called `extracted_fields` for storing information extracted from the event.
+Events are the basic unit of data in Delve. They are stored in a database and consist of indexed fields such as `created`, `index`, `source`, and `host`. Additionally, events contain a JSON field called `extracted_fields` for storing information extracted from the event.
 
-Events can be created through the Flashlight REST API or via queries using search commands, either interactively or on a scheduled basis.
+Events can be created through the Delve REST API or via queries using search commands, either interactively or on a scheduled basis.
 
 ### Queries
 Queries are used to retrieve, transform, and store data. They can be ephemeral or persisted in the database. A query's `text` field defines the pipeline through which events are processed using search commands.
@@ -47,40 +47,40 @@ search --last-15-minutes index=default
 This query retrieves events from the last 15 minutes, selects specific fields, and expands key-value pairs into individual fields.
 
 ### Ingestion
-Ingestion is the process of importing data into Flashlight. This can be done through various methods:
-- **REST API**: Programmatically send data to Flashlight.
+Ingestion is the process of importing data into Delve. This can be done through various methods:
+- **REST API**: Programmatically send data to Delve.
 - **File-tail Utility**: Monitor and stream log files in real-time.
 - **Syslog**: Collect logs from network devices and servers via UDP, TCP, or TLS.
 - **Searches**: Use interactive or scheduled queries to ingest data.
 
 ### Field Extraction and Preprocessing
-Field extraction identifies and extracts specific fields from data. Flashlight supports:
+Field extraction identifies and extracts specific fields from data. Delve supports:
 - **Index-time Extractions**: Applied during data ingestion and persisted in the database.
 - **Search-time Extractions**: Dynamically extract fields during a search (can be persisted to the database or ephemeral).
 - **Preprocessing**: Take action (email, log, etc.) on certain events during ingestion.
 
 ### Search
-Search functionality allows querying and filtering data, as well as performing transformations, visualizations, and more. Flashlight supports custom search commands written in Python, which can be registered in the configuration.
+Search functionality allows querying and filtering data, as well as performing transformations, visualizations, and more. Delve supports custom search commands written in Python, which can be registered in the configuration.
 
 ### Custom Apps
-Flashlight enables the creation of custom apps to group related data and code. These apps can include custom search commands, dashboards, REST API endpoints, and more.
+Delve enables the creation of custom apps to group related data and code. These apps can include custom search commands, dashboards, REST API endpoints, and more.
 
 ### Alerts
-Flashlight provides search-based and processor-based alerts:
+Delve provides search-based and processor-based alerts:
 - **Search-based Alerts**: Triggered by saved queries and scheduled tasks.
 - **Processor-based Alerts**: Triggered during data ingestion based on event sourcetype.
 
 ## Installation
-For installation instructions, please refer to the [Flashlight Administration Manual](../administration/index.md). The User Manual assumes that Flashlight is already installed and configured.
+For installation instructions, please refer to the [Delve Administration Manual](../administration/index.md). The User Manual assumes that Delve is already installed and configured.
 
 ## Logging In
-Once Flashlight is installed, you can log in to the web interface using the credentials provided by your administrator.
+Once Delve is installed, you can log in to the web interface using the credentials provided by your administrator.
 
 ## User Interface Overview
-The Flashlight web interface consists of several key components:
+The Delve web interface consists of several key components:
 
-- **Browsable REST API**: Provides access to almost all of the data that Flashlight has.
-- **Documentation**: Comprehensive documentation for using and configuring Flashlight.
+- **Browsable REST API**: Provides access to almost all of the data that Delve has.
+- **Documentation**: Comprehensive documentation for using and configuring Delve.
 - **Explore UI**: A dynamic, universal search interface.
 - **Admin UI**: An administrative dashboard for managing users, data sources, and system settings.
 

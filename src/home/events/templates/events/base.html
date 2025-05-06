@@ -9,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="Shine a light on your data." />
         <meta name="author" content="Clifford Bressette" />
-        <title>{% block title %}Flashlight{% endblock %}</title>
+        <title>{% block title %}Delve{% endblock %}</title>
         <link href="{% static 'css/main.css' %}" rel="stylesheet">
         <link href="{% get_static_prefix %}css/themes/{{ request.user.profile.theme }}-bootstrap.min.css" rel="stylesheet" />
         <style>
@@ -26,8 +26,8 @@
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 " id="sidebarToggle" href="#!"><i class="icon bi bi-three-dots-vertical"></i></button>
             <!-- Navbar Brand-->
-            <!-- <a class="navbar-brand ps-3" href="{% url 'explore' %}">Flashlight</a> -->
-            <a class="navbar-brand " href="{% url 'explore' %}">Flashlight</a>
+            <!-- <a class="navbar-brand ps-3" href="{% url 'explore' %}">Delve</a> -->
+            <a class="navbar-brand " href="{% url 'explore' %}">Delve</a>
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
                 <div class="input-group">
@@ -58,7 +58,7 @@
                 <nav class="sb-sidenav accordion" id="sidenavAccordion">
                     <div class="sb-sidenav-menu colapse border">
                         <div class="nav">
-                            {% for topic, links in settings.FLASHLIGHT_NAV_MENU.items %}
+                            {% for topic, links in settings.DELVE_NAV_MENU.items %}
                                 <li class="mb-1">
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-{% if user.profile.mode == 'dark' %}light{% else %}dark{% endif %}" data-bs-toggle="collapse" data-bs-target="#{{ topic }}-collapse" aria-expanded="true">
                                         {{ topic | upper }}
