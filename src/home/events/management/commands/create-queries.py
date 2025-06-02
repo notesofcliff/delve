@@ -1,5 +1,9 @@
-"""A CLI program to create an event in flashlight through the
-flashlight REST API.
+# Copyright (C) 2025 All rights reserved.
+# This file is part of the Delve project, which is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+# See the LICENSE file in the root of this repository for details.
+
+"""A CLI program to create an event in delve through the
+delve REST API.
 """
 import logging
 
@@ -10,7 +14,7 @@ from django.utils.module_loading import import_string
 from events.models import Query
 
 class Command(BaseCommand):
-    help = "Create the Queries needed for the DataPower Flashlight App"
+    help = "Create the Queries needed for the DataPower Delve App"
 
     def add_arguments(self, parser):
         parser.add_argument(

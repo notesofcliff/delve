@@ -1,3 +1,7 @@
+# Copyright (C) 2025 All rights reserved.
+# This file is part of the Delve project, which is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+# See the LICENSE file in the root of this repository for details.
+
 from getpass import getpass
 from pprint import pprint
 import argparse
@@ -19,23 +23,23 @@ from events.models import (
 class Command(BaseCommand):
     help = "".join(
         (
-            "Query the flashlight API",
+            "Query the delve API",
         )
     )
 
     def add_arguments(self, parser):
         parser.add_argument(
             "-u", "--username",
-            help="The username for authentication to flashlight",
+            help="The username for authentication to delve",
         )
         parser.add_argument(
             "-p", "--password",
-            help="The password for authentication to flashlight",
+            help="The password for authentication to delve",
         )
         parser.add_argument(
             "-s", "--server",
             default="http://localhost:8000",
-            help="The flashlight server, including scheme and port (default http://localhost:8000)",
+            help="The delve server, including scheme and port (default http://localhost:8000)",
         )
         parser.add_argument(
             "-i", "--input-file",
@@ -79,7 +83,7 @@ class Command(BaseCommand):
         server = options["server"]
         log.info(f"Found server: {server}")
         if server is None:
-            server = input("Please enter address of flashlight API (ex. https://localhost:8000)")
+            server = input("Please enter address of delve API (ex. https://localhost:8000)")
 
         username = options["username"]
         log.info(f"Found username: {username}")

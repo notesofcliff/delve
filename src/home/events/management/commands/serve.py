@@ -1,3 +1,7 @@
+# Copyright (C) 2025 All rights reserved.
+# This file is part of the Delve project, which is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+# See the LICENSE file in the root of this repository for details.
+
 from multiprocessing import cpu_count
 import logging
 
@@ -6,7 +10,7 @@ from django.conf import settings
 
 import cherrypy
 
-from flashlight.wsgi import application
+from delve.wsgi import application
 
 cherrypy_log = logging.getLogger("")
 cherrypy_log.setLevel(logging.INFO)
@@ -18,7 +22,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "-t",
             "--max-threads",
-            default=settings.FLASHLIGHT_SERVER_MAX_THREADS,
+            default=settings.DELVE_SERVER_MAX_THREADS,
             type=int,
 
         )
@@ -29,12 +33,12 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             '--host',
-            default=settings.FLASHLIGHT_SERVER_HOST,
+            default=settings.DELVE_SERVER_HOST,
             help='The host to serve',
         )
         parser.add_argument(
             '--port',
-            default=settings.FLASHLIGHT_SERVER_PORT,
+            default=settings.DELVE_SERVER_PORT,
             help='The port to serve',
         )
         parser.add_argument(
@@ -44,37 +48,37 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             '--max-body-size',
-            default=settings.FLASHLIGHT_MAX_REQUEST_BODY_SIZE,
+            default=settings.DELVE_MAX_REQUEST_BODY_SIZE,
             help='The maximum allowable request body size',
         )
         parser.add_argument(
             '--max-header-size',
-            default=settings.FLASHLIGHT_MAX_REQUEST_HEADER_SIZE,
+            default=settings.DELVE_MAX_REQUEST_HEADER_SIZE,
             help='The maximum allowable request header size',
         )
         parser.add_argument(
             '--private-key',
-            default=settings.FLASHLIGHT_SSL_PRIVATE_KEY,
+            default=settings.DELVE_SSL_PRIVATE_KEY,
             help='filename for ssl private key',
         )
         parser.add_argument(
             '--public-cert',
-            default=settings.FLASHLIGHT_SSL_CERTIFICATE,
+            default=settings.DELVE_SSL_CERTIFICATE,
             help='filename for ssl public cert',
         )
         parser.add_argument(
             '--socket-timeout',
-            default=settings.FLASHLIGHT_SOCKET_QUEUE_SIZE,
+            default=settings.DELVE_SOCKET_QUEUE_SIZE,
             help='The timeout in seconds for accepted connections',
         )
         parser.add_argument(
             '--socket-queue-size',
-            default=settings.FLASHLIGHT_SOCKET_QUEUE_SIZE,
+            default=settings.DELVE_SOCKET_QUEUE_SIZE,
             help='The maximum number of queued connections'
         )
         parser.add_argument(
             '--accepted-queue-timeout',
-            default=settings.FLASHLIGHT_ACCEPTED_QUEUE_TIMEOUT,
+            default=settings.DELVE_ACCEPTED_QUEUE_TIMEOUT,
             help='The timeout in seconds for attempting to add a request to the queue when the queue is full'
         )
         # parser.add_argument("-i", "--index")
@@ -85,10 +89,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         max_threads = options["max_threads"]
-        auto_reload = options["auto_reload"] or settings.FLASHLIGHT_AUTORELOAD
+        auto_reload = options["auto_reload"] or settings.DELVE_AUTORELOAD
         host = options["host"]
         port = options["port"]
-        log_stdout = options["log_stdout"] or settings.FLASHLIGHT_SERVER_LOG_STDOUT
+        log_stdout = options["log_stdout"] or settings.DELVE_SERVER_LOG_STDOUT
         max_body_size = options["max_body_size"]
         max_header_size = options["max_header_size"]
         private_key = options["private_key"]

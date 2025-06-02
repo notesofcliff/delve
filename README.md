@@ -1,19 +1,18 @@
 # Delve - Enterprise Data Analytics Platform
 
-**IMPORTANT**: Delve is currently in Public Alpha to gather user feedback and validate enterprise use cases.
+**NOTICE**: Delve is in Alpha pre-release. Please try it out and provide feedback of any issues or missing features you encounter, but production use is discouraged at the moment.
 
-## Licensing
-During the Alpha and Beta phases, Delve is free to use for evaluation, development, and production workloads. Upon General Availability, the following licensing tiers will be available:
+## License
 
-- **Individual**: Starting at $20/month
-  - Ideal for consultants and independent analysts
-- **Team**: Starting at $50/month
-  - Perfect for small to medium teams
-- **Enterprise**: Custom pricing
-  - Tailored for large-scale deployments
-  - High availability configurations
-  - Priority support
-  - Custom integrations
+Delve is licensed under the GNU Affero General Public License v3 (AGPL-3.0).
+
+This means:
+- You are free to use, modify, and distribute this software, provided that any network-accessible modifications are also made available under the same license.
+- The full license text is available in the [LICENSE](./LICENSE) file and at [https://www.gnu.org/licenses/agpl-3.0.html](https://www.gnu.org/licenses/agpl-3.0.html).
+
+If you deploy a modified version of Delve on a server and allow users to interact with it over a network, you must also make the source code of your modified version available to those users.
+
+For more information, see the [GNU AGPL FAQ](https://www.gnu.org/licenses/agpl-3.0-faq.html).
 
 Please use the Issues section of this repository for feature requests, bug reports, and general feedback.
 
@@ -96,7 +95,7 @@ The other settings in `settings.py` are specific to Django and the Django Rest F
 # Development
 
 In order to run Delve directly from the repo for development purposes,
-use the following commands to start:
+use the following commands to perform standard tasks:
 
 ```bash
 git clone $REPO_DIR    # TODO
@@ -148,4 +147,3 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py serve
 ```
-
