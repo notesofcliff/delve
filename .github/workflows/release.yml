@@ -53,6 +53,7 @@ jobs:
         with:
           tag_name: "v${{ needs.build-test-release-linux.outputs.version }}"
           files: dist/DELVE-*.zip
+          update_existing: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -120,6 +121,7 @@ jobs:
         with:
           tag_name: "v${{ steps.current_version.outputs.version }}"
           files: dist/DELVE-*.zip
+          update_existing: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
