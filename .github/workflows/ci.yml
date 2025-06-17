@@ -26,10 +26,15 @@ jobs:
           pip install -r build-requirements.txt
       - name: Run build script
         run: python build.py
+      - name: Prepare settings and urls
+        run: |
+          copy build\assemble\delve\example-settings.py build\assemble\delve\settings.py
+          copy build\assemble\delve\example-urls.py build\assemble\delve\urls.py
       - name: Run test suite
+        shell: cmd
         run: |
           cd build\assemble
-          fl.bat test
+          ./fl.bat test
 
   build-and-test-linux:
     name: Build and Test on Ubuntu
@@ -49,6 +54,10 @@ jobs:
           pip install -r build-requirements.txt
       - name: Run build script
         run: python build.py
+      - name: Prepare settings and urls
+        run: |
+          cp build/assemble/delve/example-settings.py build/assemble/delve/settings.py
+          cp build/assemble/delve/example-urls.py build/assemble/delve/urls.py
       - name: Run test suite
         run: |
           cd build/assemble
