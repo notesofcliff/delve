@@ -61,19 +61,19 @@ cp ./delve/example-settings.py ./delve/settings.py
 cp ./delve/example-urls.py ./delve/urls.py
 
 # Create the database
-./dl migrate
+./fl migrate
 
 # Run the tests
-./dl test
+./fl test
 
 # Create an admin user
-./dl createsuperuser
+./fl createsuperuser
 
 # Start serving the web UI
-./dl serve
+./fl serve
 
 # In another window, you can start the task runner
-./dl qcluster
+./fl qcluster
 ```
 
 ## Documentation
