@@ -10,15 +10,12 @@ on:
       - main
 
 jobs:
-  build-test-release-windows:
-    name: Build, Test, and Release on Windows
+  build-test-windows:
+    name: Build and Test on Windows
     runs-on: windows-latest
-    needs: build-test-release-linux
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -33,32 +30,19 @@ jobs:
         run: |
           copy build\assemble\delve\example-settings.py build\assemble\delve\settings.py
           copy build\assemble\delve\example-urls.py build\assemble\delve\urls.py
-      - name: Get current version
-        id: current_version
-        shell: pwsh
-        run: |
-          $content = Get-Content src/home/delve/__init__.py -Raw
-          if ($content -match '__version__\s*=\s*"([^"]+)"') {
-            $version = $matches[1]
-            echo "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          }
       - name: Run test suite
         shell: cmd
         run: |
           cd build\assemble
           ./fl.bat test
-      - name: Upload Release Assets
-        if: needs.build-test-release-linux.outputs.version_changed == 'true'
-        uses: softprops/action-gh-release@v2
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: "v${{ needs.build-test-release-linux.outputs.version }}"
-          files: dist/DELVE-*.zip
-          update_existing: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: windows-dist
+          path: dist/DELVE-*.zip
 
-  build-test-release-linux:
-    name: Build, Test, and Release on Ubuntu
+  build-test-linux:
+    name: Build and Test on Ubuntu
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.current_version.outputs.version }}
@@ -107,12 +91,28 @@ jobs:
         run: |
           cd build/assemble
           ./fl test
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-dist
+          path: dist/DELVE-*.zip
+
+  release:
+    name: Create Release and Upload All Artifacts
+    needs: [build-test-linux, build-test-windows]
+    if: needs.build-test-linux.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up GitHub CLI
         run: sudo apt-get install -y gh
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
       - name: Check if release exists
         id: check_release
         run: |
-          if gh release view "v${{ steps.current_version.outputs.version }}" > /dev/null 2>&1; then
+          if gh release view "v${{ needs.build-test-linux.outputs.version }}" > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
@@ -122,14 +122,14 @@ jobs:
       - name: Create Release
         if: steps.check_release.outputs.exists == 'false'
         run: |
-          gh release create "v${{ steps.current_version.outputs.version }}" --title "Delve ${{ steps.current_version.outputs.version }}" --notes ""
+          gh release create "v${{ needs.build-test-linux.outputs.version }}" --title "Delve ${{ needs.build-test-linux.outputs.version }}" --notes ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ steps.current_version.outputs.version }}"
-          files: dist/DELVE*.zip
+          tag_name: "v${{ needs.build-test-linux.outputs.version }}"
+          files: all-artifacts/**/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
