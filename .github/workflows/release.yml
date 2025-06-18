@@ -107,21 +107,29 @@ jobs:
         run: |
           cd build/assemble
           ./fl test
+      - name: Set up GitHub CLI
+        run: sudo apt-get install -y gh
+      - name: Check if release exists
+        id: check_release
+        run: |
+          if gh release view "v${{ steps.current_version.outputs.version }}" > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
-        if: steps.version_changed.outputs.changed == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: "v${{ steps.current_version.outputs.version }}"
-          name: "Delve ${{ steps.current_version.outputs.version }}"
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          gh release create "v${{ steps.current_version.outputs.version }}" --title "Delve ${{ steps.current_version.outputs.version }}" --notes ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Release Assets
-        if: steps.version_changed.outputs.changed == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.current_version.outputs.version }}"
-          files: dist/DELVE-*.zip
-          update_existing: true
+          files: dist/DELVE*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
