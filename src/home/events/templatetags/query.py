@@ -13,7 +13,7 @@ from events.util import resolve
 register = template.Library()
 
 @register.inclusion_tag('events/query-table.html', takes_context=True)
-def query_table(context, query_string, form=None, kwargs=None):
+def query_table(context, query_string, form=None, **kwargs):
     log = logging.getLogger(__name__)
     log.debug(f"Received {query_string=}")
     ctx = {}
@@ -40,7 +40,7 @@ def query_table(context, query_string, form=None, kwargs=None):
     }
 
 @register.inclusion_tag('events/query-chart.html', takes_context=True)
-def query_chart(context, query_string, form=None, kwargs=None):
+def query_chart(context, query_string, form=None, **kwargs):
     log = logging.getLogger(__name__)
     log.debug(f"Received {query_string=}")
     if form and form.is_valid():
