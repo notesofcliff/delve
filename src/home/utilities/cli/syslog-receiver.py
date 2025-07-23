@@ -77,6 +77,10 @@ def parse_argv(argv):
         help="The scheme, host and port of the server (ie. http://localhost:8000)"
     )
     parser.add_argument(
+        "--server-endpoint",
+        default=os.getenv("SYSLOG_RECEIVER_SERVER_ENDPOINT", "/api/events/"),
+    )
+    parser.add_argument(
         "--no-verify",
         action="store_true",
         default=os.getenv("SYSLOG_RECEIVER_NO_VERIFY", "false").lower() in ("1", "true", "yes"),
@@ -213,6 +217,9 @@ def main(argv=None):
     server = args.server
     log.debug(f"Found {server=}")
 
+    server_endpoint = args.server_endpoint
+    log.debug(f"Found {server_endpoint=}")
+
     no_verify = args.no_verify
     log.debug(f"Found {no_verify=}")
 
@@ -290,7 +297,7 @@ def main(argv=None):
     starttime = time()
     log.info(f"start: {starttime}")
 
-    url = f"{server}/api/events/"
+    url = f"{server}{server_endpoint}"
     log.debug(f"Found url: {url}")
     basic_auth = requests.auth.HTTPBasicAuth(username, password)
 
