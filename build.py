@@ -170,6 +170,7 @@ logging.config.dictConfig(
     }
 )
 log = logging.getLogger(__name__)
+log.debug(f"Found TARGET_PYTHON_VERSION: {TARGET_PYTHON_VERSION}")
 
 def fail_for_unsupported_platform(platform):
     log.critical(f"Unable to continue due to unsupported platform: {platform}")
@@ -284,18 +285,17 @@ elif platform == "darwin":
 log.debug(f"Found bitness-correct release_names: {release_names}")
 
 # There should be two: one for the hash and one for the actual release
-if len(release_names) > 2:
+if len(release_names) > 1:
     fail_for_ambiguity(release_names)
 
 # Third, find the release file and the hash file
-for name in release_names:
-    if name.endswith('sha256'):
-        hash_file = name
-    else:
-        release_file = name
-
-log.debug(f'Found hash_file: {hash_file}')
+hash_file = "SHA256SUMS"
+release_file = release_names[0]
 log.debug(f'Found release_file: {release_file}')
+
+# log.debug(f'Found hash_file: {hash_file}')
+log.debug(f'Found release_file: {release_file}')
+log.debug(f'Found hash_file: {hash_file}')
 
 # Pull out the url for the assets we identified
 for asset in assets:
@@ -320,7 +320,12 @@ hash_file_response = requests.get(
 hash_file_path = BUILD_DIRECTORY.joinpath(hash_file)
 with hash_file_path.open('wb') as fp:
     fp.write(hash_file_response.content)
-hash_hex = hash_file_path.read_text().strip()
+for line in hash_file_path.read_text().splitlines():
+    if release_file in line:
+        # We found the line with the release file name
+        hash_hex = line.split()[0]
+        log.debug(f"Found hash_hex: {hash_hex}")
+        break
 log.debug(hash_hex)
 
 # Fifth Download Release file
