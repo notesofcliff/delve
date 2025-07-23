@@ -92,9 +92,8 @@ def edit_global_context(request):
 def explore(request):
     log = logging.getLogger(__name__)
     if request.method == "GET":
-        if request.GET:
-            log.debug(f"Found request.GET: {request.GET}")
-        query_form = QueryForm()
+        log.debug(f"Found request.GET: {request.GET}")
+        query_form = QueryForm(request.GET or None)
         current_context_form = LocalContextForm()
         file_upload_form = FileUploadForm()
     else:
