@@ -158,7 +158,7 @@ def orm_search(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]
     if args.limit is None:
         pass
     else:
-        ret = ret[args.offset:args.limit]
+        ret = ret[args.offset:args.offset + args.limit]
     return ret
 
 parser = argparse.ArgumentParser(
