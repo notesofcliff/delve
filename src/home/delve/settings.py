@@ -416,6 +416,7 @@ DELVE_SEARCH_COMMANDS = {
     'qs_group_by': 'events.search_commands.qs.group_by',
     'qs_having': 'events.search_commands.qs.having',
     'qs_limit': 'events.search_commands.qs.limit',
+    'qs_sql': 'events.search_commands.qs.sql',
 }
 
 

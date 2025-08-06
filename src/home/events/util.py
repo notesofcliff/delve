@@ -16,6 +16,9 @@ from django.db.models.query import (
     QuerySet,
     ValuesIterable,
 )
+from django.conf import settings
+from django.utils import timezone
+import pytz
 
 from django.db.models import Model
 from django.forms.models import model_to_dict
@@ -64,19 +67,6 @@ def cast(value):
     except ValueError:
         return value
 
-    # if value.isdigit():
-    #     return int(value)
-    # elif value.replace(".", "", 1).isdigit():
-    #     return float(value)
-    # elif value.lower() in ["true", "false"]:
-    #     return True if value.lower()=="true" else False
-    # elif value.startswith(("[", "{")):
-    #     try:
-    #         return ast.literal_eval(value)
-    #     except:
-    #         return value
-    # return value
-
 def is_results(data):
     if isinstance(data, GeneratorType) or inspect.isgeneratorfunction(data) or isinstance(data, list) or isinstance(data, QuerySet):
         return True
@@ -101,6 +91,15 @@ def custom_model_to_dict(instance):
     for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
         data[f.name] = f.value_from_object(instance)
     return data
+
+user_tz = pytz.timezone(settings.TIME_ZONE)
+def localize_datetimes(obj):
+    for key, value in obj.items():
+        if isinstance(value, timezone.datetime):
+            if timezone.is_naive(value):
+                value = timezone.make_aware(value, timezone.utc)
+            obj[key] = value.astimezone(user_tz)
+    return obj
 
 def resolve(events):
     from events.models import BaseEvent
@@ -168,6 +167,7 @@ def resolve(events):
                 # Add None to fill any missing values
                 # log.debug(f"Found item: {item}")
                 if isinstance(item, dict):
+                    localize_datetimes(item)
                     # log.debug(f"Adding missing keys")
                     try:
                         item.update({key: item.get(key, None) for key in keys})
