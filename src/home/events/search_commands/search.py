@@ -110,7 +110,7 @@ def orm_search(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]
         )
     elif args.last_month:
         ret = ret.filter(
-            created__gte=timezone.now() - timedelta(months=1)
+            created__gte=timezone.now() - timedelta(weeks=4)
         )
     if args.older_than:
         older_than = date_parser.parse(args.older_than)
