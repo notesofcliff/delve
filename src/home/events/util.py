@@ -11,6 +11,7 @@ from itertools import chain
 from types import GeneratorType
 from collections.abc import Mapping
 import django.core.exceptions
+from django.utils.timezone import get_current_timezone
 
 from django.db.models.query import (
     QuerySet,
@@ -97,7 +98,7 @@ def localize_datetimes(obj):
     for key, value in obj.items():
         if isinstance(value, timezone.datetime):
             if timezone.is_naive(value):
-                value = timezone.make_aware(value, timezone.utc)
+                value = timezone.make_aware(value, get_current_timezone())
             obj[key] = value.astimezone(user_tz)
     return obj
 
