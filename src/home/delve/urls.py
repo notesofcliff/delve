@@ -22,7 +22,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,8 +35,12 @@ urlpatterns = [
 )
 
 if settings.DEBUG:
-    urlpatterns += debug_toolbar_urls()
-# + static(
-#     settings.MEDIA_URL,
-#     document_root=settings.MEDIA_ROOT,
-# )
+    try:
+        from debug_toolbar.toolbar import debug_toolbar_urls
+        urlpatterns += debug_toolbar_urls()
+    except:
+        print(
+            "Debug is enabled but Debug toolbar is not installed or not "
+            "configured properly. Install it with 'pip install "
+            "django-debug-toolbar' and add 'debug_toolbar' to INSTALLED_APPS."
+        )
