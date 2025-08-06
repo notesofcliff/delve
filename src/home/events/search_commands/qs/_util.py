@@ -5,7 +5,7 @@
 import logging
 import ast
 
-from django.db.models import F, Value, Q
+from django.db.models import F, Value, Q, Func
 from django.db.models.fields.json import KT
 from django.db.models import CharField, TextField, IntegerField, FloatField, BooleanField, DateField, DateTimeField, TimeField, DecimalField
 from django.db.models import Sum, Avg, Count, Max, Min, StdDev, Variance
@@ -91,6 +91,7 @@ SUPPORTED_FUNCTIONS = {
     'Value': Value,
     'F': F,
     'Q': Q,
+    'Func': Func,
     'Now': Now,
     'TruncDate': TruncDate,
     'TruncMonth': TruncMonth,
