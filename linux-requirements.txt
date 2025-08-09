@@ -18,9 +18,7 @@ xmltodict
 python-json-logger
 django_extensions
 records
-mariadb
-mysqlclient
 psutil
 pygments
 uuid_utils
-psycopg2
+psycopg2-binary

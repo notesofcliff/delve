@@ -18,8 +18,6 @@ xmltodict
 python-json-logger
 django_extensions
 records
-mariadb
-mysqlclient
 pywin32
 psutil
 pygments
