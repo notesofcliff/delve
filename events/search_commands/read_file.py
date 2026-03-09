@@ -3,6 +3,11 @@
 # See the LICENSE file in the root of this repository for details.
 
 import argparse
+import json
+import csv
+from typing import Any
+
+import xmltodict
 
 from events.models import (
     FileUpload,
@@ -23,17 +28,50 @@ parser.add_argument(
     action="store_true",
     help="Allow automatic escaping file contents. ",
 )
+csv_choices = [f"csv:{dialect}" for dialect in csv.list_dialects()]
+csv_choices.extend(["csv", "json", "jsonl", "xml"])
+csv_choices = tuple(csv_choices)
 parser.add_argument(
     "--parse",
-    choices=(
-        "csv",
-        "json",
-        "jsonl",
-        "xml",
-    ),
+    choices=csv_choices,
     help="If specified, must be a supported option. File contents "
          "will be parsed according to the format specified.",
 )
+
+
+def _normalize_csv_cell(value: Any) -> Any:
+    """Normalize CSV cell values by trimming whitespace and surrounding quotes.
+
+    Args:
+        value: The parsed CSV cell value.
+
+    Returns:
+        The normalized cell value. Non-string values are returned unchanged.
+    """
+    if not isinstance(value, str):
+        return value
+
+    stripped = value.strip()
+    stripped = stripped.strip('"').strip("'")
+    return stripped
+
+
+def _normalize_csv_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Normalize a CSV row by cleaning column names and cell values.
+
+    Args:
+        row: The row dictionary produced by ``csv.DictReader``.
+
+    Returns:
+        A normalized row with stripped keys and cleaned values.
+    """
+    normalized_row: dict[str, Any] = {}
+    for key, value in row.items():
+        normalized_key = _normalize_csv_cell(key)
+        if normalized_key is None:
+            continue
+        normalized_row[normalized_key] = _normalize_csv_cell(value)
+    return normalized_row
 
 @search_command(parser)
 def read_file(request, events, argv, environment):
@@ -46,20 +84,24 @@ def read_file(request, events, argv, environment):
         user=request.user,
         title=filename,
     )
-    # file_type = magic.from_buffer(file_object.open("rb").read(2048))
+
     if args.parse:
         _format = args.parse
-        if _format == "csv":
-            import csv
-            reader = csv.DictReader(file_object.content.open("r"))
-            for row in reader:
-                yield {
-                    "title": file_object.title,
-                    "url": file_object.content.url,
-                    **row
+        if _format.startswith("csv"):
+            try:
+                dialect = _format.split(":", 1)[1]
+            except IndexError:
+                dialect = "excel"
+            with file_object.content.open("r") as f:
+                reader = csv.DictReader(f, dialect=dialect, skipinitialspace=True)
+                for row in reader:
+                    normalized_row = _normalize_csv_row(row)
+                    yield {
+                        "title": file_object.title,
+                        "url": file_object.content.url,
+                    **normalized_row
                 }
         elif _format == "json":
-            import json
             content = json.load(file_object.content)
             if isinstance(content, (str, int, dict)):
                 yield {
@@ -101,10 +143,6 @@ def read_file(request, events, argv, environment):
                             'content': item,
                         }
         elif _format == "xml":
-            # from xml.etree.ElementTree import ElementTree as etree
-            # tree = etree.parse
-            import xmltodict
-            import json
             dict_repr = xmltodict.parse(file_object.content, process_namespaces=False)
             yield json.loads(json.dumps(dict_repr))
         else:
