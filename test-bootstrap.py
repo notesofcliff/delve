@@ -86,6 +86,24 @@ class TestBootstrap(unittest.TestCase):
         )
 
 
+    def test_select_python_release_asset_excludes_freethreaded(self):
+        release_names = [
+            "cpython-3.13.13+20250610-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+            "cpython-3.13.14+20250623-x86_64-pc-windows-msvc-freethreaded-install_only_stripped.tar.gz",
+            "cpython-3.13.12+20250520-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        ]
+
+        selected_asset = bootstrap.select_python_release_asset(
+            release_names,
+            "windows-msvc",
+        )
+
+        self.assertEqual(
+            selected_asset,
+            "cpython-3.13.13+20250610-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        )
+
+
     def test_extract_python_dry_run(self):
         downloads_dir = self.tmp_path / "build" / "downloads"
         assemble_dir = self.tmp_path / "build" / "assemble"

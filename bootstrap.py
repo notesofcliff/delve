@@ -95,6 +95,7 @@ def select_python_release_asset(
         if 'install_only_stripped' in name
         and platform_tag in name
         and architecture in name
+        and 'freethreaded' not in name
     ]
     stable_assets = [
         (name, version)
