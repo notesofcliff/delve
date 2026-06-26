@@ -10,7 +10,7 @@ RUN npm install
 RUN npx webpack --config webpack.config.js
 
 # Stage 2: Python builder
-FROM python:3.13.7-slim-bookworm AS builder
+FROM python:slim AS builder
 WORKDIR /app
 COPY requirements.txt .
 RUN python -m pip install --upgrade pip && pip install -r requirements.txt
@@ -19,7 +19,7 @@ COPY --from=frontend /app/staticfiles ./staticfiles
 RUN python manage.py collectstatic --no-input
 
 # Stage 3: Runtime
-FROM python:3.13.7-slim-bookworm
+FROM python:slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN useradd -m appuser
 WORKDIR /app
