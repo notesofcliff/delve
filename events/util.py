@@ -19,7 +19,7 @@ from django.db.models.query import (
 )
 from django.conf import settings
 from django.utils import timezone
-import pytz
+from zoneinfo import ZoneInfo
 
 from django.db.models import Model
 from django.forms.models import model_to_dict
@@ -93,7 +93,7 @@ def custom_model_to_dict(instance):
         data[f.name] = f.value_from_object(instance)
     return data
 
-user_tz = pytz.timezone(settings.TIME_ZONE)
+user_tz = ZoneInfo(settings.TIME_ZONE)
 def localize_datetimes(obj):
     for key, value in obj.items():
         if isinstance(value, timezone.datetime):
