@@ -67,6 +67,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 # DELVE_OIDC_ADMIN_GROUP: Group mapped to Django superuser. Default: 'armory-admins'.
 # DELVE_OIDC_STAFF_GROUP: Group mapped to Django staff. Default: 'armory-operators'.
 # DELVE_OIDC_VIEWER_GROUP: Group mapped to read-only access. Default: 'armory-viewers'.
+# DELVE_INGEST_ENABLED: Enable bearer-JWT machine ingestion auth (truthy: 1/true/yes). Default: '' (off).
+# DELVE_INGEST_ISSUER_URL: Issuer URL of the delve-ingest tokens (Keycloak realm base). Default: ''.
+# DELVE_INGEST_JWKS_URL: JWKS endpoint for verifying ingest tokens. Default: '<issuer>/protocol/openid-connect/certs'.
+# DELVE_INGEST_AUDIENCE: Required azp/aud of accepted ingest tokens. Default: 'delve-ingest'.
+# DELVE_INGEST_SIGN_ALGO: Required ingest-token signing algorithm (rejects alg=none/mismatch). Default: 'RS256'.
+# DELVE_INGEST_CA_FILE: Path to a CA bundle for verifying the issuer's TLS on the JWKS fetch. Default: '' (system trust).
+# DELVE_INGEST_USERNAME: Local user that ingested events are attributed to. Default: 'delve-ingest'.
+# DELVE_INGEST_LEEWAY: Allowed clock-skew seconds when checking token exp. Default: 30.
 
 # Note: Please keep this list up to date with any new environment variables added to the settings.
 
@@ -354,6 +362,35 @@ if _oidc_on:
     LOGIN_REDIRECT_URL = '/'
     LOGOUT_REDIRECT_URL = '/'
     OIDC_STORE_ID_TOKEN = True
+
+# Machine ingestion (bearer-JWT) — optional, env-gated, INDEPENDENT of human SSO.
+#
+# The audit feed shippers authenticate to ingress/ with an access token from the
+# Keycloak `delve-ingest` client-credentials client; events.authentication.
+# IngestJWTAuthentication validates it. Off by default (air-gapped default); when
+# on it never touches the human OIDC/browser path — same issuer, different client,
+# separate code path. Verification reuses mozilla-django-oidc against the realm
+# JWKS (see events/authentication.py).
+_ingest_on = os.getenv('DELVE_INGEST_ENABLED', '').strip().lower() in ('1', 'true', 'yes')
+DELVE_INGEST_ENABLED = _ingest_on
+
+if _ingest_on:
+    # mozilla-django-oidc must be importable for the verifier; it is always in
+    # requirements, but ensure the app is registered when only ingestion is on.
+    if 'mozilla_django_oidc' not in INSTALLED_APPS:
+        INSTALLED_APPS.append('mozilla_django_oidc')
+
+    DELVE_INGEST_ISSUER_URL = os.getenv('DELVE_INGEST_ISSUER_URL', '').rstrip('/')
+    DELVE_INGEST_AUDIENCE = os.getenv('DELVE_INGEST_AUDIENCE', 'delve-ingest')
+    DELVE_INGEST_SIGN_ALGO = os.getenv('DELVE_INGEST_SIGN_ALGO', 'RS256')
+    DELVE_INGEST_JWKS_URL = os.getenv(
+        'DELVE_INGEST_JWKS_URL',
+        f'{DELVE_INGEST_ISSUER_URL}/protocol/openid-connect/certs',
+    )
+    # Empty => verify the JWKS fetch against system trust.
+    DELVE_INGEST_CA_FILE = os.getenv('DELVE_INGEST_CA_FILE', '').strip()
+    DELVE_INGEST_USERNAME = os.getenv('DELVE_INGEST_USERNAME', 'delve-ingest')
+    DELVE_INGEST_LEEWAY = int(os.getenv('DELVE_INGEST_LEEWAY', 30))
 # This PAGE_SIZE really only helps the DRF browsable API.
 # Submitting a Query does not respect this and will return
 # the results as per your query.
@@ -363,6 +400,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # Default pagination class
     'PAGE_SIZE': 100,  # Default page size
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'events.authentication.IngestJWTAuthentication',  # Bearer-JWT machine ingestion (env-gated; no-op when DELVE_INGEST_ENABLED is off)
         'rest_framework.authentication.BasicAuthentication',  # Basic authentication
         'rest_framework.authentication.SessionAuthentication',  # Session authentication
     ],

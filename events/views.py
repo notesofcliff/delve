@@ -8,8 +8,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 import markdown
 
@@ -108,30 +110,35 @@ def explore(request):
         }
     )
 
-@login_required()
-@csrf_exempt
+# DRF view so the request runs the REST_FRAMEWORK auth + permission pipeline:
+# interactive callers via Basic/Session as before, and machine feed shippers via
+# the bearer-JWT IngestJWTAuthentication (events.authentication). A forged /
+# expired / wrong-audience / alg=none token is therefore rejected here at
+# ingress/ with 401/403 instead of silently creating an event. DRF only enforces
+# CSRF for SessionAuthentication, so token-authenticated POSTs need no exemption.
+@api_view(["POST"])
 def ingress(request, index, source, sourcetype):
     log = logging.getLogger(__name__)
-    if request.method != "POST":
-        return http_405()
+    # Read the raw body before DRF touches the stream; the event text is the
+    # verbatim payload (e.g. a JSON audit line from a feed shipper).
+    text = request.body.decode()
     host = get_client_ip(request=request)
     event = Event.objects.create(
         index=index,
         host=host,
         source=source,
         sourcetype=sourcetype,
-        text=request.body.decode(),
+        text=text,
+        # Event.user is a required FK; attribute the event to the authenticated
+        # caller (the delve-ingest service user for machine ingestion).
+        user=request.user,
     )
     if settings.DELVE_ENABLE_EXTRACTIONS_ON_CREATE:
         event.extract_fields()
     if settings.DELVE_ENABLE_PROCESSORSS_ON_CREATE:
         event.process()
     event.save()
-    return HttpResponse(
-        "<h1>Created!</h1>",
-        content_type="text/html",
-        status=201,
-    )
+    return Response(status=201)
 
 def index(request):
     if request.method == "GET":

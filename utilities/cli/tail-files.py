@@ -5,6 +5,7 @@
 """A CLI program to tail a file and create events in delve
 through the delve REST API.
 """
+import os
 import sys
 import glob
 import json
@@ -15,6 +16,7 @@ import getpass
 import logging
 import logging.config
 import argparse
+import threading
 from pathlib import Path
 import multiprocessing
 from time import (
@@ -27,6 +29,55 @@ import requests
 HERE = Path(__file__).parent.parent.absolute()
 DATA_DIRECTORY = HERE / "_data"
 LOG_DIRECTORY = HERE / "log"
+
+
+class ClientCredentialsAuth(requests.auth.AuthBase):
+    """requests auth that attaches a Keycloak client-credentials bearer token.
+
+    Used by the Delve audit feed shippers: instead of a static Basic credential
+    they present a short-lived access token from the ``delve-ingest`` client.
+    The token is fetched lazily, cached, and refreshed just before expiry, so it
+    keeps working across the multiprocessing sender's lifetime without a
+    long-lived secret on the wire. Refresh is guarded by a lock because the
+    auth callable runs per-request.
+    """
+
+    def __init__(self, token_url, client_id, client_secret, verify=True, leeway=30):
+        self._token_url = token_url
+        self._client_id = client_id
+        self._client_secret = client_secret
+        self._verify = verify
+        self._leeway = leeway
+        self._lock = threading.Lock()
+        self._token = None
+        self._expiry = 0.0
+
+    def _fetch(self):
+        response = requests.post(
+            self._token_url,
+            data={
+                "grant_type": "client_credentials",
+                "client_id": self._client_id,
+                "client_secret": self._client_secret,
+            },
+            verify=self._verify,
+            timeout=30,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        self._token = payload["access_token"]
+        # Refresh a little before the issuer-stated lifetime elapses.
+        self._expiry = time() + float(payload.get("expires_in", 60))
+
+    def _valid_token(self):
+        with self._lock:
+            if not self._token or time() >= (self._expiry - self._leeway):
+                self._fetch()
+            return self._token
+
+    def __call__(self, request):
+        request.headers["Authorization"] = f"Bearer {self._valid_token()}"
+        return request
 
 def parse_argv(argv):
     parser = argparse.ArgumentParser(
@@ -78,6 +129,39 @@ def parse_argv(argv):
         "--password",
         help="The password to use for authentication (if omitted, you will "
             "be prompted)",
+    )
+    parser.add_argument(
+        "--auth",
+        choices=("basic", "bearer"),
+        default="basic",
+        help="Authentication mode. 'basic' uses --username/--password; 'bearer' "
+            "fetches a Keycloak client-credentials token (--token-url, "
+            "--client-id, --client-secret[-file]).",
+    )
+    parser.add_argument(
+        "--token-url",
+        help="OIDC token endpoint for --auth bearer "
+            "(e.g. https://host/realms/armory/protocol/openid-connect/token).",
+    )
+    parser.add_argument(
+        "--client-id",
+        help="OIDC client id for --auth bearer.",
+    )
+    parser.add_argument(
+        "--client-secret",
+        help="OIDC client secret for --auth bearer. Prefer --client-secret-file "
+            "or the DELVE_INGEST_CLIENT_SECRET env var to keep it off argv.",
+    )
+    parser.add_argument(
+        "--client-secret-file",
+        type=Path,
+        help="Path to a file containing the OIDC client secret for --auth bearer.",
+    )
+    parser.add_argument(
+        "--ca-file",
+        type=Path,
+        help="CA bundle used to verify TLS for both the Delve server and the "
+            "token endpoint. Overrides system trust; ignored with --no-verify.",
     )
     parser.add_argument(
         "-v",
@@ -211,23 +295,60 @@ def main(argv=None):
     no_verify = args.no_verify
     log.debug(f"Found {no_verify=}")
 
-    username = args.username
-    log.debug(f"Found username: {username}")
-    password = args.password   # DO NOT LOG PASSWORD
-    if not username:
-        if not sys.stdin.isatty():
+    # Resolve TLS verification once; reused for the Delve POST and the token fetch.
+    if no_verify:
+        verify = False
+    elif args.ca_file:
+        verify = str(args.ca_file)
+    else:
+        verify = True
+    log.debug(f"Found {verify=}")
+
+    # BUILD AUTH (basic or bearer client-credentials)
+    if args.auth == "bearer":
+        client_secret = args.client_secret
+        if not client_secret and args.client_secret_file:
+            client_secret = args.client_secret_file.read_text().strip()
+        if not client_secret:
+            client_secret = os.environ.get("DELVE_INGEST_CLIENT_SECRET")
+        missing = [
+            name for name, value in (
+                ("--token-url", args.token_url),
+                ("--client-id", args.client_id),
+                ("--client-secret/--client-secret-file/DELVE_INGEST_CLIENT_SECRET", client_secret),
+            ) if not value
+        ]
+        if missing:
             raise ValueError(
-                f"For non-interactive use, you must supply "
-                f"username and password on the command line",
+                f"--auth bearer requires: {', '.join(missing)}",
             )
-        username = input("Please specify username: ")
-    if not password:
-        if not sys.stdin.isatty():
-            raise ValueError(
-                f"For non-interactive use, you must supply "
-                f"username and password on the command line",
-            )
-        password = getpass.getpass("Please specify password: ")
+        auth = ClientCredentialsAuth(
+            token_url=args.token_url,
+            client_id=args.client_id,
+            client_secret=client_secret,
+            verify=verify,
+        )
+        log.debug("Using bearer client-credentials authentication")
+    else:
+        username = args.username
+        log.debug(f"Found username: {username}")
+        password = args.password   # DO NOT LOG PASSWORD
+        if not username:
+            if not sys.stdin.isatty():
+                raise ValueError(
+                    f"For non-interactive use, you must supply "
+                    f"username and password on the command line",
+                )
+            username = input("Please specify username: ")
+        if not password:
+            if not sys.stdin.isatty():
+                raise ValueError(
+                    f"For non-interactive use, you must supply "
+                    f"username and password on the command line",
+                )
+            password = getpass.getpass("Please specify password: ")
+        auth = requests.auth.HTTPBasicAuth(username, password)
+        log.debug("Using basic authentication")
 
     # BUILD COMPUTED VALUES
     starttime = time()
@@ -235,13 +356,12 @@ def main(argv=None):
 
     url = f"{server}/api/events/"
     log.debug(f"Found url: {url}")
-    basic_auth = requests.auth.HTTPBasicAuth(username, password)
 
     session = requests.Session()
     if no_verify:
         log.warning(f"Hostname verification has been disabled")
-        session.verify = False
-    session.auth = basic_auth
+    session.verify = verify
+    session.auth = auth
     log.debug(f"HTTP session initiated")
 
     # INITIALIZE FILE POSITION DATA
