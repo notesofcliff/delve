@@ -56,6 +56,17 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 # DELVE_Q_CLUSTER_ORM: ORM for the Q cluster. Default: 'default'.
 # DELVE_PYTHON_VERSION: Python version to use. Default: '3.13.2'.
 # DELVE_SERVICE_INTERVAL: Interval for the service commands. Default: 5.
+# DELVE_OIDC_ENABLED: Enable Keycloak OIDC human SSO (truthy: 1/true/yes). Default: '' (off).
+# DELVE_OIDC_ISSUER_URL: OIDC issuer URL (Keycloak realm base, e.g. https://host/realms/armory). Default: ''.
+# DELVE_OIDC_CLIENT_ID: OIDC relying-party client id. Default: ''.
+# DELVE_OIDC_CLIENT_SECRET: OIDC relying-party client secret. Default: ''.
+# DELVE_OIDC_SCOPES: Space-separated OIDC scopes. Default: 'openid profile email'.
+# DELVE_OIDC_SIGN_ALGO: ID token signing algorithm. Default: 'RS256'.
+# DELVE_OIDC_CA_FILE: Path to a CA bundle for verifying the issuer's TLS. Default: '' (system trust).
+# DELVE_OIDC_GROUPS_CLAIM: Token claim carrying group membership. Default: 'groups'.
+# DELVE_OIDC_ADMIN_GROUP: Group mapped to Django superuser. Default: 'armory-admins'.
+# DELVE_OIDC_STAFF_GROUP: Group mapped to Django staff. Default: 'armory-operators'.
+# DELVE_OIDC_VIEWER_GROUP: Group mapped to read-only access. Default: 'armory-viewers'.
 
 # Note: Please keep this list up to date with any new environment variables added to the settings.
 
@@ -294,10 +305,55 @@ logging.config.dictConfig(
 # Custom user model
 AUTH_USER_MODEL = "users.User"
 
-# Authentication backends
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
+# Keycloak OIDC (human SSO) — optional, env-gated.
+#
+# Off by default so Delve keeps its air-gapped, local-auth behavior. When
+# DELVE_OIDC_ENABLED is truthy the mozilla-django-oidc backend is prepended to
+# AUTHENTICATION_BACKENDS, but ModelBackend is ALWAYS retained as a fallback so a
+# local Django superuser (break-glass) still works and an unreachable issuer
+# cannot lock everyone out. All endpoints are derived from a single issuer URL
+# (Keycloak realm base, e.g. https://host/realms/armory) to keep the env small.
+_oidc_on = os.getenv('DELVE_OIDC_ENABLED', '').strip().lower() in ('1', 'true', 'yes')
+# Uppercase mirror so templates / urls.py can read it off django.conf.settings.
+DELVE_OIDC_ENABLED = _oidc_on
+
+AUTHENTICATION_BACKENDS = tuple(
+    (['users.auth.DelveOIDCBackend'] if _oidc_on else [])
+    + ['django.contrib.auth.backends.ModelBackend']
 )
+
+if _oidc_on:
+    INSTALLED_APPS.append('mozilla_django_oidc')
+
+    OIDC_ISSUER_URL = os.getenv('DELVE_OIDC_ISSUER_URL', '').rstrip('/')
+    OIDC_RP_CLIENT_ID = os.getenv('DELVE_OIDC_CLIENT_ID', '')
+    OIDC_RP_CLIENT_SECRET = os.getenv('DELVE_OIDC_CLIENT_SECRET', '')
+    OIDC_RP_SIGN_ALGO = os.getenv('DELVE_OIDC_SIGN_ALGO', 'RS256')
+    OIDC_RP_SCOPES = os.getenv('DELVE_OIDC_SCOPES', 'openid profile email')
+
+    # Standard Keycloak endpoint layout under the realm issuer.
+    OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OIDC_ISSUER_URL}/protocol/openid-connect/auth'
+    OIDC_OP_TOKEN_ENDPOINT = f'{OIDC_ISSUER_URL}/protocol/openid-connect/token'
+    OIDC_OP_USER_ENDPOINT = f'{OIDC_ISSUER_URL}/protocol/openid-connect/userinfo'
+    OIDC_OP_JWKS_ENDPOINT = f'{OIDC_ISSUER_URL}/protocol/openid-connect/certs'
+
+    # Verify the issuer's TLS chain. requests accepts a CA-bundle path as the
+    # `verify` argument, so point OIDC_VERIFY_SSL at the mounted internal CA PEM
+    # when provided; otherwise fall back to system trust.
+    _oidc_ca_file = os.getenv('DELVE_OIDC_CA_FILE', '').strip()
+    OIDC_VERIFY_SSL = _oidc_ca_file if _oidc_ca_file else True
+
+    # Group claim emitted by the Keycloak group-membership mapper, consumed by
+    # DelveOIDCBackend to set is_staff / is_superuser.
+    DELVE_OIDC_GROUPS_CLAIM = os.getenv('DELVE_OIDC_GROUPS_CLAIM', 'groups')
+    DELVE_OIDC_ADMIN_GROUP = os.getenv('DELVE_OIDC_ADMIN_GROUP', 'armory-admins')
+    DELVE_OIDC_STAFF_GROUP = os.getenv('DELVE_OIDC_STAFF_GROUP', 'armory-operators')
+    DELVE_OIDC_VIEWER_GROUP = os.getenv('DELVE_OIDC_VIEWER_GROUP', 'armory-viewers')
+
+    # Land back on the app root after login/logout.
+    LOGIN_REDIRECT_URL = '/'
+    LOGOUT_REDIRECT_URL = '/'
+    OIDC_STORE_ID_TOKEN = True
 # This PAGE_SIZE really only helps the DRF browsable API.
 # Submitting a Query does not respect this and will return
 # the results as per your query.

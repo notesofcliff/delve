@@ -34,6 +34,13 @@ urlpatterns = [
     document_root=settings.STATIC_ROOT,
 )
 
+# Keycloak OIDC routes (login init, /oidc/callback/, logout) — only mounted when
+# human SSO is enabled, preserving the air-gapped local-auth default.
+if getattr(settings, 'DELVE_OIDC_ENABLED', False):
+    urlpatterns += [
+        path('oidc/', include('mozilla_django_oidc.urls')),
+    ]
+
 if settings.DEBUG:
     try:
         from debug_toolbar.toolbar import debug_toolbar_urls

@@ -9,4 +9,10 @@
   {{ form }}
   <button type="submit">Log In</button>
 </form>
+{% if settings.DELVE_OIDC_ENABLED %}
+<p>or</p>
+<a href="{% url 'oidc_authentication_init' %}">
+  <button type="button">Log In with Keycloak</button>
+</a>
+{% endif %}
 {% endblock %}

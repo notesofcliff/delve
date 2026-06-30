@@ -20,4 +20,5 @@ psutil
 pygments
 uuid_utils
 psycopg2-binary
+mozilla-django-oidc
 pywin32 ; sys_platform == 'win32'
