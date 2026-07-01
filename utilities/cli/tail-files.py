@@ -322,12 +322,13 @@ def main(argv=None):
             raise ValueError(
                 f"--auth bearer requires: {', '.join(missing)}",
             )
-        auth = ClientCredentialsAuth(
-            token_url=args.token_url,
-            client_id=args.client_id,
-            client_secret=client_secret,
-            verify=verify,
-        )
+        auth_spec = {
+            "kind": "bearer",
+            "token_url": args.token_url,
+            "client_id": args.client_id,
+            "client_secret": client_secret,
+            "verify": verify,
+        }
         log.debug("Using bearer client-credentials authentication")
     else:
         username = args.username
@@ -347,7 +348,11 @@ def main(argv=None):
                     f"username and password on the command line",
                 )
             password = getpass.getpass("Please specify password: ")
-        auth = requests.auth.HTTPBasicAuth(username, password)
+        auth_spec = {
+            "kind": "basic",
+            "username": username,
+            "password": password,
+        }
         log.debug("Using basic authentication")
 
     # BUILD COMPUTED VALUES
@@ -357,12 +362,8 @@ def main(argv=None):
     url = f"{server}/api/events/"
     log.debug(f"Found url: {url}")
 
-    session = requests.Session()
     if no_verify:
         log.warning(f"Hostname verification has been disabled")
-    session.verify = verify
-    session.auth = auth
-    log.debug(f"HTTP session initiated")
 
     # INITIALIZE FILE POSITION DATA
     data_file = DATA_DIRECTORY.joinpath("tail-files.json")
@@ -397,7 +398,8 @@ def main(argv=None):
             event_queue,
             logging_queue,
             url,
-            session,
+            verify,
+            auth_spec,
             batch_size,
         ),
         daemon=True,
@@ -479,8 +481,28 @@ def main(argv=None):
                 log.debug(f"Found {level=}, {message=}")
                 log.log(level=level, msg=message)
 
-def send_to_delve(event_queue, logging_queue, url, session, batch_size):
+def build_auth(auth_spec):
+    """Build a requests auth object from a plain, picklable spec.
+
+    Called inside the sender process so any lock-bearing state (eg.
+    ClientCredentialsAuth's refresh lock) is created fresh there, instead of
+    being pickled across the multiprocessing start-method boundary.
+    """
+    if auth_spec["kind"] == "bearer":
+        return ClientCredentialsAuth(
+            token_url=auth_spec["token_url"],
+            client_id=auth_spec["client_id"],
+            client_secret=auth_spec["client_secret"],
+            verify=auth_spec["verify"],
+        )
+    return requests.auth.HTTPBasicAuth(auth_spec["username"], auth_spec["password"])
+
+
+def send_to_delve(event_queue, logging_queue, url, verify, auth_spec, batch_size):
     timeout = 1 # seconds
+    session = requests.Session()
+    session.verify = verify
+    session.auth = build_auth(auth_spec)
     current_batch = []
     logging_queue.put((logging.DEBUG, "Sender process entering main loop."))
     while True:

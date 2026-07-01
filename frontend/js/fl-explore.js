@@ -854,7 +854,7 @@ var application = {
                   title: item,
                   data: item,
                   render: function (data, type, row, meta)  {
-                    data = JSON.stringify(data);
+                    data = JSON.stringify(data) ?? "";
                     // console.log(data)
                     data = data.replace( /</g, '&lt;' );
                     // console.log(data)

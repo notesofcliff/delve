@@ -442,6 +442,11 @@ DELVE_EXTRACTION_MAP = {
     'apache': 'events.parsers.apache',
     'csv': 'events.parsers.csv',
     'xml': 'xmltodict.parse',
+    # armory audit feed shippers (utilities/cli/tail-files.py, keycloak-events.py)
+    # send JSON-encoded text for these sourcetypes.
+    'openbao_audit': json.loads,
+    'keycloak_event': json.loads,
+    'k8s_audit': json.loads,
 }
 
 DELVE_PROCESSOR_MAP = {}
