@@ -1,6 +1,6 @@
 {
   "name": "delve",
-  "version": "0.9.3-dev",
+  "version": "0.9.4-dev",
   "description": "A data tool",
   "private": true,
   "scripts": {

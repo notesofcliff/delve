@@ -41,6 +41,14 @@ counterparts.
 - `dedup`: Remove duplicate entries from the result set.
 - `sort`: Sort the result set based on specified criteria.
 
+`select` and `filter` can walk nested fields with double-underscore paths
+(eg. `extracted_fields__auth__display_name`), which is useful when different
+sourcetypes populate `extracted_fields` with different shapes. A path segment
+that's missing on a given event resolves to `None` rather than raising an
+error, and a `filter` predicate (`icontains`, `startswith`, etc.) that can't
+be evaluated against `None` is treated as not matching, instead of aborting
+the whole search - the same way a database `NULL` behaves for most lookups.
+
 ## Visualization Commands
 Visualization commands take a result set and generate a table, chart, or other visualization. These commands help you to display your data in a meaningful and interactive way.
 
@@ -61,13 +69,13 @@ Here are some example commands to use the `qs_group_by` functionality:
 
 ```bash
 # Group records by a single field and calculate the average of another field
-search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField))
+search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar,IntegerField))
 
 # Group records by multiple fields and count the number of records in each group
 search index=test | qs_group_by extracted_fields__foo extracted_fields__bar count=Count('id')
 
 # Group records by a field and filter the groups based on an aggregate condition
-search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField)) | qs_having avg_bar__gt=1
+search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar,IntegerField)) | qs_having avg_bar__gt=1
 
 # Filiter records, select nested fields and calculate the difference in days between the created field (index timestamp) and the timestamp field (timestamp from the text of the event)
 search
@@ -75,11 +83,14 @@ search
 | qs_annotate index_delay=ExpressionWrapper((F(created)-Cast(timestamp,DateTimeField))/60/60/24,output_field=DurationField)
 ```
 
+> **Note:** these expressions have no spaces inside the parentheses on purpose - see
+> [Quoting Multi-Word Arguments](#quoting-multi-word-arguments) below for why.
+
 ### Explanation
 
-- `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField))`: Groups records by the `extracted_fields__foo` field and calculates the average of the `extracted_fields__bar` field, casting it to an integer.
+- `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar,IntegerField))`: Groups records by the `extracted_fields__foo` field and calculates the average of the `extracted_fields__bar` field, casting it to an integer.
 - `qs_group_by extracted_fields__foo extracted_fields__bar count=Count('id')`: Groups records by the `extracted_fields__foo` and `extracted_fields__bar` fields and counts the number of records in each group.
-- `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField)) | qs_having avg_bar__gt=1`: Groups records by the `extracted_fields__foo` field, calculates the average of the `extracted_fields__bar` field, and filters the groups to include only those with an average greater than 1.
+- `qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar,IntegerField)) | qs_having avg_bar__gt=1`: Groups records by the `extracted_fields__foo` field, calculates the average of the `extracted_fields__bar` field, and filters the groups to include only those with an average greater than 1.
 
 The `qs_group_by` command is a powerful tool for aggregating and analyzing data within Delve, allowing you to perform complex queries and calculations on grouped records.
 
@@ -235,6 +246,26 @@ The `qs_*` commands are designed to modify a Django QuerySet using methods on th
 ### Argument Parsing
 
 When you use `qs_*` commands, the arguments are parsed into expressions that Django can understand. This means you can use functions and complex expressions to manipulate your data.
+
+Each argument token is run through Python's `ast.parse` so that function calls
+(`Cast(...)`, `Trunc(...)`, `F(...)`, etc.) and arithmetic can be used directly.
+This has two consequences worth knowing before you write one of these commands:
+
+#### Quoting Multi-Word Arguments
+
+A query line is first split into pipeline stages on `|`, then each stage is
+tokenized on whitespace (via `shlex.split`) before argument parsing even
+starts. That means:
+
+- **An expression containing `, ` (a comma followed by a space) gets split
+  into two tokens and fails with a `SyntaxError`.** Either drop the space
+  (`Cast(field,IntegerField)`) or wrap the whole expression in quotes:
+  `qs_annotate status_code="Cast(KT('extracted_fields__code'),IntegerField)"`.
+- **A value that should be treated as a literal string but starts with `-`
+  (eg. a descending sort field) looks like a CLI flag and needs to be a quoted
+  Python string literal:** `qs_order_by "'-count'"`, not `qs_order_by -count`
+  (the latter gets parsed as unary negation of the name `count` and raises a
+  `TypeError`).
 
 ### Available Field Classes
 
@@ -524,7 +555,7 @@ Here are some example usages of the `qs_*` commands, starting with the `search` 
 
 ```bash
 # Search for events and annotate them with additional fields
-search field1=value1 | qs_annotate new_field1=Lower(old_field1) new_field2=Concat(field2, Value('suffix'))
+search field1=value1 | qs_annotate new_field1=Lower(old_field1) new_field2="Concat(field2, Value('suffix'))"
 
 # Search for events, filter them, and then count the results
 search field1=value1 | qs_filter field2__gt=10 | qs_count
@@ -534,6 +565,20 @@ search field1=value1 | qs_aggregate total=Sum(field2) average=Avg(field2) | qs_a
 
 # Search for events and retrieve dates from the queryset
 search field1=value1 | qs_dates field=date_field kind=month order=ASC
+
+# Group by a deeply nested JSON field, threshold the groups, and sort
+# descending - useful for things like flagging repeated failed logins
+search --last-day index=keycloak extracted_fields__type=LOGIN_ERROR
+| qs_group_by extracted_fields__user_id extracted_fields__ip_address count=Count('id')
+| qs_having count__gte=5
+| qs_order_by "'-count'"
+
+# Same idea as a bar chart, split into one series per index and bucketed
+# by hour
+search --last-day
+| qs_annotate hour=Trunc(created,kind='hour',output_field=DateTimeField)
+| qs_group_by hour index count=Count('id')
+| chart --type bar --x-field hour --y-field count --by-field index --time-x hour
 ```
 
 ### Notes

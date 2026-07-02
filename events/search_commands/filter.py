@@ -47,9 +47,12 @@ def resolve_field_lookup(expression: str, item: Dict[str, Any]) -> Any:
         log.debug(f"ret: {ret}, subexpr: {subexpr}")
         try:
             ret = ret[subexpr]
-        except KeyError:
+        except (KeyError, TypeError):
+            # A missing key at any depth (or a None left over from one)
+            # means the rest of the path can't resolve either - stop here
+            # instead of indexing into None on the next segment.
             ret = None
-            continue
+            break
         log.debug(f"Built ret: {ret}")
     return expression.split("__")[-1], ret
 
@@ -114,14 +117,23 @@ def filter(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], 
             if not args.no_cast:
                 rhs = cast(rhs)
                 log.debug(f"Cast rhs: {rhs} to {type(rhs)}")
+            try:
+                matched = predicate(lhs, rhs)
+            except (AttributeError, TypeError):
+                # lhs is missing/None (eg. the field doesn't exist on this
+                # event) and the predicate assumes a real value (icontains,
+                # startswith, gt, etc.) - treat that the same as a database
+                # NULL: it doesn't match, rather than crashing the search.
+                log.debug(f"{predicate} raised on lhs={lhs!r}, rhs={rhs!r}; treating as no match")
+                matched = False
             if negate:
-                if predicate(lhs, rhs):
-                    log.debug(f"negated {predicate}({lhs}, {rhs}) returned: {predicate(lhs, rhs)}")
+                if matched:
+                    log.debug(f"negated {predicate}({lhs}, {rhs}) returned: {matched}")
                     allowed = False
                     break
             else:
-                if not predicate(lhs, rhs):
-                    log.debug(f"{predicate}({lhs}, {rhs}) returned: {predicate(lhs, rhs)}")
+                if not matched:
+                    log.debug(f"{predicate}({lhs}, {rhs}) returned: {matched}")
                     allowed = False
                     break
         if allowed:

@@ -48,6 +48,8 @@ def select(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], 
                 item = event
                 for segment in field.split("__"):
                     log.debug(f"Trying segment: {segment}")
+                    if item is None:
+                        break
                     try:
                         item = item[segment]
                         log.debug(f"Found segment {segment}: {item}")
@@ -55,7 +57,10 @@ def select(request: HttpRequest, events: Union[QuerySet, List[Dict[str, Any]]], 
                         log.warning(f"Received KeyError, field {segment} not in {item}")
                         item = None
                     except TypeError:
-                        item = getattr(item, segment)
+                        try:
+                            item = getattr(item, segment)
+                        except AttributeError:
+                            item = None
                 row[field] = item
                 log.debug(f"row[field]: {row[field]}")
             log.debug(f"Yielding row: {row}")
