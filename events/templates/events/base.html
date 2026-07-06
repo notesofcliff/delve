@@ -62,11 +62,11 @@
                         <div class="nav">
                             {% for topic, links in settings.DELVE_NAV_MENU.items %}
                                 <li class="mb-1">
-                                    <button class="btn btn-toggle align-items-center rounded collapsed text-{% if user.profile.mode == 'dark' %}light{% else %}dark{% endif %}" data-bs-toggle="collapse" data-bs-target="#{{ topic }}-collapse" aria-expanded="true">
+                                    <button class="btn btn-toggle align-items-center rounded collapsed text-{% if user.profile.mode == 'dark' %}light{% else %}dark{% endif %}" data-bs-toggle="collapse" data-bs-target="#{{ topic|slugify }}-collapse" aria-expanded="true">
                                         {{ topic | upper }}
                                     </button>
                                     <div class="container">
-                                        <div class="collapse" id="{{ topic }}-collapse">
+                                        <div class="collapse" id="{{ topic|slugify }}-collapse">
                                             <ul class="btn-toggle-nav list-unstyled pb-1 small">
                                                 {% for text, name in links.items %}
                                                     <li><a href="{% url name %}" class="rounded text-{% if user.profile.mode == 'dark' %}light{% else %}dark{% endif %}">{{ text }}</a></li>

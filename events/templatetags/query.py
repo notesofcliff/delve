@@ -20,8 +20,10 @@ def query_table(context, query_string, form=None, **kwargs):
     if form and form.is_valid():
         log.debug(f"Form is valid: {form.cleaned_data}")
         ctx = form.cleaned_data
-    else:
+    elif form:
         log.debug(f"Form is not valid: {form.errors}")
+        ctx = {}
+    else:
         ctx = {}
     if kwargs:
         log.debug(f"kwargs: {kwargs}")
@@ -46,8 +48,10 @@ def query_chart(context, query_string, form=None, **kwargs):
     if form and form.is_valid():
         log.debug(f"Form is valid: {form.cleaned_data}")
         ctx = form.cleaned_data
-    else:
+    elif form:
         log.debug(f"Form is not valid: {form.errors}")
+        ctx = {}
+    else:
         ctx = {}
     if kwargs:
         log.debug(f"kwargs: {kwargs}")
