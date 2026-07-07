@@ -180,7 +180,8 @@ def parse_argv(argv):
         "--delay",
         type=int,
         default=1,
-        help="The number of seconds to sleep between API POST requests",
+        help="The number of seconds to sleep between passes over the "
+            "monitored files when none of them have new data",
     )
     parser.add_argument(
         "--batch-size",
@@ -419,6 +420,7 @@ def main(argv=None):
 
     # MAIN PROGRAM LOOP
     while True:
+        found_data = False
         for filename in filenames:
             while not logging_queue.empty():
                 level, message = logging_queue.get()
@@ -438,7 +440,8 @@ def main(argv=None):
                 # No new data
                 log.debug(f"No new data for {filename=}")
                 continue
-            elif current_position > size:
+            found_data = True
+            if current_position > size:
                 log.info(f"Found {current_position=}")
                 while filename.stat().st_size < 256:
                     log.info(f"Waiting for {filename=} to reach at least 256 bytes")
@@ -480,6 +483,10 @@ def main(argv=None):
                 level, message = logging_queue.get()
                 log.debug(f"Found {level=}, {message=}")
                 log.log(level=level, msg=message)
+
+        if not found_data:
+            log.debug(f"No new data in any monitored file, sleeping for {delay=}")
+            sleep(delay)
 
 def build_auth(auth_spec):
     """Build a requests auth object from a plain, picklable spec.
