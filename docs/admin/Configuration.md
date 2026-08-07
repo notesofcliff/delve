@@ -99,4 +99,4 @@ Delve has several specific configuration options that you can set in `settings.p
 Use the existing `delve/settings.py` file in the project root as a reference for available options and environment variable support.
 
 
-[Previous: Bootstrap Guide](/doc/admin/Bootstrap_Guide.md) | [Next: Ingesting Data](/doc/admin/Ingesting_Data.md)
+[Previous: Bootstrap Guide](Bootstrap_Guide.md) | [Next: Ingesting Data](Ingesting_Data.md)

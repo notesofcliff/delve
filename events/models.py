@@ -26,6 +26,8 @@ from events.util import resolve
 
 
 class FileUpload(models.Model):
+    """A user-uploaded file, stored on disk and referenced by a unique title."""
+
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
@@ -53,6 +55,8 @@ class FileUpload(models.Model):
 
 
 class GlobalContext(models.Model):
+    """Per-user Jinja2 template context applied to every query the user runs."""
+
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
@@ -85,6 +89,8 @@ class GlobalContext(models.Model):
             raise ValidationError('Context must be a mapping (dict, object)')
 
 class LocalContext(models.Model):
+    """A named, reusable Jinja2 template context a user can select by name in a query."""
+
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
@@ -118,6 +124,8 @@ class LocalContext(models.Model):
             raise ValidationError('Context must be a mapping (dict, object)')
 
 class Query(models.Model):
+    """A saved or ad hoc search pipeline that resolves to a list of matching events."""
+
     id = models.UUIDField(
         default=uuid4,
         primary_key=True,
@@ -257,6 +265,8 @@ def generate_uuid7():
     return UUID(str(uuid7()))
 
 class BaseEvent(models.Model):
+    """Abstract base for ingested event records: source, sourcetype, host, text, and extracted fields."""
+
     id = models.UUIDField(
         default=generate_uuid7,
         primary_key=True,
@@ -360,6 +370,8 @@ class BaseEvent(models.Model):
         return ret
             
 class Event(BaseEvent):
+    """A stored event, owned by the user or agent identity that ingested it."""
+
     user = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,

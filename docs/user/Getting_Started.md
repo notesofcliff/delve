@@ -94,7 +94,7 @@ Delve provides search-based and processor-based alerts:
 - **Processor-based Alerts**: Triggered during data ingestion based on event sourcetype.
 
 ## Installation
-For installation instructions, please refer to the [Delve Administration Manual](/doc/admin/index.md). Administrators who need a scripted build can follow the [Bootstrap Guide](/doc/admin/Bootstrap_Guide.md). The User Manual assumes that Delve is already installed and configured.
+For installation instructions, please refer to the [Delve Administration Manual](../admin/index.md). Administrators who need a scripted build can follow the [Bootstrap Guide](../admin/Bootstrap_Guide.md). The User Manual assumes that Delve is already installed and configured.
 
 ## Logging In
 Once Delve is installed, you can log in to the web interface using the credentials provided by your administrator.
@@ -107,4 +107,4 @@ The Delve web interface consists of several key components:
 - **Explore UI**: A dynamic, universal search interface.
 - **Admin UI**: An administrative dashboard for managing users, data sources, and system settings.
 
-[Next: Using the Web UI](/doc/user/Using_the_Web_UI.md)
+[Next: Using the Web UI](Using_the_Web_UI.md)

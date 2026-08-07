@@ -110,4 +110,4 @@ Running `python custom_bootstrap.py package --assemble-dir build/assemble` execu
 
 ---
 
-[Previous: Installation and Setup](/doc/admin/Installation_and_Setup.md) | [Next: Configuration](/doc/admin/Configuration.md)
+[Previous: Installation and Setup](Installation_and_Setup.md) | [Next: Configuration](Configuration.md)

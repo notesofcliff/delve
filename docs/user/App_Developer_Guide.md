@@ -363,4 +363,4 @@ By following these guidelines, you can create powerful and flexible Delve apps t
 
 ---
 
-[Previous: Searching, Filtering and More](/doc/user/Searching_Filtering_and_More.md) | [Next: Usage Tips](/doc/user/Usage_Tips.md)
+[Previous: Searching, Filtering and More](Searching_Filtering_and_More.md) | [Next: Usage Tips](Usage_Tips.md)

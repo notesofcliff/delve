@@ -56,7 +56,7 @@ Follow these steps to install Delve:
 
 **NOTE**: Utilities launched with `python manage.py` are configured in `settings.py`, while utilities in `utilities/cli/` are generally configured via command line arguments.
 
-For details on automating these steps into a repeatable build, see the [Bootstrap Guide](/doc/admin/Bootstrap_Guide.md).
+For details on automating these steps into a repeatable build, see the [Bootstrap Guide](Bootstrap_Guide.md).
 
 ## Hosting with CherryPy
 
@@ -125,4 +125,4 @@ it an easy way to deploy Delve on Linux and macOS without manually configuring
 init systems like Systemd.
 
 
-[Previous: Introduction](/doc/admin/Introduction.md) | [Next: Bootstrap Guide](/doc/admin/Bootstrap_Guide.md)
+[Previous: Introduction](Introduction.md) | [Next: Bootstrap Guide](Bootstrap_Guide.md)

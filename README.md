@@ -19,7 +19,7 @@ Delve is a powerful, extensible platform for ingesting, transforming, and search
 - `requirements.txt` and `pyproject.toml` for Python dependencies
 - `bootstrap.py` for automated build, packaging, and asset management
 - `frontend/` for JavaScript and SCSS assets
-- `doc/` for user and admin documentation
+- `docs/` for user and admin documentation, published via MkDocs and GitHub Pages
 - `utilities/cli/` for ingestion utilities such as `tail-files.py` and `syslog-receiver.py`
 
 ## Quick Start
@@ -214,12 +214,24 @@ Or run all steps in sequence:
 python bootstrap.py all
 ```
 
-See `doc/admin/Bootstrap_Guide.md` for full details and extensibility options.
+See the [Bootstrap Guide](docs/admin/Bootstrap_Guide.md) for full details and extensibility options.
 
 ## Documentation
-- **User Guide:** `doc/user/Getting_Started.md`
-- **Admin Guide:** `doc/admin/Installation_and_Setup.md`, `doc/admin/Bootstrap_Guide.md`
-- **API Reference:** Browse the REST API via the web UI after starting the server
+
+Read the full documentation at **https://www.mcindi.com/delve/**.
+
+- User Guide: [docs/user/Getting_Started.md](docs/user/Getting_Started.md)
+- Admin Guide: [docs/admin/Installation_and_Setup.md](docs/admin/Installation_and_Setup.md), [docs/admin/Bootstrap_Guide.md](docs/admin/Bootstrap_Guide.md)
+- Python API reference: generated from docstrings and signatures
+- REST API: browse it via the web UI after starting the server
+
+Generated reference docs live under `docs/reference/` and are published via
+MkDocs and GitHub Pages. Build docs locally:
+
+```bash
+python -m pip install -r requirements-docs.txt
+mkdocs build --strict
+```
 
 ## Key Concepts
 - **Events:** The core data unit, with indexed and extracted fields
@@ -239,4 +251,4 @@ Delve is an open-source project maintained in my spare time.
 If you find it useful, please consider [sponsoring me on GitHub](https://github.com/sponsors/notesofcliff)
 
 ## License
-Delve is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See `doc/LICENSES.txt` for details.
+Delve is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See `LICENSE` for details.

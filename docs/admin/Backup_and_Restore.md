@@ -83,4 +83,4 @@ python manage.py loaddata "$DELVE_DIR/backups/backup.json"
 By following these steps, you can effectively back up and restore your Delve instance, ensuring that your data is protected and can be quickly recovered in case of an issue.
 
 
-[Previous: Performance Tuning](/doc/admin/Performance_Tuning.md) | [Next: Scaling and Load Balancing](/doc/admin/Scaling_and_Load_Balancing.md)
+[Previous: Performance Tuning](Performance_Tuning.md) | [Next: Scaling and Load Balancing](Scaling_and_Load_Balancing.md)

@@ -1,0 +1,50 @@
+site_name: Delve
+site_description: Documentation for the Delve data platform
+site_url: https://www.mcindi.com/delve/
+repo_url: https://github.com/McIndi/delve
+
+theme:
+  name: mkdocs
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_options:
+              warn_missing_types: false
+
+markdown_extensions:
+  - admonition
+
+nav:
+  - Overview: index.md
+  - Admin Guide:
+      - Overview: admin/index.md
+      - Introduction: admin/Introduction.md
+      - Installation and Setup: admin/Installation_and_Setup.md
+      - Bootstrap Guide: admin/Bootstrap_Guide.md
+      - Configuration: admin/Configuration.md
+      - Ingesting Data: admin/Ingesting_Data.md
+      - User and Group Management: admin/User_and_Group_Management.md
+      - Monitoring and Maintenance: admin/Monitoring_and_Maintenance.md
+      - Security: admin/Security.md
+      - Troubleshooting: admin/Troubleshooting.md
+      - Performance Tuning: admin/Performance_Tuning.md
+      - Backup and Restore: admin/Backup_and_Restore.md
+      - Scaling and Load Balancing: admin/Scaling_and_Load_Balancing.md
+      - Advanced Logging: admin/Advanced_Logging.md
+  - User Guide:
+      - Overview: user/index.md
+      - Getting Started: user/Getting_Started.md
+      - Using the Web UI: user/Using_the_Web_UI.md
+      - Ingesting Data: user/Ingesting_Data.md
+      - Searching, Filtering and More: user/Searching_Filtering_and_More.md
+      - App Developer Guide: user/App_Developer_Guide.md
+      - Usage Tips: user/Usage_Tips.md
+      - FAQ: user/FAQ.md
+  - Reference:
+      - Overview: reference/index.md
+      - Python API: reference/python-api.md
